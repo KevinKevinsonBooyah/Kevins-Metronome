@@ -332,6 +332,47 @@ body[data-view=seq] .stage{min-height:219px}
  body[data-view=seq] .swaitwrap{width:78px}
  body[data-view=seq] .swaitunit{font-size:.73rem}
 }
+
+/* v4: timeline labels stay legible and every tile remains visible on mobile. */
+.seq,.seq-track,.seq-list,.sblk,.sbody,.shead,.sctrl,.settings,.console,.tempo{min-width:0}
+.seq-head{min-width:0}
+.seq-sum{overflow-wrap:anywhere}
+.seq-track{min-width:0;padding-top:5px}
+.tseg{font-size:1.07rem;font-weight:850;min-width:72px;height:45px;padding:2px 7px;flex-shrink:0}
+.tseg span{display:block;max-width:100%;white-space:normal;overflow-wrap:anywhere;line-height:1.14;text-align:center}
+.tseg.active{transform:translateY(-1px)}
+/* The dashed guides are discrete flex items between dots, never behind them. */
+.beat-line{width:auto;margin-left:0;margin-right:0;gap:0;justify-content:space-between;min-width:0;isolation:auto}
+.beat-line::before{display:none}
+.beat-line .beat{position:relative;z-index:1;flex:0 1 46px;width:auto;max-width:46px;min-width:0;aspect-ratio:1;line-height:1;white-space:nowrap}
+.beat-line.many .beat{flex-basis:38px;width:auto;max-width:38px}
+.beat-line .beat-connector{display:block;align-self:center;flex:1 1 7px;min-width:2px;height:0;border-top:2px dotted #b7b9ca;pointer-events:none}
+.beat-line.very-many .beat{font-size:0}
+[data-theme=dark] .beat-line .beat-connector{border-top-color:#777c93}
+@media (hover:hover) and (pointer:fine){body[data-view=seq] .scene{top:3%;bottom:16%}}
+@media(max-width:720px){
+  /* A wrapping overview means even 20+ blocks are accessible without horizontal clipping. */
+  body[data-view=seq] .seq-track{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(76px,100%),1fr));gap:6px;overflow:visible;padding:4px 0 12px;align-items:stretch}
+  body[data-view=seq] .tseg{width:100%;min-width:0;height:49px;min-height:49px;font-size:1.04rem;flex:none!important;padding:4px 5px}
+  body[data-view=seq] .seq-head{align-items:flex-start}
+  body[data-view=seq] .seq-sum{max-width:100%}
+  body[data-view=seq] .sblk{overflow:visible}
+  body[data-view=seq] .sctrl,body[data-view=seq] .stepper{min-width:0}
+  body[data-view=seq] .stepper{flex-wrap:wrap}
+  body[data-view=seq] .sprog{border-radius:0 0 9px 9px}
+  .beat-line .beat{flex-basis:43px;max-width:43px;font-size:clamp(.65rem,2.8vw,.92rem)}
+  .beat-line.many .beat{flex-basis:37px;max-width:37px;font-size:clamp(.56rem,2.6vw,.76rem)}
+  .beat-line.very-many .beat{font-size:0}
+  .beat-line .beat-connector{flex-basis:5px;min-width:2px}
+  .switches .switch-row{min-width:0}
+}
+@media(max-width:350px){
+  body[data-view=seq] .tseg{font-size:1rem}
+  body[data-view=seq] .sctrl{gap:6px}
+  body[data-view=seq] .sacts{gap:2px}
+  .beat-line.many .beat{font-size:clamp(.52rem,2.35vw,.68rem)}
+  .beat-line.very-many .beat{font-size:0}
+}
 </style>
 </head>
 <body>
@@ -388,7 +429,7 @@ body[data-view=seq] .stage{min-height:219px}
 <div class="field"><label for="voice">Click sound</label><div class="select-wrap"><svg class="icon" aria-hidden="true"><use href="#i-wave"/></svg><select id="voice"><option value="wood">Woodblock</option><option value="classic">Classic click</option><option value="soft">Soft beep</option></select><svg class="icon chevron" aria-hidden="true"><use href="#i-chevron"/></svg></div></div>
 </div>
 <div class="volume"><div class="volume-top"><label for="volume">Volume</label><output for="volume" id="volumeOut">75%</output></div><div class="volume-slider"><svg class="icon" aria-hidden="true"><use href="#i-low"/></svg><input id="volume" type="range" min="0" max="300" value="75" aria-label="Sound volume"><svg class="icon" aria-hidden="true"><use href="#i-volume"/></svg></div></div>
-<div class="switches"><button class="switch-row" role="switch" aria-checked="true" type="button" id="countIn"><span>4-beat count-in</span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row" role="switch" aria-checked="true" type="button" id="accent"><span>Accent first beat</span><span class="switch-track" aria-hidden="true"></span></button></div>
+<div class="switches"><button class="switch-row" role="switch" aria-checked="true" type="button" id="countIn"><span>4-beat count-in</span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row" role="switch" aria-checked="true" type="button" id="accent"><span>Accent first beat</span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row" role="switch" aria-checked="false" type="button" id="loopSequence" hidden><span>Loop Sequence</span><span class="switch-track" aria-hidden="true"></span></button></div>
 </section></div>
 <section id="seqCard" class="seq card" aria-labelledby="seqTitle" hidden>
 <div class="seq-head"><div class="settings-title"><span class="settings-icon"><svg class="icon" aria-hidden="true"><use href="#i-seq"/></svg></span><h2 id="seqTitle">Your sequence</h2></div><span id="seqSummary" class="seq-sum"></span></div>
@@ -516,17 +557,26 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const mainBeats = {'3/8':[0], '5/8':[0,3], '6/8':[0,3], '7/8':[0,2,4], '9/8':[0,3,6], '12/8':[0,3,6,9]};
 function circles(total, accent, meter) {
   const row = $('beats');
-  if (row.children.length !== total) {
+  let dots = row.querySelectorAll('.beat');
+  if (dots.length !== total) {
     const fragment = document.createDocumentFragment();
     for (let i = 0; i < total; i++) {
+      if (i > 0) {
+        const connector = document.createElement('span');
+        connector.className = 'beat-connector';
+        fragment.appendChild(connector);
+      }
       const el = document.createElement('span');
+      el.className = 'beat';
       el.textContent = i + 1;
       fragment.appendChild(el);
     }
     row.replaceChildren(fragment);
+    dots = row.querySelectorAll('.beat');
   }
   row.classList.toggle('many', total > 6);
-  for (let i = 0; i < total; i++) row.children[i].className = 'beat' + (i === 0 && accent ? ' accent' : '') + (mainBeats[meter] && !mainBeats[meter].includes(i) ? ' minor' : '');
+  row.classList.toggle('very-many', total > 12);
+  for (let i = 0; i < total; i++) dots[i].className = 'beat' + (i === 0 && accent ? ' accent' : '') + (mainBeats[meter] && !mainBeats[meter].includes(i) ? ' minor' : '');
 }
 function setMode(mode) {
   if (screenMode === mode) return;
@@ -550,7 +600,7 @@ function showIdle() {
 function showBeat(event) {
   setMode(event.count ? 'count' : 'playing');
   circles(event.total, !event.count && prefs.accent, event.count ? null : event.meter);
-  const dots = $('beats').children;
+  const dots = $('beats').querySelectorAll('.beat');
   if (event.count) {
     for (let i = 0; i <= event.beat; i++) dots[i].classList.add('filled');
   } else dots[event.beat].classList.add('current');
@@ -582,6 +632,7 @@ try {
       .filter(b => b && (b.type === 'play' || b.type === 'wait') && meterList.includes(b.meter) && Number.isInteger(b.counts) && b.counts >= 1 && b.counts <= (b.type === 'wait' && b.unit === 'seconds' ? 600 : 128))
       .map((b, i) => ({id:i+1, type:b.type, meter:b.meter, counts:b.counts, ...(b.type === 'wait' ? {unit:b.unit === 'seconds' ? 'seconds' : 'counts'} : {}), bpm:Number.isInteger(b.bpm) && b.bpm >= 30 && b.bpm <= 300 ? b.bpm : 0}));
     seqSeed = seqList.length + 1;
+    seqLoop = saved.loop === true;
   }
 } catch {}
 let nextTime, leadBeats, beat, part, barLength, partsThisBeat, beatLength;
@@ -854,6 +905,11 @@ $('accent').onclick = () => {
   prefs.accent = !prefs.accent;
   syncSwitches(); if (phase === 'idle') showIdle(); save(); feedback();
 };
+$('loopSequence').onclick = () => {
+  seqLoop = !seqLoop;
+  $('loopSequence').setAttribute('aria-checked', String(seqLoop));
+  seqSave(); feedback();
+};
 $('meter').onchange = event => {
   prefs.meter = event.target.value;
   syncDivisionLabels(); if (phase === 'idle') showIdle(); save(); feedback();
@@ -1053,6 +1109,7 @@ function setView(next) {
   $('viewTitle').textContent = seq ? 'Sequencer' : 'Practice room';
   $('meter').closest('.field').hidden = seq;
   $('countIn').hidden = seq;
+  $('loopSequence').hidden = !seq;
   screenMode = '';
   showIdle(); feedback();
 }
@@ -1061,6 +1118,7 @@ $('tabSeq').onclick = () => setView('seq');
 window.addEventListener('pagehide', () => { stop(); mediaRoute?.pause(); });
 $('meter').value = prefs.meter; $('division').value = prefs.division; $('voice').value = prefs.voice;
 renderSeq();
+$('loopSequence').setAttribute('aria-checked', String(seqLoop));
 syncDivisionLabels(); updateTempo(prefs.bpm); syncSound(); syncSwitches(); showIdle();
 
 </script>
