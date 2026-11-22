@@ -177,7 +177,7 @@ kbd{font:600 .72rem/1.25 ui-monospace,"SFMono-Regular",Consolas,monospace;color:
 .seq-sum{font:600 .76rem/1.3 ui-monospace,"SFMono-Regular",Consolas,monospace;color:var(--muted)}
 .seq-track{display:flex;gap:4px;padding-bottom:14px;margin-bottom:18px;border-bottom:var(--border)}
 .tseg{position:relative;overflow:hidden;min-width:0;height:34px;display:grid;place-items:center;background:#e9ecff;border:1.5px solid var(--ink);border-radius:7px;font:700 .7rem/1 ui-monospace,"SFMono-Regular",Consolas,monospace;transition:box-shadow .12s,transform .12s}
-.tseg.wait{background:#d8ad43;color:#20212a}
+.tseg.wait{background:#d0af60;color:#24221c}
 .tseg.wait i{background:#20212a;opacity:.2}
 .tseg i{position:absolute;inset:0 auto 0 0;width:0;background:var(--blue);opacity:.3}
 .tseg span{position:relative;white-space:nowrap}
@@ -201,6 +201,8 @@ kbd{font:600 .72rem/1.25 ui-monospace,"SFMono-Regular",Consolas,monospace;color:
 .stepper{display:flex;align-items:center;gap:7px}
 .scount,.sbpmin{height:36px;text-align:center;background:#fafaf7;border:1.5px solid #85868a;border-radius:7px;font:650 .95rem/1 ui-monospace,"SFMono-Regular",Consolas,monospace;appearance:textfield;-moz-appearance:textfield}
 .scount{width:62px}.sbpmin{width:68px}
+.swaitwrap{width:112px;flex:none}.swaitunit{height:36px;padding:0 30px 0 12px;font-size:.84rem;font-weight:680}
+.swaitwrap .chevron{width:14px;height:14px}
 .scount::-webkit-inner-spin-button,.scount::-webkit-outer-spin-button,.sbpmin::-webkit-inner-spin-button,.sbpmin::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .slabel,.sbpm,.sbars{font-size:.84rem;font-weight:650;color:var(--muted)}
 .sbpm{display:inline-flex;align-items:center;gap:7px}
@@ -210,9 +212,8 @@ kbd{font:600 .72rem/1.25 ui-monospace,"SFMono-Regular",Consolas,monospace;color:
 .seq-empty{padding:22px;text-align:center;border:2px dashed #b3b4bc;border-radius:12px;color:var(--muted);font-weight:600}
 .seq-add{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:18px}
 body[data-view=seq] .stage{min-height:clamp(240px,34vh,300px)}
-@media(min-width:721px) and (pointer:fine){
-body[data-view=seq] .scene{top:12%;bottom:12%;right:3%;width:40%;max-height:none;translate:0 -8px}
-}
+body[data-view=seq] .scene{top:6%;bottom:18%;right:3%;width:40%;max-height:none}
+body[data-view=seq] .scene svg{width:100%;height:100%;left:0;top:0}
 @media(max-width:720px){
 .heading-row{flex-wrap:wrap}
 .view-toggle button{padding:6px 11px}
@@ -229,7 +230,7 @@ body[data-view=seq] .scene{top:12%;bottom:12%;right:3%;width:40%;max-height:none
 .sacts{grid-area:acts}
 .stepper{gap:8px;flex-wrap:wrap}
 .stepper .mini-btn{width:40px;height:40px}
-.scount,.sbpmin,.smeter{height:40px;font-size:1rem}
+.scount,.sbpmin,.smeter,.swaitunit{height:40px;font-size:1rem}
 .scount{width:64px}.sbpmin{width:74px}.smeterwrap{width:104px}
 .seq-add{gap:10px}
 body[data-view=seq] main{display:flex;flex-direction:column;gap:21px}
@@ -241,17 +242,19 @@ body[data-view=seq] .settings{order:3;align-self:stretch}
 body[data-view=seq] #error{order:4}
 body[data-view=seq] .shortcuts{order:5;margin:0}
 body[data-view=seq] .stage{min-height:219px}
+ body[data-view=seq] .scene{top:4%;bottom:4%;right:0;width:46%;max-height:none}
+ body[data-view=seq] .scene svg{position:relative;width:134%;height:118%;left:-17%;top:-9%}
 }
 [data-theme=dark] :is(.view-toggle,.sblk,.tseg){background:#252631}
 [data-theme=dark] :is(.view-toggle,.sblk){box-shadow:3px 4px 0 #08090d}
 [data-theme=dark] .view-toggle button:hover{background:#31344a}
 [data-theme=dark] .view-toggle button[aria-pressed=true]{background:var(--blue)}
 [data-theme=dark] .sblk.wait{background:#3a3626}
-[data-theme=dark] .tseg.wait{background:#d8ad43;color:#20212a}
+[data-theme=dark] .tseg.wait{background:#ba9650;color:#17191e}
 [data-theme=dark] .sblk.active{background:#323a63}
 [data-theme=dark] .sblk.wait.active{background:#51471f}
 [data-theme=dark] .sblk.drag{background:#2e3040;box-shadow:6px 9px 0 #08090d}
-[data-theme=dark] :is(.scount,.sbpmin){background:#31333e;border-color:#6a6d80}
+[data-theme=dark] :is(.scount,.sbpmin,.swaitunit){background:#31333e;border-color:#6a6d80}
 [data-theme=dark] .sprog{background:var(--blue-deep)}
 [data-theme=dark] .sblk.wait .skind{color:#20212a}
 [data-theme=dark] .seq-empty{border-color:#565967}
@@ -450,18 +453,18 @@ let context, master, transportBus, mediaRoute, silenceURL, idleTimer;
 const sampleCache = new Map();
 let timer, frame, generation = 0, visualQueue = [];
 let barMeter;
-// Sequencer state: an ordered list of sections (meter + counts) and waits (clicks only).
+// Sequencer state: sections in counts, plus waits in tempo counts or real seconds.
 const seqKey = 'kevins-metronome.sequence.v1';
 const meterList = Array.from($('meter').options).map(option => option.value);
 let view = 'practice', seqOn = false, seqDone = false, seqIdx = 0, seqCount = 0, seqBlock = null, seqLoop = false;
-let seqList = [{id:1,type:'wait',meter:'4/4',counts:4,bpm:0}, {id:2,type:'play',meter:'4/4',counts:16,bpm:0}, {id:3,type:'play',meter:'12/8',counts:12,bpm:0}];
+let seqList = [{id:1,type:'wait',meter:'4/4',counts:4,unit:'counts',bpm:0}, {id:2,type:'play',meter:'4/4',counts:16,bpm:0}, {id:3,type:'play',meter:'12/8',counts:12,bpm:0}];
 let seqSeed = 4;
 try {
   const saved = JSON.parse(localStorage.getItem(seqKey));
   if (saved && Array.isArray(saved.list)) {
     seqList = saved.list
-      .filter(b => b && (b.type === 'play' || b.type === 'wait') && meterList.includes(b.meter) && Number.isInteger(b.counts) && b.counts >= 1 && b.counts <= 128)
-      .map((b, i) => ({id:i+1, type:b.type, meter:b.meter, counts:b.counts, bpm:Number.isInteger(b.bpm) && b.bpm >= 30 && b.bpm <= 300 ? b.bpm : 0}));
+      .filter(b => b && (b.type === 'play' || b.type === 'wait') && meterList.includes(b.meter) && Number.isInteger(b.counts) && b.counts >= 1 && b.counts <= (b.type === 'wait' && b.unit === 'seconds' ? 600 : 128))
+      .map((b, i) => ({id:i+1, type:b.type, meter:b.meter, counts:b.counts, ...(b.type === 'wait' ? {unit:b.unit === 'seconds' ? 'seconds' : 'counts'} : {}), bpm:Number.isInteger(b.bpm) && b.bpm >= 30 && b.bpm <= 300 ? b.bpm : 0}));
     seqSeed = seqList.length + 1;
   }
 } catch {}
@@ -597,13 +600,13 @@ function scheduler() {
       if (seqOn) { barMeter = seqBlock.meter; barLength = seqSpan(seqBlock); }
       else if (beat === 0) { barMeter = prefs.meter; barLength = beatsPerBar(); }
       partsThisBeat = counting ? 1 : prefs.division;
-      beatLength = 60/((seqOn && seqBlock.bpm) || prefs.bpm);
+      beatLength = waiting && seqBlock.unit === 'seconds' ? 1 : 60/((seqOn && seqBlock.bpm) || prefs.bpm);
       const lead = leadBeats > 0;
       const eventData = {meter:barMeter, time:nextTime, count:counting, beat:lead ? 4-leadBeats : beat, total:lead ? 4 : barLength, duration:beatLength};
       if (seqOn) {
         eventData.seq = seqIdx;
         eventData.prog = Math.min(1, (seqCount+1)/seqBlock.counts);
-        eventData.info = '#' + (seqIdx+1) + ' · ' + (waiting ? 'wait ' + (seqCount+1) + ' of ' + seqBlock.counts : seqBlock.meter + ' · beat ' + (beat+1)) + (seqBlock.bpm ? ' · ' + seqBlock.bpm + ' BPM' : '');
+        eventData.info = '#' + (seqIdx+1) + ' · ' + (waiting ? 'wait ' + (seqCount+1) + ' of ' + seqBlock.counts + (seqBlock.unit === 'seconds' ? ' sec' : ' counts') : seqBlock.meter + ' · beat ' + (beat+1)) + (seqBlock.bpm && !(waiting && seqBlock.unit === 'seconds') ? ' · ' + seqBlock.bpm + ' BPM' : '');
       }
       visualQueue.push(eventData);
     }
@@ -763,13 +766,17 @@ function seqBarsText(block) {
   const bars = block.counts / seqSpan(block);
   return '= ' + String(+bars.toFixed(1)) + (bars === 1 ? ' bar' : ' bars');
 }
+function seqDuration(block) {
+  return block.type === 'wait' && block.unit === 'seconds' ? block.counts : block.counts*60/(block.bpm || prefs.bpm);
+}
 function renderSummary() {
-  const total = seqList.reduce((sum, b) => sum + b.counts, 0);
-  const seconds = seqList.reduce((sum, b) => sum + b.counts*60/(b.bpm || prefs.bpm), 0);
-  $('seqSummary').textContent = seqList.length ? seqList.length + (seqList.length === 1 ? ' block' : ' blocks') + ' · ' + total + ' counts · ' + seqTime(seconds) : 'No blocks yet';
+  const total = seqList.filter(b => !(b.type === 'wait' && b.unit === 'seconds')).reduce((sum, b) => sum + b.counts, 0);
+  const timedWait = seqList.filter(b => b.type === 'wait' && b.unit === 'seconds').reduce((sum, b) => sum + b.counts, 0);
+  const seconds = seqList.reduce((sum, b) => sum + seqDuration(b), 0);
+  $('seqSummary').textContent = seqList.length ? seqList.length + (seqList.length === 1 ? ' block' : ' blocks') + ' · ' + total + ' counts' + (timedWait ? ' + ' + timedWait + 's timed waits' : '') + ' · ' + seqTime(seconds) : 'No blocks yet';
 }
 function renderTrack() {
-  $('seqTrack').innerHTML = seqList.map(b => '<div class="tseg ' + b.type + '" style="flex:' + Math.max(b.counts,4) + ' 1 0"><i></i><span>' + (b.type === 'wait' ? 'Wait' : b.meter) + '</span></div>').join('');
+  $('seqTrack').innerHTML = seqList.map(b => '<div class="tseg ' + b.type + '" style="flex:' + Math.max(seqDuration(b), 1).toFixed(2) + ' 1 0" title="' + (b.type === 'wait' ? 'Wait ' + b.counts + ' ' + (b.unit === 'seconds' ? 'seconds' : 'counts') : b.meter + ' · ' + b.counts + ' counts') + '"><i></i><span>' + (b.type === 'wait' ? 'Wait' : b.meter) + '</span></div>').join('');
   $('seqTrack').hidden = !seqList.length;
   renderSummary();
 }
@@ -786,8 +793,10 @@ function seqBlockEl(b) {
     '<button type="button" class="grip" aria-label="Move block. Drag, or use the up and down arrow keys.">' + seqIcon('grip') + '</button>' +
     '<div class="sbody"><div class="shead"><span class="skind">' + seqIcon(wait ? 'wait' : 'note') + (wait ? 'Wait' : 'Section') + '</span>' +
     (wait ? '' : '<div class="select-wrap smeterwrap"><select class="smeter" aria-label="Time signature">' + meterList.map(m => '<option' + (m === b.meter ? ' selected' : '') + '>' + m + '</option>').join('') + '</select>' + seqIcon('chevron').replace('class="icon"','class="icon chevron"') + '</div>') + '</div>' +
-    '<div class="sctrl"><div class="stepper"><button type="button" class="mini-btn smin" aria-label="Fewer counts">' + seqIcon('minus') + '</button><input class="scount" type="number" inputmode="numeric" min="1" max="128" value="' + b.counts + '" aria-label="Counts"><button type="button" class="mini-btn splus" aria-label="More counts">' + seqIcon('plus') + '</button><span class="slabel">counts</span><span class="sbars">' + seqBarsText(b) + '</span></div>' +
-    '<label class="sbpm">Tempo <input class="sbpmin" type="number" inputmode="numeric" min="30" max="300" placeholder="' + prefs.bpm + '" value="' + (b.bpm || '') + '" aria-label="Tempo for this block, optional"> BPM</label></div></div>' +
+    '<div class="sctrl"><div class="stepper"><button type="button" class="mini-btn smin" aria-label="Decrease duration">' + seqIcon('minus') + '</button><input class="scount" type="number" inputmode="numeric" min="1" max="' + (wait && b.unit === 'seconds' ? 600 : 128) + '" value="' + b.counts + '" aria-label="' + (wait && b.unit === 'seconds' ? 'Wait duration in seconds' : 'Duration in counts') + '"><button type="button" class="mini-btn splus" aria-label="Increase duration">' + seqIcon('plus') + '</button>' +
+    (wait ? '<div class="select-wrap swaitwrap"><select class="swaitunit" aria-label="Wait in counts or seconds"><option value="counts"' + (b.unit !== 'seconds' ? ' selected' : '') + '>Counts</option><option value="seconds"' + (b.unit === 'seconds' ? ' selected' : '') + '>Seconds</option></select>' + seqIcon('chevron').replace('class="icon"','class="icon chevron"') + '</div>' : '<span class="slabel">counts</span>') +
+    '<span class="sbars">' + seqBarsText(b) + '</span></div>' +
+    (wait && b.unit === 'seconds' ? '' : '<label class="sbpm">Tempo <input class="sbpmin" type="number" inputmode="numeric" min="30" max="300" placeholder="' + prefs.bpm + '" value="' + (b.bpm || '') + '" aria-label="Tempo for this block, optional"> BPM</label>') + '</div></div>' +
     '<div class="sacts"><button type="button" class="mini-btn sdup" aria-label="Duplicate block">' + seqIcon('copy') + '</button><button type="button" class="mini-btn sdel" aria-label="Delete block">' + seqIcon('trash') + '</button></div>' +
     '<div class="sprog" aria-hidden="true"></div>';
   return li;
@@ -819,7 +828,7 @@ function seqRow(target) {
   return li ? [li, seqList.find(b => b.id == li.dataset.id)] : null;
 }
 function setCounts(li, block, value) {
-  block.counts = clamp(Math.round(value) || 1, 1, 128);
+  block.counts = clamp(Math.round(value) || 1, 1, block.type === 'wait' && block.unit === 'seconds' ? 600 : 128);
   li.querySelector('.sbars').textContent = seqBarsText(block);
   renderTrack(); seqSave();
   if (phase === 'idle') showIdle();
@@ -847,6 +856,12 @@ seqUL.addEventListener('change', event => {
   const [li, block] = row, t = event.target;
   if (t.classList.contains('scount')) t.value = block.counts;
   if (t.classList.contains('sbpmin')) t.value = block.bpm || '';
+  if (t.classList.contains('swaitunit')) {
+    if (phase !== 'idle') stop();
+    block.unit = t.value === 'seconds' ? 'seconds' : 'counts';
+    block.counts = clamp(block.counts, 1, block.unit === 'seconds' ? 600 : 128);
+    seqChanged(); feedback();
+  }
   if (t.classList.contains('smeter')) {
     block.meter = t.value; li.querySelector('.sbars').textContent = seqBarsText(block);
     renderTrack(); seqSave(); if (phase === 'idle') showIdle(); feedback();
@@ -904,7 +919,7 @@ seqUL.addEventListener('pointerdown', event => {
 function addBlock(type) {
   if (phase !== 'idle') stop();
   const play = type === 'play', top = Number(prefs.meter.split('/')[0]);
-  seqList.push({id:seqSeed++, type, meter:play ? prefs.meter : '4/4', counts:play ? top*4 : 4, bpm:0});
+  seqList.push({id:seqSeed++, type, meter:play ? prefs.meter : '4/4', counts:play ? top*4 : 4, ...(play ? {} : {unit:'counts'}), bpm:0});
   seqChanged(); feedback();
   seqUL.lastElementChild.scrollIntoView({block:'nearest', behavior:reduceMotion.matches ? 'auto' : 'smooth'});
 }
