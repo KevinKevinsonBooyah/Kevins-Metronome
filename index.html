@@ -135,6 +135,31 @@ kbd{font:600 .72rem/1.25 ui-monospace,"SFMono-Regular",Consolas,monospace;color:
 [data-theme=dark] :is(.card,.action,.audio-btn,.mini-btn,.logo){box-shadow:3px 4px 0 #08090d}
 [data-theme=dark] #error{background:#473e24}
 [data-theme=dark] .action.start:hover{background:#4154cb}
+/* Desktop practice controls share the available viewport height. */
+@media (hover:hover) and (pointer:fine) {
+ body{zoom:var(--desk-scale,1);min-height:calc(100dvh / var(--desk-scale,1));display:flex;flex-direction:column}
+ .wrap{width:calc(100% - clamp(28px,4vw,72px));max-width:none}
+ .topbar{min-height:clamp(46px,7vh,68px)}
+ main.wrap{display:flex;flex-direction:column;flex:1;padding-top:clamp(8px,2vh,24px)}
+ .heading-row{margin-bottom:clamp(8px,1.7vh,18px)}h1{font-size:clamp(1.65rem,4.6vh,3rem)}
+ .layout{flex:1;grid-template-columns:minmax(0,1.8fr) minmax(260px,1fr);gap:clamp(14px,2vw,26px)}
+ .stage{min-height:0;padding:clamp(12px,2.8vh,36px)}
+ .bpm{font-size:clamp(4.2rem,12vh,8rem)}
+ .tempo-adjust{margin-top:clamp(8px,2vh,22px)}
+ .console-controls,.settings{padding:clamp(12px,2vh,26px)}
+ .beat-line{margin-block:clamp(8px,1.7vh,18px)}
+ .settings{justify-content:space-evenly;gap:4px}
+ .settings-title,.volume,.switches{margin-block:4px}
+ .fields{grid-template-columns:1fr;gap:clamp(4px,1vh,12px)}
+ .field{display:flex;gap:3px}.field select{height:clamp(32px,4.7vh,42px)}
+ .switches{display:block;padding-top:5px}
+ .shortcuts{margin:clamp(8px,1.6vh,18px) 0}
+}
+@media (hover:hover) and (pointer:fine) and (max-height:660px){
+ .field{display:grid;grid-template-columns:90px minmax(0,1fr);align-items:center}
+ .settings{justify-content:center;gap:8px}
+ .action{min-height:40px}.beat{width:34px}
+}
 </style>
 </head>
 <body>
@@ -193,6 +218,16 @@ kbd{font:600 .72rem/1.25 ui-monospace,"SFMono-Regular",Consolas,monospace;color:
 <script>
 // All sounds are synthesized locally. No requests or samples are required.
 'use strict';
+// Keep short or narrow mouse-driven windows in the two-column desktop layout.
+const desktopPointer = matchMedia('(hover:hover) and (pointer:fine)');
+function fitDesktop() {
+  const scale = desktopPointer.matches ? Math.min(1, innerHeight/535, innerWidth/830) : 1;
+  document.body.style.setProperty('--desk-scale', String(scale));
+}
+fitDesktop();
+window.addEventListener('resize', fitDesktop);
+desktopPointer.addEventListener?.('change', fitDesktop);
+
 const $ = (id) => document.getElementById(id);
 const clamp = (value, low, high) => Math.min(high, Math.max(low, value));
 const defaults = { bpm:120, meter:'4/4', division:1, voice:'wood', volume:75, countIn:true, accent:true, muted:false };
