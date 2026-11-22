@@ -184,7 +184,7 @@ kbd{font:600 .72rem/1.25 ui-monospace,"SFMono-Regular",Consolas,monospace;color:
 <div class="field"><label for="division">Subdivision</label><div class="select-wrap"><svg class="icon" aria-hidden="true"><use href="#i-note"/></svg><select id="division" aria-describedby="pulseHelp"><option value="1">Quarter notes</option><option value="2">Eighth notes</option><option value="3">Triplets</option><option value="4">Sixteenth notes</option></select><svg class="icon chevron" aria-hidden="true"><use href="#i-chevron"/></svg></div><span id="pulseHelp" class="sr-only"></span></div>
 <div class="field"><label for="voice">Click sound</label><div class="select-wrap"><svg class="icon" aria-hidden="true"><use href="#i-wave"/></svg><select id="voice"><option value="wood">Woodblock</option><option value="classic">Classic click</option><option value="soft">Soft beep</option></select><svg class="icon chevron" aria-hidden="true"><use href="#i-chevron"/></svg></div></div>
 </div>
-<div class="volume"><div class="volume-top"><label for="volume">Volume</label><output for="volume" id="volumeOut">75%</output></div><div class="volume-slider"><svg class="icon" aria-hidden="true"><use href="#i-low"/></svg><input id="volume" type="range" min="0" max="100" value="75" aria-label="Sound volume"><svg class="icon" aria-hidden="true"><use href="#i-volume"/></svg></div></div>
+<div class="volume"><div class="volume-top"><label for="volume">Volume</label><output for="volume" id="volumeOut">75%</output></div><div class="volume-slider"><svg class="icon" aria-hidden="true"><use href="#i-low"/></svg><input id="volume" type="range" min="0" max="200" value="75" aria-label="Sound volume"><svg class="icon" aria-hidden="true"><use href="#i-volume"/></svg></div></div>
 <div class="switches"><button class="switch-row" role="switch" aria-checked="true" type="button" id="countIn"><span>4-beat count-in</span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row" role="switch" aria-checked="true" type="button" id="accent"><span>Accent first beat</span><span class="switch-track" aria-hidden="true"></span></button></div>
 </section></div>
 <p id="error" role="alert" hidden></p>
@@ -200,7 +200,7 @@ const storeKey = 'kevins-metronome.settings.v1';
 const prefs = { ...defaults };
 try {
   const saved = JSON.parse(localStorage.getItem(storeKey)) || {};
-  for (const [key, low, high] of [['bpm',30,300], ['division',1,4], ['volume',0,100]]) {
+  for (const [key, low, high] of [['bpm',30,300], ['division',1,4], ['volume',0,200]]) {
     if (Number.isInteger(saved[key])) prefs[key] = clamp(saved[key], low, high);
   }
   for (const key of ['meter','voice']) {
