@@ -164,6 +164,63 @@ kbd{font:600 .72rem/1.25 ui-monospace,"SFMono-Regular",Consolas,monospace;color:
 .settings.card{align-self:start;justify-content:flex-start;gap:12px}
 .settings.card .settings-title,.settings.card .volume,.settings.card .switches{margin-block:0}
 @media(max-height:660px) and (hover:hover) and (pointer:fine){.settings.card{gap:8px}}
+/* Sequencer */
+[hidden]{display:none!important}
+.view-toggle{display:flex;gap:3px;padding:3px;background:#fff;border:var(--border);border-radius:11px;box-shadow:2px 3px 0 var(--ink)}
+.view-toggle button{display:inline-flex;align-items:center;gap:7px;padding:6px 13px;border-radius:7px;font-weight:750;font-size:.88rem;letter-spacing:-.02em}
+.view-toggle button .icon{width:16px;height:16px}
+.view-toggle button:hover{background:#f0f1ff}
+.view-toggle button[aria-pressed=true],.view-toggle button[aria-pressed=true]:hover{background:var(--blue);color:#fff}
+.seq{margin-top:23px;padding:24px}
+.seq-head{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;margin-bottom:16px}
+.seq-head .settings-title{margin:0}
+.seq-sum{font:600 .76rem/1.3 ui-monospace,"SFMono-Regular",Consolas,monospace;color:var(--muted)}
+.seq-track{display:flex;gap:4px;height:34px;margin-bottom:16px}
+.tseg{position:relative;overflow:hidden;min-width:0;display:grid;place-items:center;background:#e9ecff;border:1.5px solid var(--ink);border-radius:7px;font:700 .7rem/1 ui-monospace,"SFMono-Regular",Consolas,monospace;transition:box-shadow .12s,transform .12s}
+.tseg.wait{background:#fff4bf;border-style:dashed}
+.tseg i{position:absolute;inset:0 auto 0 0;width:0;background:var(--blue);opacity:.3}
+.tseg span{position:relative;white-space:nowrap}
+.tseg.active{transform:translateY(-2px);box-shadow:0 3px 0 var(--ink)}
+.seq-list{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.sblk{position:relative;display:flex;align-items:center;gap:8px;padding:10px 12px 12px 6px;background:#eef0ff;border:var(--border);border-radius:13px;box-shadow:2px 3px 0 var(--ink);overflow:hidden;transition:box-shadow .12s,transform .12s,background .12s}
+.sblk.wait{background:#fff4bf;border-style:dashed}
+.sblk.active{background:#dce1ff;transform:translate(1px,2px);box-shadow:0 1px 0 var(--ink)}
+.sblk.wait.active{background:#ffeb94}
+.sblk.drag{z-index:3;transition:none;background:#fff;box-shadow:6px 9px 0 var(--ink)}
+.grip{align-self:stretch;width:32px;display:grid;place-items:center;border-radius:8px;color:var(--muted);cursor:grab;touch-action:none}
+.grip:hover{background:#0000000d;color:var(--ink)}
+.sblk.drag .grip{cursor:grabbing}
+.sbody{flex:1;min-width:0;display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px}
+.skind{display:inline-flex;align-items:center;gap:6px;background:var(--blue);color:#fff;border:1.5px solid var(--ink);box-shadow:1px 2px 0 var(--ink);transform:rotate(-2deg);font-weight:740;font-size:.83rem;padding:2px 10px;border-radius:5px}
+.sblk.wait .skind{background:var(--yellow);color:var(--ink)}
+.skind .icon{width:14px;height:14px;stroke-width:2}
+.smeterwrap{width:98px}
+.smeter{height:36px;padding:0 28px 0 12px;font:700 .9rem ui-monospace,"SFMono-Regular",Consolas,monospace}
+.stepper{display:flex;align-items:center;gap:7px}
+.scount,.sbpmin{height:36px;text-align:center;background:#fafaf7;border:1.5px solid #85868a;border-radius:7px;font:650 .95rem/1 ui-monospace,"SFMono-Regular",Consolas,monospace;appearance:textfield;-moz-appearance:textfield}
+.scount{width:62px}.sbpmin{width:68px}
+.scount::-webkit-inner-spin-button,.scount::-webkit-outer-spin-button,.sbpmin::-webkit-inner-spin-button,.sbpmin::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.slabel,.sbpm,.sbars{font-size:.84rem;font-weight:650;color:var(--muted)}
+.sbpm{display:inline-flex;align-items:center;gap:7px}
+.sbars{font-family:ui-monospace,"SFMono-Regular",Consolas,monospace}
+.sacts{display:flex;gap:8px;flex:none}
+.sprog{position:absolute;left:0;bottom:0;height:5px;width:var(--prog,0%);background:var(--ink);transition:width .1s linear}
+.seq-empty{padding:22px;text-align:center;border:2px dashed #b3b4bc;border-radius:12px;color:var(--muted);font-weight:600}
+.seq-add{display:grid;grid-template-columns:1fr 1fr 1.1fr;gap:13px;margin-top:18px;align-items:center}
+.seq-loop{border:1.5px dashed #c5c4c0;border-radius:10px;padding:6px 14px}
+@media(max-width:720px){.heading-row{flex-wrap:wrap}.view-toggle button{padding:6px 11px}.seq{padding:19px 17px}.seq-add{grid-template-columns:1fr 1fr}.seq-loop{grid-column:1/-1}.sbody{gap:10px 12px}.sblk{padding-right:10px}}
+[data-theme=dark] :is(.view-toggle,.sblk,.tseg){background:#252631}
+[data-theme=dark] :is(.view-toggle,.sblk){box-shadow:3px 4px 0 #08090d}
+[data-theme=dark] .view-toggle button:hover{background:#31344a}
+[data-theme=dark] .view-toggle button[aria-pressed=true]{background:var(--blue)}
+[data-theme=dark] :is(.sblk.wait,.tseg.wait){background:#3a3626}
+[data-theme=dark] .sblk.active{background:#323a63}
+[data-theme=dark] .sblk.wait.active{background:#51471f}
+[data-theme=dark] .sblk.drag{background:#2e3040;box-shadow:6px 9px 0 #08090d}
+[data-theme=dark] :is(.scount,.sbpmin){background:#31333e;border-color:#6a6d80}
+[data-theme=dark] .sprog{background:var(--blue-deep)}
+[data-theme=dark] .sblk.wait .skind{color:#20212a}
+[data-theme=dark] .seq-empty{border-color:#565967}
 </style>
 </head>
 <body>
@@ -183,13 +240,18 @@ kbd{font:600 .72rem/1.25 ui-monospace,"SFMono-Regular",Consolas,monospace;color:
 <symbol id="i-meter" viewBox="0 0 24 24"><path d="m6 3-3 6h7M8 5v7m10 0-3 6h7m-2-4v8M5 20 19 4"/></symbol>
 <symbol id="i-wave" viewBox="0 0 24 24"><path d="M3 10v4m4-7v10m5-14v18m5-14v10m4-7v4"/></symbol>
 <symbol id="i-keys" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h.1m4 0h.1m4 0h.1m4 0h.1M6 12h.1m4 0h.1m4 0h.1m4 0h.1M8 15h8"/></symbol>
+<symbol id="i-seq" viewBox="0 0 24 24"><path d="M4 6h9M4 12h16M4 18h12"/></symbol>
+<symbol id="i-wait" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="i-grip" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><circle cx="9" cy="6" r="1.7"/><circle cx="15" cy="6" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18" r="1.7"/><circle cx="15" cy="18" r="1.7"/></g></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 7V4h4v3M6.5 7l1 13h9l1-13M10 11v6m4-6v6"/></symbol>
 </defs></svg>
 <header><div class="wrap topbar">
 <div class="brand"><span class="logo" aria-hidden="true"><svg viewBox="0 0 60 60" fill="none" stroke="white" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"><path d="M31 9C15 7 4 20 6 33c2 12 15 18 29 15 14-3 20-13 17-23-2-6-12-15-21-18M16 29q11 21 25-2"/><g fill="white" stroke="none"><circle cx="22" cy="23" r="2.7"/><circle cx="35" cy="21" r="2.7"/></g></svg></span><span>Kevin’s <em>Metronome</em></span></div>
 <div class="top-actions"><button class="audio-btn" id="theme" type="button" aria-label="Dark mode" aria-pressed="false"><span aria-hidden="true">☾</span><span>Dark mode</span></button><button class="audio-btn" id="mute" type="button" aria-pressed="true" aria-label="Enable sound"><svg class="icon" aria-hidden="true"><use href="#i-volume"/></svg><span>Sound on</span></button></div>
 </div></header>
 <main class="wrap">
-<div class="heading-row"><h1>Practice room</h1></div>
+<div class="heading-row"><h1 id="viewTitle">Practice room</h1><div class="view-toggle" role="group" aria-label="Mode"><button type="button" id="tabPractice" aria-pressed="true"><svg class="icon" aria-hidden="true"><use href="#i-speed"/></svg><span>Practice</span></button><button type="button" id="tabSeq" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-seq"/></svg><span>Sequencer</span></button></div></div>
 <div class="layout">
 <section class="card console" aria-label="Metronome">
 <div class="stage">
@@ -216,6 +278,12 @@ kbd{font:600 .72rem/1.25 ui-monospace,"SFMono-Regular",Consolas,monospace;color:
 <div class="volume"><div class="volume-top"><label for="volume">Volume</label><output for="volume" id="volumeOut">75%</output></div><div class="volume-slider"><svg class="icon" aria-hidden="true"><use href="#i-low"/></svg><input id="volume" type="range" min="0" max="200" value="75" aria-label="Sound volume"><svg class="icon" aria-hidden="true"><use href="#i-volume"/></svg></div></div>
 <div class="switches"><button class="switch-row" role="switch" aria-checked="true" type="button" id="countIn"><span>4-beat count-in</span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row" role="switch" aria-checked="true" type="button" id="accent"><span>Accent first beat</span><span class="switch-track" aria-hidden="true"></span></button></div>
 </section></div>
+<section id="seqCard" class="seq card" aria-labelledby="seqTitle" hidden>
+<div class="seq-head"><div class="settings-title"><span class="settings-icon"><svg class="icon" aria-hidden="true"><use href="#i-seq"/></svg></span><h2 id="seqTitle">Your sequence</h2></div><span id="seqSummary" class="seq-sum"></span></div>
+<div id="seqTrack" class="seq-track" aria-hidden="true"></div>
+<ol id="seqList" class="seq-list" aria-label="Sequence blocks, played in order"></ol>
+<div class="seq-add"><button type="button" class="action tap" id="addSection"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg><span>Add section</span></button><button type="button" class="action tap" id="addWait"><svg class="icon" aria-hidden="true"><use href="#i-wait"/></svg><span>Add wait</span></button><button class="switch-row seq-loop" role="switch" aria-checked="false" type="button" id="seqLoop"><span>Loop sequence</span><span class="switch-track" aria-hidden="true"></span></button></div>
+</section>
 <p id="error" role="alert" hidden></p>
 <div class="shortcuts" aria-label="Keyboard shortcuts"><span><svg class="icon" aria-hidden="true"><use href="#i-keys"/></svg>Shortcuts</span><span><kbd>Space</kbd> Start / stop</span><span><kbd>T</kbd> Tap tempo</span><span><kbd>↑</kbd><kbd>↓</kbd> Adjust tempo</span></div>
 </main>
@@ -267,6 +335,7 @@ function updateTempo(value) {
   updateRange($('tempoSlider'));
   const names = [[40,'Grave'],[60,'Largo'],[66,'Larghetto'],[76,'Adagio'],[108,'Andante'],[120,'Moderato'],[156,'Allegro'],[176,'Vivace'],[200,'Presto'],[301,'Prestissimo']];
   $('tempoName').textContent = names.find(([limit]) => prefs.bpm < limit)[1];
+  refreshSeqTempo();
 }
 function beatsPerBar() { return Number(prefs.meter.split('/')[0]); }
 function syncDivisionLabels() {
@@ -311,10 +380,17 @@ function setMode(mode) {
   screenMode = mode;
   const active = mode !== 'idle';
   setIcon($('start'), active ? 'stop' : 'play');
-  $('start').querySelector('span').textContent = active ? 'Stop metronome' : 'Start metronome';
+  $('start').querySelector('span').textContent = view === 'seq' ? (active ? 'Stop sequence' : 'Play sequence') : (active ? 'Stop metronome' : 'Start metronome');
 }
 function showIdle() {
   setMode('idle');
+  markSeq(-1);
+  if (view === 'seq') {
+    const first = seqList[0];
+    circles(first ? seqSpan(first) : beatsPerBar(), !!first && first.type === 'play' && prefs.accent, first && first.type === 'play' ? first.meter : null);
+    $('beatInfo').textContent = seqList.length ? seqList.length + (seqList.length === 1 ? ' block' : ' blocks') + ' ready' : 'Add a block to begin';
+    return;
+  }
   circles(prefs.countIn ? 4 : beatsPerBar(), !prefs.countIn && prefs.accent, prefs.countIn ? null : prefs.meter);
   $('beatInfo').textContent = prefs.countIn ? '4-beat count-in' : beatsPerBar() + ' beats per bar';
 }
@@ -325,7 +401,8 @@ function showBeat(event) {
   if (event.count) {
     for (let i = 0; i <= event.beat; i++) dots[i].classList.add('filled');
   } else dots[event.beat].classList.add('current');
-  $('beatInfo').textContent = (event.count ? 'Count-in ' : 'Beat ') + (event.beat + 1) + ' of ' + event.total;
+  $('beatInfo').textContent = event.info || ((event.count ? 'Count-in ' : 'Beat ') + (event.beat + 1) + ' of ' + event.total);
+  if (event.seq !== undefined) markSeq(event.seq, event.prog);
   if (!reduceMotion.matches && typeof $('kevin').animate === 'function') {
     characterMotion?.cancel();
     const angle = event.beat % 2 ? 5 : -5;
@@ -339,6 +416,22 @@ let context, master, transportBus, mediaRoute, silenceURL, idleTimer;
 const sampleCache = new Map();
 let timer, frame, generation = 0, visualQueue = [];
 let barMeter;
+// Sequencer state: an ordered list of sections (meter + counts) and waits (clicks only).
+const seqKey = 'kevins-metronome.sequence.v1';
+const meterList = Array.from($('meter').options).map(option => option.value);
+let view = 'practice', seqOn = false, seqDone = false, seqIdx = 0, seqCount = 0, seqBlock = null, seqLoop = false;
+let seqList = [{id:1,type:'wait',meter:'4/4',counts:4,bpm:0}, {id:2,type:'play',meter:'4/4',counts:16,bpm:0}, {id:3,type:'play',meter:'12/8',counts:12,bpm:0}];
+let seqSeed = 4;
+try {
+  const saved = JSON.parse(localStorage.getItem(seqKey));
+  if (saved && Array.isArray(saved.list)) {
+    seqList = saved.list
+      .filter(b => b && (b.type === 'play' || b.type === 'wait') && meterList.includes(b.meter) && Number.isInteger(b.counts) && b.counts >= 1 && b.counts <= 128)
+      .map((b, i) => ({id:i+1, type:b.type, meter:b.meter, counts:b.counts, bpm:Number.isInteger(b.bpm) && b.bpm >= 30 && b.bpm <= 300 ? b.bpm : 0}));
+    seqSeed = seqList.length + 1;
+  }
+  seqLoop = !!saved && saved.loop === true;
+} catch {}
 let nextTime, leadBeats, beat, part, barLength, partsThisBeat, beatLength;
 function setPlaybackSession() {
   try {
@@ -450,7 +543,9 @@ function report(message) {
   $('error').textContent = message;
   $('error').hidden = !message;
 }
+function seqSpan(block) { return block.type === 'wait' ? Math.min(block.counts, 16) : Number(block.meter.split('/')[0]); }
 function scheduler() {
+  if (seqDone) return;
   const now = context.currentTime;
   if (nextTime < now - .06) {
     // After a throttled or sleeping tab, resume on a fresh downbeat without a burst.
@@ -458,12 +553,26 @@ function scheduler() {
     beat = 0; part = 0; visualQueue.length = 0;
   }
   while (nextTime < now + .12) {
-    const counting = leadBeats > 0;
+    if (seqOn && part === 0) {
+      if (seqIdx >= seqList.length) { seqDone = true; visualQueue.push({end:true, time:nextTime}); return; }
+      seqBlock = seqList[seqIdx];
+      beat = seqCount % seqSpan(seqBlock);
+    }
+    const waiting = seqOn && seqBlock.type === 'wait';
+    const counting = leadBeats > 0 || waiting;
     if (part === 0) {
-      if (beat === 0) { barMeter = prefs.meter; barLength = beatsPerBar(); }
+      if (seqOn) { barMeter = seqBlock.meter; barLength = seqSpan(seqBlock); }
+      else if (beat === 0) { barMeter = prefs.meter; barLength = beatsPerBar(); }
       partsThisBeat = counting ? 1 : prefs.division;
-      beatLength = 60/prefs.bpm;
-      visualQueue.push({meter:barMeter, time:nextTime, count:counting, beat:counting ? 4-leadBeats : beat, total:counting ? 4 : barLength, duration:beatLength});
+      beatLength = 60/((seqOn && seqBlock.bpm) || prefs.bpm);
+      const lead = leadBeats > 0;
+      const eventData = {meter:barMeter, time:nextTime, count:counting, beat:lead ? 4-leadBeats : beat, total:lead ? 4 : barLength, duration:beatLength};
+      if (seqOn) {
+        eventData.seq = seqIdx;
+        eventData.prog = Math.min(1, (seqCount+1)/seqBlock.counts);
+        eventData.info = '#' + (seqIdx+1) + ' · ' + (waiting ? 'wait ' + (seqCount+1) + ' of ' + seqBlock.counts : seqBlock.meter + ' · beat ' + (beat+1)) + (seqBlock.bpm ? ' · ' + seqBlock.bpm + ' BPM' : '');
+      }
+      visualQueue.push(eventData);
     }
     const level = part ? 'sub' : !counting && beat === 0 && prefs.accent ? 'accent' : 'main';
     const smallDot = !counting && part === 0 && mainBeats[barMeter] && !mainBeats[barMeter].includes(beat);
@@ -472,7 +581,9 @@ function scheduler() {
     part++;
     if (part === partsThisBeat) {
       part = 0;
-      if (counting) leadBeats--;
+      if (seqOn) {
+        if (++seqCount >= seqBlock.counts) { seqCount = 0; seqIdx++; if (seqIdx >= seqList.length && seqLoop) seqIdx = 0; }
+      } else if (counting) leadBeats--;
       else beat = (beat + 1) % barLength;
     }
   }
@@ -486,11 +597,13 @@ function paint() {
   }
   let event;
   while (visualQueue.length && visualQueue[0].time <= audible) event = visualQueue.shift();
+  if (event && event.end) { stop(); return; }
   if (event) showBeat(event);
   frame = requestAnimationFrame(paint);
 }
 async function togglePlayback() {
   if (phase !== 'idle') { stop(); feedback(); return; }
+  if (view === 'seq' && !seqList.length) { report('Add a section or a wait to the sequence first.'); return; }
   const ticket = ++generation;
   phase = 'loading';
   setMode('loading');
@@ -511,6 +624,8 @@ async function togglePlayback() {
     phase = 'running';
     leadBeats = prefs.countIn ? 4 : 0;
     beat = 0; part = 0; barLength = beatsPerBar();
+    seqOn = view === 'seq'; seqIdx = 0; seqCount = 0; seqDone = false;
+    if (seqOn) leadBeats = 0;
     nextTime = context.currentTime + .055;
     scheduler(); timer = setInterval(scheduler, 25); paint();
   } catch {
@@ -520,6 +635,7 @@ async function togglePlayback() {
 function stop() {
   generation++;
   phase = 'idle';
+  seqOn = false;
   clearInterval(timer); cancelAnimationFrame(frame); visualQueue.length = 0;
   if (transportBus) {
     const bus = transportBus;
@@ -604,8 +720,185 @@ document.addEventListener('keydown', event => {
   else if (event.key.toLowerCase() === 't') { event.preventDefault(); if (!event.repeat) tapTempo(); }
   else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') { event.preventDefault(); nudge(event.key === 'ArrowUp' ? 1 : -1); }
 });
+// ---- Sequencer UI: drag blocks to reorder, edit counts, add waits ----
+const seqIcon = name => '<svg class="icon" aria-hidden="true"><use href="#i-' + name + '"/></svg>';
+const seqUL = $('seqList');
+function seqSave() { try { localStorage.setItem(seqKey, JSON.stringify({list:seqList, loop:seqLoop})); } catch {} }
+function seqTime(seconds) { const total = Math.round(seconds); return Math.floor(total/60) + ':' + String(total % 60).padStart(2,'0'); }
+function seqBarsText(block) {
+  if (block.type === 'wait') return '';
+  const bars = block.counts / seqSpan(block);
+  return '= ' + String(+bars.toFixed(1)) + (bars === 1 ? ' bar' : ' bars');
+}
+function renderSummary() {
+  const total = seqList.reduce((sum, b) => sum + b.counts, 0);
+  const seconds = seqList.reduce((sum, b) => sum + b.counts*60/(b.bpm || prefs.bpm), 0);
+  $('seqSummary').textContent = seqList.length ? seqList.length + (seqList.length === 1 ? ' block' : ' blocks') + ' · ' + total + ' counts · ' + seqTime(seconds) : 'No blocks yet';
+}
+function renderTrack() {
+  $('seqTrack').innerHTML = seqList.map(b => '<div class="tseg ' + b.type + '" style="flex:' + Math.max(b.counts,4) + ' 1 0"><i></i><span>' + (b.type === 'wait' ? 'Wait' : b.meter) + '</span></div>').join('');
+  $('seqTrack').hidden = !seqList.length;
+  renderSummary();
+}
+function refreshSeqTempo() {
+  document.querySelectorAll('.sbpmin').forEach(input => input.placeholder = prefs.bpm);
+  renderSummary();
+}
+function seqBlockEl(b) {
+  const wait = b.type === 'wait';
+  const li = document.createElement('li');
+  li.className = 'sblk ' + b.type;
+  li.dataset.id = b.id;
+  li.innerHTML =
+    '<button type="button" class="grip" aria-label="Move block. Drag, or use the up and down arrow keys.">' + seqIcon('grip') + '</button>' +
+    '<div class="sbody"><span class="skind">' + seqIcon(wait ? 'wait' : 'note') + (wait ? 'Wait' : 'Section') + '</span>' +
+    (wait ? '' : '<div class="select-wrap smeterwrap"><select class="smeter" aria-label="Time signature">' + meterList.map(m => '<option' + (m === b.meter ? ' selected' : '') + '>' + m + '</option>').join('') + '</select>' + seqIcon('chevron').replace('class="icon"','class="icon chevron"') + '</div>') +
+    '<div class="stepper"><button type="button" class="mini-btn smin" aria-label="Fewer counts">' + seqIcon('minus') + '</button><input class="scount" type="number" inputmode="numeric" min="1" max="128" value="' + b.counts + '" aria-label="Counts"><button type="button" class="mini-btn splus" aria-label="More counts">' + seqIcon('plus') + '</button><span class="slabel">counts</span></div>' +
+    '<label class="sbpm">at <input class="sbpmin" type="number" inputmode="numeric" min="30" max="300" placeholder="' + prefs.bpm + '" value="' + (b.bpm || '') + '" aria-label="Tempo for this block, optional"> BPM</label>' +
+    '<span class="sbars">' + seqBarsText(b) + '</span></div>' +
+    '<div class="sacts"><button type="button" class="mini-btn sdup" aria-label="Duplicate block">' + seqIcon('copy') + '</button><button type="button" class="mini-btn sdel" aria-label="Delete block">' + seqIcon('trash') + '</button></div>' +
+    '<div class="sprog" aria-hidden="true"></div>';
+  return li;
+}
+function renderSeq() {
+  const items = seqList.map(seqBlockEl);
+  if (!items.length) {
+    const empty = document.createElement('li');
+    empty.className = 'seq-empty';
+    empty.textContent = 'Nothing here yet. Add a section or a wait to build your sequence.';
+    items.push(empty);
+  }
+  seqUL.replaceChildren(...items);
+  renderTrack();
+}
+function seqChanged() { renderSeq(); seqSave(); if (phase === 'idle') showIdle(); }
+function markSeq(index, prog = 0) {
+  document.querySelectorAll('#seqList .sblk').forEach((li, i) => {
+    li.classList.toggle('active', i === index);
+    li.style.setProperty('--prog', i === index ? prog*100 + '%' : '0%');
+  });
+  document.querySelectorAll('#seqTrack .tseg').forEach((seg, i) => {
+    seg.classList.toggle('active', i === index);
+    seg.firstElementChild.style.width = i < index ? '100%' : i === index ? prog*100 + '%' : '0';
+  });
+}
+function syncSeqLoop() { $('seqLoop').setAttribute('aria-checked', String(seqLoop)); }
+function seqRow(target) {
+  const li = target.closest && target.closest('.sblk');
+  return li ? [li, seqList.find(b => b.id == li.dataset.id)] : null;
+}
+function setCounts(li, block, value) {
+  block.counts = clamp(Math.round(value) || 1, 1, 128);
+  li.querySelector('.sbars').textContent = seqBarsText(block);
+  renderTrack(); seqSave();
+  if (phase === 'idle') showIdle();
+}
+function syncOrder() {
+  seqList = Array.from(seqUL.children).filter(el => el.dataset.id).map(el => seqList.find(b => b.id == el.dataset.id));
+  renderTrack(); seqSave();
+  if (phase === 'idle') showIdle();
+}
+seqUL.addEventListener('click', event => {
+  const row = seqRow(event.target); if (!row) return;
+  const [li, block] = row, t = event.target;
+  if (t.closest('.smin,.splus')) { setCounts(li, block, block.counts + (t.closest('.splus') ? 1 : -1)); li.querySelector('.scount').value = block.counts; feedback(); }
+  else if (t.closest('.sdup')) { if (phase !== 'idle') stop(); seqList.splice(seqList.indexOf(block)+1, 0, {...block, id:seqSeed++}); seqChanged(); feedback(); }
+  else if (t.closest('.sdel')) { if (phase !== 'idle') stop(); seqList = seqList.filter(b => b !== block); seqChanged(); feedback(); }
+});
+seqUL.addEventListener('input', event => {
+  const row = seqRow(event.target); if (!row) return;
+  const [li, block] = row, t = event.target;
+  if (t.classList.contains('scount') && t.value !== '') setCounts(li, block, t.valueAsNumber);
+  if (t.classList.contains('sbpmin')) { block.bpm = t.value === '' ? 0 : clamp(Math.round(t.valueAsNumber) || 0, 30, 300); renderSummary(); seqSave(); }
+});
+seqUL.addEventListener('change', event => {
+  const row = seqRow(event.target); if (!row) return;
+  const [li, block] = row, t = event.target;
+  if (t.classList.contains('scount')) t.value = block.counts;
+  if (t.classList.contains('sbpmin')) t.value = block.bpm || '';
+  if (t.classList.contains('smeter')) {
+    block.meter = t.value; li.querySelector('.sbars').textContent = seqBarsText(block);
+    renderTrack(); seqSave(); if (phase === 'idle') showIdle(); feedback();
+  }
+});
+seqUL.addEventListener('focusin', event => { if (event.target.matches('input')) event.target.select(); });
+seqUL.addEventListener('keydown', event => {
+  if (event.key === 'Enter' && event.target.matches('input')) { event.target.blur(); return; }
+  const grip = event.target.closest && event.target.closest('.grip');
+  if (!grip || (event.key !== 'ArrowUp' && event.key !== 'ArrowDown')) return;
+  event.preventDefault(); event.stopPropagation();
+  const li = grip.closest('.sblk'), sibling = event.key === 'ArrowUp' ? li.previousElementSibling : li.nextElementSibling;
+  if (!sibling || !sibling.dataset.id) return;
+  if (phase !== 'idle') stop();
+  if (event.key === 'ArrowUp') sibling.before(li); else sibling.after(li);
+  grip.focus(); syncOrder();
+});
+seqUL.addEventListener('pointerdown', event => {
+  const grip = event.target.closest('.grip');
+  if (!grip || event.button > 0) return;
+  event.preventDefault();
+  const li = grip.closest('.sblk');
+  const zoom = parseFloat(document.body.style.getPropertyValue('--desk-scale')) || 1;
+  let startY = event.clientY, halted = false;
+  li.classList.add('drag');
+  const lift = dy => 'translateY(' + dy/zoom + 'px)';
+  li.style.transform = lift(0);
+  const move = e => {
+    if (!halted) { halted = true; if (phase !== 'idle') stop(); }
+    li.style.transform = lift(e.clientY - startY);
+    const box = li.getBoundingClientRect(), mid = box.top + box.height/2;
+    for (const other of seqUL.children) {
+      if (other === li || !other.dataset.id) continue;
+      const q = other.getBoundingClientRect(), after = li.compareDocumentPosition(other) & Node.DOCUMENT_POSITION_FOLLOWING;
+      const otherMid = q.top + q.height/2;
+      if (after ? mid > otherMid : mid < otherMid) {
+        const seen = li.getBoundingClientRect().top, otherTop = q.top;
+        if (after) other.after(li); else other.before(li);
+        li.style.transform = 'none';
+        const natural = li.getBoundingClientRect().top;
+        startY = e.clientY - (seen - natural);
+        li.style.transform = lift(seen - natural);
+        if (!reduceMotion.matches && other.animate) other.animate([{transform:'translateY(' + (otherTop - other.getBoundingClientRect().top)/zoom + 'px)'}, {transform:'none'}], {duration:170, easing:'ease-out'});
+        break;
+      }
+    }
+  };
+  const finish = () => {
+    removeEventListener('pointermove', move); removeEventListener('pointerup', finish); removeEventListener('pointercancel', finish);
+    li.classList.remove('drag'); li.style.transform = '';
+    syncOrder();
+  };
+  addEventListener('pointermove', move); addEventListener('pointerup', finish); addEventListener('pointercancel', finish);
+});
+function addBlock(type) {
+  if (phase !== 'idle') stop();
+  const play = type === 'play', top = Number(prefs.meter.split('/')[0]);
+  seqList.push({id:seqSeed++, type, meter:play ? prefs.meter : '4/4', counts:play ? top*4 : 4, bpm:0});
+  seqChanged(); feedback();
+  seqUL.lastElementChild.scrollIntoView({block:'nearest', behavior:reduceMotion.matches ? 'auto' : 'smooth'});
+}
+$('addSection').onclick = () => addBlock('play');
+$('addWait').onclick = () => addBlock('wait');
+$('seqLoop').onclick = () => { seqLoop = !seqLoop; syncSeqLoop(); seqSave(); feedback(); };
+function setView(next) {
+  if (view === next) return;
+  if (phase !== 'idle') stop();
+  view = next;
+  const seq = view === 'seq';
+  $('tabPractice').setAttribute('aria-pressed', String(!seq));
+  $('tabSeq').setAttribute('aria-pressed', String(seq));
+  $('seqCard').hidden = !seq;
+  $('viewTitle').textContent = seq ? 'Sequencer' : 'Practice room';
+  $('meter').closest('.field').hidden = seq;
+  $('countIn').hidden = seq;
+  screenMode = '';
+  showIdle(); feedback();
+}
+$('tabPractice').onclick = () => setView('practice');
+$('tabSeq').onclick = () => setView('seq');
 window.addEventListener('pagehide', () => { stop(); mediaRoute?.pause(); });
 $('meter').value = prefs.meter; $('division').value = prefs.division; $('voice').value = prefs.voice;
+renderSeq(); syncSeqLoop();
 syncDivisionLabels(); updateTempo(prefs.bpm); syncSound(); syncSwitches(); showIdle();
 
 </script>
