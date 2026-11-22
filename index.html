@@ -160,6 +160,10 @@ kbd{font:600 .72rem/1.25 ui-monospace,"SFMono-Regular",Consolas,monospace;color:
  .settings{justify-content:center;gap:8px}
  .action{min-height:40px}.beat{width:34px}
 }
+/* Let the settings panel end just below its last switch. */
+.settings.card{align-self:start;justify-content:flex-start;gap:12px}
+.settings.card .settings-title,.settings.card .volume,.settings.card .switches{margin-block:0}
+@media(max-height:660px) and (hover:hover) and (pointer:fine){.settings.card{gap:8px}}
 </style>
 </head>
 <body>
