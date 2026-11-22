@@ -365,9 +365,10 @@ function soundBuffer(voice, level) {
   const duration = ui ? .048 : voice === 'soft' ? .075 : .064;
   const buffer = context.createBuffer(1, Math.ceil(rate*duration), rate);
   const data = buffer.getChannelData(0);
-  const base = {wood:855, classic:1320, soft:720, count:1010, pulse:570, ui:540}[voice];
-  const pitch = base * (level === 'accent' ? 1.36 : level === 'sub' ? .82 : 1);
-  const loudness = (ui ? .21 : .72) * (level === 'accent' ? 1.13 : level === 'sub' ? .45 : .9);
+  const base = {wood:855, classic:1320, soft:720, count:1010, ui:540}[voice];
+  const smallDotPitch = {wood:.72, classic:.68, soft:.79};
+  const pitch = base * (level === 'accent' ? 1.36 : level === 'small' ? smallDotPitch[voice] : level === 'sub' ? .82 : 1);
+  const loudness = (ui ? .21 : .72) * (level === 'accent' ? 1.13 : level === 'small' ? .60 : level === 'sub' ? .45 : .9);
   let seed = 7, previousNoise = 0;
   for (let i = 0; i < data.length; i++) {
     const t = i/rate, w = 2*Math.PI*pitch*t;
@@ -427,7 +428,7 @@ function scheduler() {
     }
     const level = part ? 'sub' : !counting && beat === 0 && prefs.accent ? 'accent' : 'main';
     const smallDot = !counting && part === 0 && mainBeats[barMeter] && !mainBeats[barMeter].includes(beat);
-    clickAt(nextTime, counting ? 'count' : smallDot ? 'pulse' : prefs.voice, smallDot ? 'sub' : level, transportBus);
+    clickAt(nextTime, counting ? 'count' : prefs.voice, smallDot ? 'small' : level, transportBus);
     nextTime += beatLength / partsThisBeat;
     part++;
     if (part === partsThisBeat) {
