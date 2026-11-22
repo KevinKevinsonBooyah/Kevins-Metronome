@@ -175,9 +175,10 @@ kbd{font:600 .72rem/1.25 ui-monospace,"SFMono-Regular",Consolas,monospace;color:
 .seq-head{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;margin-bottom:16px}
 .seq-head .settings-title{margin:0}
 .seq-sum{font:600 .76rem/1.3 ui-monospace,"SFMono-Regular",Consolas,monospace;color:var(--muted)}
-.seq-track{display:flex;gap:4px;height:34px;margin-bottom:16px}
-.tseg{position:relative;overflow:hidden;min-width:0;display:grid;place-items:center;background:#e9ecff;border:1.5px solid var(--ink);border-radius:7px;font:700 .7rem/1 ui-monospace,"SFMono-Regular",Consolas,monospace;transition:box-shadow .12s,transform .12s}
-.tseg.wait{background:#fff4bf;border-style:dashed}
+.seq-track{display:flex;gap:4px;padding-bottom:14px;margin-bottom:18px;border-bottom:var(--border)}
+.tseg{position:relative;overflow:hidden;min-width:0;height:34px;display:grid;place-items:center;background:#e9ecff;border:1.5px solid var(--ink);border-radius:7px;font:700 .7rem/1 ui-monospace,"SFMono-Regular",Consolas,monospace;transition:box-shadow .12s,transform .12s}
+.tseg.wait{background:var(--yellow);color:#20212a}
+.tseg.wait i{background:#20212a;opacity:.2}
 .tseg i{position:absolute;inset:0 auto 0 0;width:0;background:var(--blue);opacity:.3}
 .tseg span{position:relative;white-space:nowrap}
 .tseg.active{transform:translateY(-2px);box-shadow:0 3px 0 var(--ink)}
@@ -190,7 +191,8 @@ kbd{font:600 .72rem/1.25 ui-monospace,"SFMono-Regular",Consolas,monospace;color:
 .grip{align-self:stretch;width:32px;display:grid;place-items:center;border-radius:8px;color:var(--muted);cursor:grab;touch-action:none}
 .grip:hover{background:#0000000d;color:var(--ink)}
 .sblk.drag .grip{cursor:grabbing}
-.sbody{flex:1;min-width:0;display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px}
+.sbody{flex:1;min-width:0;display:flex;align-items:center;flex-wrap:wrap;gap:10px 22px}
+.shead,.sctrl{display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px}
 .skind{display:inline-flex;align-items:center;gap:6px;background:var(--blue);color:#fff;border:1.5px solid var(--ink);box-shadow:1px 2px 0 var(--ink);transform:rotate(-2deg);font-weight:740;font-size:.83rem;padding:2px 10px;border-radius:5px}
 .sblk.wait .skind{background:var(--yellow);color:var(--ink)}
 .skind .icon{width:14px;height:14px;stroke-width:2}
@@ -206,14 +208,45 @@ kbd{font:600 .72rem/1.25 ui-monospace,"SFMono-Regular",Consolas,monospace;color:
 .sacts{display:flex;gap:8px;flex:none}
 .sprog{position:absolute;left:0;bottom:0;height:5px;width:var(--prog,0%);background:var(--ink);transition:width .1s linear}
 .seq-empty{padding:22px;text-align:center;border:2px dashed #b3b4bc;border-radius:12px;color:var(--muted);font-weight:600}
-.seq-add{display:grid;grid-template-columns:1fr 1fr 1.1fr;gap:13px;margin-top:18px;align-items:center}
-.seq-loop{border:1.5px dashed #c5c4c0;border-radius:10px;padding:6px 14px}
-@media(max-width:720px){.heading-row{flex-wrap:wrap}.view-toggle button{padding:6px 11px}.seq{padding:19px 17px}.seq-add{grid-template-columns:1fr 1fr}.seq-loop{grid-column:1/-1}.sbody{gap:10px 12px}.sblk{padding-right:10px}}
+.seq-add{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:18px}
+body[data-view=seq] .stage{min-height:clamp(240px,34vh,300px)}
+body[data-view=seq] .scene{top:12%;bottom:12%;right:3%;width:40%;max-height:none}
+body[data-view=seq] .scene svg{width:100%;height:100%;left:0;top:0}
+@media(max-width:720px){
+.heading-row{flex-wrap:wrap}
+.view-toggle button{padding:6px 11px}
+.seq{padding:18px 16px 20px}
+.seq-head{margin-bottom:14px}
+.seq-track{padding-bottom:12px;margin-bottom:16px}
+.tseg{height:30px}
+.seq-list{gap:14px}
+.sblk{display:grid;grid-template-columns:34px minmax(0,1fr) auto;grid-template-areas:"grip head acts" "grip ctrl ctrl";gap:12px 8px;align-items:center;padding:12px 12px 17px 6px}
+.grip{grid-area:grip;width:34px;background:#0000000a}
+.sbody{display:contents}
+.shead{grid-area:head;min-width:0}
+.sctrl{grid-area:ctrl;min-width:0;gap:12px 16px}
+.sacts{grid-area:acts}
+.stepper{gap:8px;flex-wrap:wrap}
+.stepper .mini-btn{width:40px;height:40px}
+.scount,.sbpmin,.smeter{height:40px;font-size:1rem}
+.scount{width:64px}.sbpmin{width:74px}.smeterwrap{width:104px}
+.seq-add{gap:10px}
+body[data-view=seq] main{display:flex;flex-direction:column;gap:21px}
+body[data-view=seq] .heading-row{margin-bottom:0}
+body[data-view=seq] .layout{display:contents}
+body[data-view=seq] .console{order:1}
+body[data-view=seq] .seq{order:2;margin-top:0}
+body[data-view=seq] .settings{order:3;align-self:stretch}
+body[data-view=seq] #error{order:4}
+body[data-view=seq] .shortcuts{order:5;margin:0}
+body[data-view=seq] .stage{min-height:190px}
+}
 [data-theme=dark] :is(.view-toggle,.sblk,.tseg){background:#252631}
 [data-theme=dark] :is(.view-toggle,.sblk){box-shadow:3px 4px 0 #08090d}
 [data-theme=dark] .view-toggle button:hover{background:#31344a}
 [data-theme=dark] .view-toggle button[aria-pressed=true]{background:var(--blue)}
-[data-theme=dark] :is(.sblk.wait,.tseg.wait){background:#3a3626}
+[data-theme=dark] .sblk.wait{background:#3a3626}
+[data-theme=dark] .tseg.wait{background:var(--yellow);color:#20212a}
 [data-theme=dark] .sblk.active{background:#323a63}
 [data-theme=dark] .sblk.wait.active{background:#51471f}
 [data-theme=dark] .sblk.drag{background:#2e3040;box-shadow:6px 9px 0 #08090d}
@@ -282,7 +315,7 @@ kbd{font:600 .72rem/1.25 ui-monospace,"SFMono-Regular",Consolas,monospace;color:
 <div class="seq-head"><div class="settings-title"><span class="settings-icon"><svg class="icon" aria-hidden="true"><use href="#i-seq"/></svg></span><h2 id="seqTitle">Your sequence</h2></div><span id="seqSummary" class="seq-sum"></span></div>
 <div id="seqTrack" class="seq-track" aria-hidden="true"></div>
 <ol id="seqList" class="seq-list" aria-label="Sequence blocks, played in order"></ol>
-<div class="seq-add"><button type="button" class="action tap" id="addSection"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg><span>Add section</span></button><button type="button" class="action tap" id="addWait"><svg class="icon" aria-hidden="true"><use href="#i-wait"/></svg><span>Add wait</span></button><button class="switch-row seq-loop" role="switch" aria-checked="false" type="button" id="seqLoop"><span>Loop sequence</span><span class="switch-track" aria-hidden="true"></span></button></div>
+<div class="seq-add"><button type="button" class="action tap" id="addSection"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg><span>Add section</span></button><button type="button" class="action tap" id="addWait"><svg class="icon" aria-hidden="true"><use href="#i-wait"/></svg><span>Add wait</span></button></div>
 </section>
 <p id="error" role="alert" hidden></p>
 <div class="shortcuts" aria-label="Keyboard shortcuts"><span><svg class="icon" aria-hidden="true"><use href="#i-keys"/></svg>Shortcuts</span><span><kbd>Space</kbd> Start / stop</span><span><kbd>T</kbd> Tap tempo</span><span><kbd>↑</kbd><kbd>↓</kbd> Adjust tempo</span></div>
@@ -430,7 +463,6 @@ try {
       .map((b, i) => ({id:i+1, type:b.type, meter:b.meter, counts:b.counts, bpm:Number.isInteger(b.bpm) && b.bpm >= 30 && b.bpm <= 300 ? b.bpm : 0}));
     seqSeed = seqList.length + 1;
   }
-  seqLoop = !!saved && saved.loop === true;
 } catch {}
 let nextTime, leadBeats, beat, part, barLength, partsThisBeat, beatLength;
 function setPlaybackSession() {
@@ -751,11 +783,10 @@ function seqBlockEl(b) {
   li.dataset.id = b.id;
   li.innerHTML =
     '<button type="button" class="grip" aria-label="Move block. Drag, or use the up and down arrow keys.">' + seqIcon('grip') + '</button>' +
-    '<div class="sbody"><span class="skind">' + seqIcon(wait ? 'wait' : 'note') + (wait ? 'Wait' : 'Section') + '</span>' +
-    (wait ? '' : '<div class="select-wrap smeterwrap"><select class="smeter" aria-label="Time signature">' + meterList.map(m => '<option' + (m === b.meter ? ' selected' : '') + '>' + m + '</option>').join('') + '</select>' + seqIcon('chevron').replace('class="icon"','class="icon chevron"') + '</div>') +
-    '<div class="stepper"><button type="button" class="mini-btn smin" aria-label="Fewer counts">' + seqIcon('minus') + '</button><input class="scount" type="number" inputmode="numeric" min="1" max="128" value="' + b.counts + '" aria-label="Counts"><button type="button" class="mini-btn splus" aria-label="More counts">' + seqIcon('plus') + '</button><span class="slabel">counts</span></div>' +
-    '<label class="sbpm">at <input class="sbpmin" type="number" inputmode="numeric" min="30" max="300" placeholder="' + prefs.bpm + '" value="' + (b.bpm || '') + '" aria-label="Tempo for this block, optional"> BPM</label>' +
-    '<span class="sbars">' + seqBarsText(b) + '</span></div>' +
+    '<div class="sbody"><div class="shead"><span class="skind">' + seqIcon(wait ? 'wait' : 'note') + (wait ? 'Wait' : 'Section') + '</span>' +
+    (wait ? '' : '<div class="select-wrap smeterwrap"><select class="smeter" aria-label="Time signature">' + meterList.map(m => '<option' + (m === b.meter ? ' selected' : '') + '>' + m + '</option>').join('') + '</select>' + seqIcon('chevron').replace('class="icon"','class="icon chevron"') + '</div>') + '</div>' +
+    '<div class="sctrl"><div class="stepper"><button type="button" class="mini-btn smin" aria-label="Fewer counts">' + seqIcon('minus') + '</button><input class="scount" type="number" inputmode="numeric" min="1" max="128" value="' + b.counts + '" aria-label="Counts"><button type="button" class="mini-btn splus" aria-label="More counts">' + seqIcon('plus') + '</button><span class="slabel">counts</span><span class="sbars">' + seqBarsText(b) + '</span></div>' +
+    '<label class="sbpm">Tempo <input class="sbpmin" type="number" inputmode="numeric" min="30" max="300" placeholder="' + prefs.bpm + '" value="' + (b.bpm || '') + '" aria-label="Tempo for this block, optional"> BPM</label></div></div>' +
     '<div class="sacts"><button type="button" class="mini-btn sdup" aria-label="Duplicate block">' + seqIcon('copy') + '</button><button type="button" class="mini-btn sdel" aria-label="Delete block">' + seqIcon('trash') + '</button></div>' +
     '<div class="sprog" aria-hidden="true"></div>';
   return li;
@@ -782,7 +813,6 @@ function markSeq(index, prog = 0) {
     seg.firstElementChild.style.width = i < index ? '100%' : i === index ? prog*100 + '%' : '0';
   });
 }
-function syncSeqLoop() { $('seqLoop').setAttribute('aria-checked', String(seqLoop)); }
 function seqRow(target) {
   const li = target.closest && target.closest('.sblk');
   return li ? [li, seqList.find(b => b.id == li.dataset.id)] : null;
@@ -879,11 +909,11 @@ function addBlock(type) {
 }
 $('addSection').onclick = () => addBlock('play');
 $('addWait').onclick = () => addBlock('wait');
-$('seqLoop').onclick = () => { seqLoop = !seqLoop; syncSeqLoop(); seqSave(); feedback(); };
 function setView(next) {
   if (view === next) return;
   if (phase !== 'idle') stop();
   view = next;
+  document.body.dataset.view = view;
   const seq = view === 'seq';
   $('tabPractice').setAttribute('aria-pressed', String(!seq));
   $('tabSeq').setAttribute('aria-pressed', String(seq));
@@ -898,7 +928,7 @@ $('tabPractice').onclick = () => setView('practice');
 $('tabSeq').onclick = () => setView('seq');
 window.addEventListener('pagehide', () => { stop(); mediaRoute?.pause(); });
 $('meter').value = prefs.meter; $('division').value = prefs.division; $('voice').value = prefs.voice;
-renderSeq(); syncSeqLoop();
+renderSeq();
 syncDivisionLabels(); updateTempo(prefs.bpm); syncSound(); syncSwitches(); showIdle();
 
 </script>
