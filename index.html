@@ -872,6 +872,27 @@ body[data-view=seq] .stage{min-height:219px}
 [data-theme=dark] .random-silence-setting{background:#2c2d3b;border-color:#505366}
 .beat.silenced{opacity:.68;box-shadow:inset 0 0 0 2px #b073c0;border-style:dashed}
 @media(max-width:390px){.random-silence-setting{padding-inline:8px}.random-silence-row{grid-template-columns:minmax(69px,auto) minmax(20px,1fr) 38px;gap:5px}.random-silence-row label{font-size:.68rem}}
+/* v22: editor history toolbar, designed to stay compact on phones. */
+.seq-head-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;width:100%;min-width:0}
+.seq-head-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap;min-width:0}
+.seq-head-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:34px;padding:6px 11px;border:1.5px solid var(--ink);border-radius:8px;background:#f0f1ff;color:var(--ink);font-weight:750;font-size:.78rem;white-space:nowrap;box-shadow:1px 2px 0 var(--ink);transition:background-color .16s,transform .13s,box-shadow .13s}
+.seq-head-button .icon{width:15px;height:15px;flex:none}
+.seq-head-button:not(:disabled):hover{background:#e5e8ff;transform:translateY(-1px);box-shadow:1px 3px 0 var(--ink)}
+.seq-head-button:not(:disabled):active{transform:translateY(1px);box-shadow:0 1px 0 var(--ink)}
+.seq-head-button:disabled{opacity:.42;cursor:not-allowed;box-shadow:none}
+.seq-new-button{background:#fff0eb}
+.seq-new-button:not(:disabled):hover{background:#ffe4de}
+.new-sequence-warning{margin:12px 0 17px;line-height:1.55;color:var(--muted);font-size:.91rem}
+.seq-danger-button{background:#ffdbd7;border-color:#a94c4c;color:#752626}
+.seq-danger-button:hover{background:#ffc7c1}
+[data-theme=dark] .seq-head-button{background:#303245;color:#ebe9f9;border-color:#6b6d85;box-shadow:1px 2px 0 #0b0c17}
+[data-theme=dark] .seq-head-button:not(:disabled):hover{background:#3d3b59;box-shadow:1px 3px 0 #0b0c17}
+[data-theme=dark] .seq-new-button{background:#46343e;border-color:#8c6579}
+[data-theme=dark] .seq-new-button:not(:disabled):hover{background:#553d4b}
+[data-theme=dark] .seq-danger-button{background:#62404a;color:#fff0f0;border-color:#a97984}
+[data-theme=dark] .seq-danger-button:hover{background:#714854}
+@media(max-width:720px),(hover:none) and (pointer:coarse){body[data-view=seq] .seq-head-toolbar{align-items:flex-start;gap:8px}body[data-view=seq] .seq-head-actions{width:100%;display:grid;grid-template-columns:1.25fr .8fr .8fr;gap:6px}body[data-view=seq] .seq-head-button{width:100%;font-size:.75rem;padding:6px 4px;min-height:36px;gap:4px}body[data-view=seq] .seq-head-button .icon{width:14px;height:14px}}
+@media(max-width:330px){body[data-view=seq] .seq-head-button{font-size:.69rem}body[data-view=seq] .seq-head-button .icon{width:12px;height:12px}}
 </style>
 </head>
 <body>
@@ -895,6 +916,9 @@ body[data-view=seq] .stage{min-height:219px}
 <symbol id="i-wait" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></symbol>
 <symbol id="i-grip" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><circle cx="9" cy="6" r="1.7"/><circle cx="15" cy="6" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18" r="1.7"/><circle cx="15" cy="18" r="1.7"/></g></symbol>
 <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3"/></symbol>
+<symbol id="i-new-sequence" viewBox="0 0 24 24"><path d="M4 3h11l5 5v13H4zM15 3v5h5M9 14h7m-3.5-3.5v7"/></symbol>
+<symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3"/></symbol>
+<symbol id="i-redo" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5m5 5H10a6 6 0 0 0 0 12h3"/></symbol>
 <symbol id="i-save" viewBox="0 0 24 24"><path d="M5 3h12l3 3v15H4V3h1zM8 3v7h9V3M8 21v-7h8v7M10 3v5h4V3"/></symbol>
 <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6h7l2 3h9v10H3zM3 6v13"/></symbol>
 <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 7V4h4v3M6.5 7l1 13h9l1-13M10 11v6m4-6v6"/></symbol>
@@ -950,12 +974,25 @@ body[data-view=seq] .stage{min-height:219px}
 </div>
 </section></div>
 <section id="seqCard" class="seq card" aria-labelledby="seqTitle" hidden>
-<div class="seq-head"><div class="settings-title"><span class="settings-icon"><svg class="icon" aria-hidden="true"><use href="#i-seq"/></svg></span><h2 id="seqTitle">Your sequence</h2></div><span id="seqSummary" class="seq-sum"></span></div>
+<div class="seq-head">
+<div class="seq-head-toolbar">
+<div class="settings-title"><span class="settings-icon"><svg class="icon" aria-hidden="true"><use href="#i-seq"/></svg></span><h2 id="seqTitle">Your sequence</h2></div>
+<div class="seq-head-actions" role="group" aria-label="Sequence editing actions">
+<button type="button" class="seq-head-button seq-new-button" id="newSequence"><svg class="icon" aria-hidden="true"><use href="#i-new-sequence"/></svg><span>New Sequence</span></button>
+<button type="button" class="seq-head-button" id="undoSequence" disabled title="Undo (Ctrl+Z)" aria-label="Undo last sequence change"><svg class="icon" aria-hidden="true"><use href="#i-undo"/></svg><span>Undo</span></button>
+<button type="button" class="seq-head-button" id="redoSequence" disabled title="Redo (Ctrl+Y or Ctrl+Shift+Z)" aria-label="Redo last sequence change"><svg class="icon" aria-hidden="true"><use href="#i-redo"/></svg><span>Redo</span></button>
+</div></div>
+<span id="seqSummary" class="seq-sum"></span></div>
 <div id="seqTrack" class="seq-track" aria-label="Sequence overview. Click a section or rest to jump to it."></div>
 <ol id="seqList" class="seq-list" aria-label="Sequence blocks, played in order"></ol>
 <div class="seq-add"><button type="button" class="action tap" id="addSection"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg><span>Add section</span></button><button type="button" class="action tap" id="addWait"><svg class="icon" aria-hidden="true"><use href="#i-wait"/></svg><span>Add rest</span></button></div>
 <div class="mod-add" aria-label="Add modifiers"><span class="mod-add-label">Modifiers <span>· stack above and affect the same next block</span></span><div class="mod-add-buttons"><button type="button" class="storage-button" id="addRit">↘ Add Rit.</button><button type="button" class="storage-button" id="addFermata">𝄐 Add Fermata</button><button type="button" class="storage-button" id="addAccel">↗ Add Accel.</button></div></div>
 </section>
+<dialog class="storage-dialog" id="newSequenceDialog" aria-labelledby="newSequenceDialogTitle">
+  <div class="storage-dialog-head"><h2 id="newSequenceDialogTitle">Start a new sequence?</h2><button type="button" class="dialog-close" id="newSequenceDialogClose" aria-label="Cancel new sequence">×</button></div>
+  <p class="new-sequence-warning">This will clear all blocks in the current editor. Your named saved sequences will not be deleted, and you can use <strong>Undo</strong> to bring this one back.</p>
+  <div class="dialog-buttons"><button type="button" class="storage-button seq-danger-button" id="confirmNewSequence">Clear &amp; start new</button><button type="button" class="storage-button secondary" id="cancelNewSequence">Cancel</button></div>
+</dialog>
 <dialog class="storage-dialog" id="sequenceDialog" aria-labelledby="sequenceDialogTitle">
  <div class="storage-dialog-head"><h2 id="sequenceDialogTitle">Save sequence</h2><button class="dialog-close" id="sequenceDialogClose" aria-label="Close saved sequences" type="button">×</button></div>
  <form id="sequenceSaveForm" class="sequence-save-form">
@@ -1595,7 +1632,99 @@ document.addEventListener('keydown', event => {
 // ---- Sequencer UI: drag blocks to reorder, edit counts, add waits ----
 const seqIcon = name => '<svg class="icon" aria-hidden="true"><use href="#i-' + name + '"/></svg>';
 const seqUL = $('seqList');
-function seqSave() { try { localStorage.setItem(seqKey, JSON.stringify({list:seqList, loop:seqLoop})); } catch {} }
+// In-memory undo/redo snapshots. Stored current sequence stays separate from named saves.
+const sequenceHistory = [];
+let sequenceHistoryIndex = -1;
+let sequenceHistoryRestoring = false;
+let sequenceInputBeingEdited = null;
+let lastHistoryInput = null;
+let lastHistoryInputAt = 0;
+const sequenceHistoryLimit = 100;
+function sequenceSnapshot() {
+  return JSON.stringify({list:seqList, loop:seqLoop, name:activeSequenceName});
+}
+function refreshSequenceHistoryButtons() {
+  $('undoSequence').disabled = sequenceHistoryIndex <= 0;
+  $('redoSequence').disabled = sequenceHistoryIndex < 0 || sequenceHistoryIndex >= sequenceHistory.length - 1;
+}
+function initSequenceHistory() {
+  if (sequenceHistoryIndex !== -1) return;
+  sequenceHistory.push(sequenceSnapshot());
+  sequenceHistoryIndex = 0;
+  refreshSequenceHistoryButtons();
+}
+function recordSequenceHistory() {
+  if (sequenceHistoryRestoring) return;
+  initSequenceHistory();
+  const next = sequenceSnapshot();
+  if (next === sequenceHistory[sequenceHistoryIndex]) return;
+  const now = Date.now();
+  const groupInput = sequenceInputBeingEdited && sequenceInputBeingEdited === lastHistoryInput && now-lastHistoryInputAt < 1200 && sequenceHistoryIndex > 0;
+  if (groupInput) {
+    sequenceHistory[sequenceHistoryIndex] = next;
+  } else {
+    // Any new edit after Undo invalidates the redo branch.
+    sequenceHistory.splice(sequenceHistoryIndex+1);
+    sequenceHistory.push(next);
+    sequenceHistoryIndex++;
+    if (sequenceHistory.length > sequenceHistoryLimit) { sequenceHistory.shift(); sequenceHistoryIndex--; }
+  }
+  lastHistoryInput = sequenceInputBeingEdited;
+  lastHistoryInputAt = now;
+  refreshSequenceHistoryButtons();
+}
+function seqSave() {
+  try { localStorage.setItem(seqKey, JSON.stringify({list:seqList, loop:seqLoop})); } catch {}
+  recordSequenceHistory();
+}
+function travelSequenceHistory(delta) {
+  initSequenceHistory();
+  const dest = sequenceHistoryIndex + delta;
+  if (dest < 0 || dest >= sequenceHistory.length) return;
+  if (phase !== 'idle') stop();
+  sequenceHistoryRestoring = true;
+  try {
+    const state = JSON.parse(sequenceHistory[dest]);
+    seqList = state.list;
+    seqLoop = state.loop === true;
+    activeSequenceName = state.name || 'Kevin sequence';
+    seqSeed = Math.max(0,...seqList.map(block => Number(block.id) || 0))+1;
+    $('loopSequence').setAttribute('aria-checked',String(seqLoop));
+    sequenceHistoryIndex = dest;
+    renderSeq(); seqSave(); showIdle();
+  } finally { sequenceHistoryRestoring = false; }
+  lastHistoryInput = null;
+  refreshSequenceHistoryButtons();
+  showSeqToast(delta < 0 ? 'Undid sequence change' : 'Redid sequence change');
+}
+function confirmNewSequence() {
+  if (phase !== 'idle') stop();
+  seqList = [];
+  seqSeed = 1;
+  seqLoop = false;
+  activeSequenceName = 'Untitled sequence';
+  $('loopSequence').setAttribute('aria-checked','false');
+  seqChanged();
+  $('newSequenceDialog').close();
+  showSeqToast('New sequence ready · Undo restores your previous sequence');
+}
+function openNewSequenceWarning() {
+  if ($('newSequenceDialog').open) return;
+  $('newSequenceDialog').showModal();
+}
+$('newSequence').onclick = openNewSequenceWarning;
+$('undoSequence').onclick = () => travelSequenceHistory(-1);
+$('redoSequence').onclick = () => travelSequenceHistory(1);
+$('confirmNewSequence').onclick = confirmNewSequence;
+$('cancelNewSequence').onclick = () => $('newSequenceDialog').close();
+$('newSequenceDialogClose').onclick = () => $('newSequenceDialog').close();
+document.addEventListener('keydown', event => {
+  if (view !== 'seq' || !event.ctrlKey && !event.metaKey || event.altKey || event.isComposing) return;
+  const active = event.target;
+  if (active?.closest?.('input,textarea,select,[contenteditable="true"]')) return;
+  if (event.key.toLowerCase() === 'z') { event.preventDefault(); travelSequenceHistory(event.shiftKey ? 1 : -1); }
+  else if (event.key.toLowerCase() === 'y') { event.preventDefault(); travelSequenceHistory(1); }
+});
 function seqTime(seconds) { const total = Math.round(seconds); return Math.floor(total/60) + ':' + String(total % 60).padStart(2,'0'); }
 function seqBarsText(block) {
   if (block.type !== 'play') return '';
@@ -1788,10 +1917,13 @@ seqUL.addEventListener('click', event => {
 seqUL.addEventListener('input', event => {
   const row = seqRow(event.target); if (!row) return;
   const [li, block] = row, t = event.target;
+  sequenceInputBeingEdited = t;
+  try {
   if (t.classList.contains('modstrength') && t.value !== '') { block.strength = clamp(Math.round(t.valueAsNumber) || 25,5,80); renderTrack(); seqSave(); }
   if (t.classList.contains('modhold') && t.value !== '') { block.hold = clamp(t.valueAsNumber || 2,.5,30); renderTrack(); seqSave(); }
   if (t.classList.contains('scount') && t.value !== '') setCounts(li, block, t.valueAsNumber);
   if (t.classList.contains('sbpmin')) { block.bpm = t.value === '' ? 0 : clamp(Math.round(t.valueAsNumber) || 0, 30, 300); renderSummary(); seqSave(); }
+  } finally { sequenceInputBeingEdited = null; }
 });
 seqUL.addEventListener('change', event => {
   const row = seqRow(event.target); if (!row) return;
@@ -2148,6 +2280,7 @@ $('tabSeq').onclick = () => setView('seq');
 window.addEventListener('pagehide', () => { stop(); mediaRoute?.pause(); });
 $('meter').value = prefs.meter; $('division').value = prefs.division; $('voice').value = prefs.voice;
 renderSeq();
+initSequenceHistory();
 $('loopSequence').setAttribute('aria-checked', String(seqLoop));
 syncDivisionLabels(); updateTempo(prefs.bpm); syncSound(); syncSwitches(); showIdle();
 
