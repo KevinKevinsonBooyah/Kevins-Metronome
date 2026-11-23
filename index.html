@@ -751,6 +751,26 @@ body[data-view=seq] .stage{min-height:219px}
  /* Hover should never mimic the selected/playing state. */
  .seq:hover .seq-head .settings-icon{transform:rotate(-4deg)!important}
 }
+/* v13: lock BPM controls when a playing Section or Rest explicitly sets BPM. */
+.tempo-block-locked{opacity:.54;filter:saturate(.65)}
+.tempo-block-locked input,.tempo-block-locked button{cursor:not-allowed}
+.tempo-lock-note{margin:6px 0 0;font:700 .71rem/1.3 ui-monospace,Consolas,monospace;color:#514999}
+[data-theme=dark] .tempo-lock-note{color:#c5b7ff}
+.preset-chips button:disabled,.preset-editor :disabled{cursor:not-allowed;opacity:.48}
+/* v13: on touch devices, the root owns the dotted paper all the way down a long page. */
+@media(max-width:720px),(pointer:coarse){
+ html{min-height:100%;background-color:var(--paper);background-image:none}
+ /* Put the repeating dots on the full document body, not only the viewport's root canvas. */
+ body{background-color:transparent;background-image:radial-gradient(#a7a49a37 .7px,transparent .85px);background-size:6px 6px;background-repeat:repeat;min-height:100dvh}
+ /* Browser touch :hover persists between taps; only .active means playing. */
+ .track-item:not(.active):hover{transform:none!important;filter:none!important}
+ .track-item:not(.active):hover .tseg{box-shadow:none!important;border-color:var(--ink)!important}
+ .track-item:not(.active):hover .track-mod{background:#efeaff!important}
+ [data-theme=dark] .track-item:not(.active):hover .track-mod{background:#433958!important}
+ .track-item:not(.active):hover .tseg.wait{border-color:var(--ink)!important}
+ .track-item:focus:not(:focus-visible){outline:none}
+ .track-item{-webkit-tap-highlight-color:transparent;tap-highlight-color:transparent}
+}
 </style>
 </head>
 <body>
@@ -780,7 +800,7 @@ body[data-view=seq] .stage{min-height:219px}
 <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M4 17v3h16v-3"/></symbol><symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4m-4 4 4-4 4 4M4 17v3h16v-3"/></symbol></defs></svg>
 <header><div class="wrap topbar">
 <div class="brand"><span class="logo" aria-hidden="true"><svg viewBox="0 0 60 60" fill="none" stroke="white" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"><path d="M31 9C15 7 4 20 6 33c2 12 15 18 29 15 14-3 20-13 17-23-2-6-12-15-21-18M16 29q11 21 25-2"/><g fill="white" stroke="none"><circle cx="22" cy="23" r="2.7"/><circle cx="35" cy="21" r="2.7"/></g></svg></span><span>Kevin’s <em>Metronome</em></span></div>
-<div class="top-actions"><button class="audio-btn" id="theme" type="button" aria-label="Dark mode" aria-pressed="false"><span aria-hidden="true">☾</span><span>Dark mode</span></button><button class="audio-btn" id="mute" type="button" aria-pressed="true" aria-label="Enable sound"><svg class="icon" aria-hidden="true"><use href="#i-volume"/></svg><span>Sound on</span></button></div>
+<div class="top-actions"><button class="audio-btn" id="theme" type="button" aria-label="Dark mode" aria-pressed="false"><span aria-hidden="true">☾</span><span>Dark mode</span></button></div>
 </div></header>
 <main class="wrap">
 <div class="heading-row"><h1 id="viewTitle">Metronome</h1><div class="view-toggle" role="group" aria-label="Mode"><button type="button" id="tabPractice" aria-pressed="true"><svg class="icon" aria-hidden="true"><use href="#i-speed"/></svg><span>Metronome</span></button><button type="button" id="tabSeq" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-seq"/></svg><span>Sequence</span></button></div></div>
@@ -791,7 +811,7 @@ body[data-view=seq] .stage{min-height:219px}
 <label class="eyebrow" for="bpm"><svg class="icon" aria-hidden="true"><use href="#i-speed"/></svg>Tempo <span id="tempoLive" class="tempo-live-indicator" hidden>LIVE</span></label>
 <div class="number-row"><input id="bpm" class="bpm" type="number" inputmode="numeric" min="30" max="300" step="1" value="120" aria-label="Tempo in beats per minute"><span class="unit">BPM</span></div>
 <div class="tempo-tag"><svg class="icon" aria-hidden="true"><use href="#i-note"/></svg><span id="tempoName">Allegro</span></div>
-<div class="tempo-adjust"><button type="button" class="mini-btn" id="slower" aria-label="Decrease tempo by one"><svg class="icon" aria-hidden="true"><use href="#i-minus"/></svg></button><input id="tempoSlider" type="range" min="30" max="300" value="120" aria-label="Adjust tempo"><button type="button" class="mini-btn" id="faster" aria-label="Increase tempo by one"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button></div>
+<div class="tempo-adjust" id="tempoAdjust"><button type="button" class="mini-btn" id="slower" aria-label="Decrease tempo by one"><svg class="icon" aria-hidden="true"><use href="#i-minus"/></svg></button><input id="tempoSlider" type="range" min="30" max="300" value="120" aria-label="Adjust tempo" aria-describedby="tempoLockNote"><button type="button" class="mini-btn" id="faster" aria-label="Increase tempo by one"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button></div><p id="tempoLockNote" class="tempo-lock-note" role="status" hidden>Tempo set by this sequence block</p>
 <div class="tempo-presets"><label for="customTempos">Quick tempos (BPM)</label><div class="preset-editor"><input id="customTempos" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="80, 120, 160" aria-describedby="customTempoHelp"><button type="button" id="saveTempos" aria-label="Save quick tempos">Set</button></div><span id="customTempoHelp" class="sr-only">Enter one or more tempos from 30 to 300 separated by commas. Press Set to save them as shortcut buttons.</span><div id="tempoPresets" class="preset-chips" role="group" aria-label="Saved tempo shortcuts"></div><div id="presetError" class="preset-error" role="status" hidden></div></div>
 </div>
 <div class="scene" aria-hidden="true"><svg viewBox="0 0 290 245" xmlns="http://www.w3.org/2000/svg"><defs><filter id="ink" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1 0 0 1 0"/></filter></defs>
@@ -865,10 +885,11 @@ try {
   for (const key of ['meter','voice']) {
     if (Array.from($(key).options).some(option => option.value === saved[key])) prefs[key] = saved[key];
   }
-  for (const key of ['countIn','accent','muted']) {
+  for (const key of ['countIn','accent']) {
     if (typeof saved[key] === 'boolean') prefs[key] = saved[key];
   }
 } catch {}
+prefs.muted = false; // v13: sound always enabled; volume can still be adjusted to 0.
 function save() {
   try { localStorage.setItem(storeKey, JSON.stringify(prefs)); } catch {}
 }
@@ -895,7 +916,22 @@ function showTempoValue(value, {live=false, rit=false, timedRest=false} = {}) {
   $('tempoName').textContent = live && timedRest ? 'Timed rest · seconds' : live && rit ? 'Rit. · ' + name : name;
   $('tempoLive').hidden = !live;
 }
+let tempoBlockLocked = false;
+function setTempoBlockLock(locked) {
+  locked = Boolean(locked && seqOn && phase === 'running');
+  if (tempoBlockLocked === locked) return;
+  tempoBlockLocked = locked;
+  for (const id of ['tempoSlider','bpm','slower','faster','tap']) $(id).disabled = locked;
+  $('tempoAdjust').classList.toggle('tempo-block-locked', locked);
+  $('tempoLockNote').hidden = !locked;
+  $('bpm').title = locked ? 'Tempo is controlled by the current sequence block' : '';
+  $('tempoSlider').title = locked ? 'Tempo is controlled by the current sequence block' : '';
+  for (const button of document.querySelectorAll('#tempoPresets button')) button.disabled = locked;
+  $('customTempos').disabled = locked;
+  $('saveTempos').disabled = locked;
+}
 function updateTempo(value) {
+  if (tempoBlockLocked) return;
   prefs.bpm = clamp(Math.round(value), 30, 300);
   if (phase !== 'running' || !seqOn) showTempoValue(prefs.bpm);
   refreshSeqTempo();
@@ -917,11 +953,13 @@ function renderTempoPresets() {
     button.title = 'Set tempo to ' + bpm + ' BPM';
     button.setAttribute('aria-label', 'Set tempo to ' + bpm + ' BPM');
     button.setAttribute('aria-pressed', String(prefs.bpm === bpm));
+    button.disabled = tempoBlockLocked;
     button.addEventListener('click', () => { updateTempo(bpm); save(); feedback(); });
     return button;
   }));
 }
 function saveTempoPresets() {
+  if (tempoBlockLocked) return;
   const input = $('customTempos');
   const raw = input.value.trim();
   const tokens = raw ? raw.split(/[\s,;]+/).filter(Boolean) : [];
@@ -974,9 +1012,6 @@ function syncSound() {
   $('volume').value = prefs.volume;
   $('volumeOut').textContent = prefs.volume + '%';
   updateRange($('volume'));
-  $('mute').setAttribute('aria-pressed', String(!prefs.muted));
-  $('mute').querySelector('span').textContent = prefs.muted ? 'Sound off' : 'Sound on';
-  setIcon($('mute'), prefs.muted ? 'mute' : 'volume');
   if (master) master.gain.setTargetAtTime(prefs.muted ? 0 : prefs.volume/100, context.currentTime, .006);
 }
 function syncSwitches() {
@@ -1018,6 +1053,7 @@ function setMode(mode) {
 }
 function showIdle() {
   setMode('idle');
+  setTempoBlockLock(false);
   showTempoValue(prefs.bpm);
   markSeq(-1);
   if (view === 'seq') {
@@ -1031,6 +1067,7 @@ function showIdle() {
 }
 function showBeat(event) {
   setMode(event.count ? 'count' : 'playing');
+  if (seqOn && event.seq !== undefined) setTempoBlockLock(!!seqPlan.find(entry => entry.index === event.seq)?.block.bpm && !event.timedRest);
   if (seqOn && event.seq !== undefined && Number.isFinite(event.bpm))
     showTempoValue(event.bpm, {live:true,rit:!!event.rit,timedRest:!!event.timedRest});
   circles(event.total, !event.count && prefs.accent, event.count ? null : event.meter);
@@ -1328,6 +1365,7 @@ async function togglePlayback() {
     requestedSequenceStart = null;
     seqCount = 0; seqDone = false;
     if (seqOn) leadBeats = 0;
+    setTempoBlockLock(!!(seqOn && seqPlan[seqIdx]?.block.bpm && !(seqPlan[seqIdx]?.block.type === 'wait' && seqPlan[seqIdx]?.block.unit === 'seconds')));
     nextTime = context.currentTime + .055;
     scheduler(); timer = setInterval(scheduler, 25); paint();
   } catch {
@@ -1350,6 +1388,7 @@ function stop() {
 }
 let taps = [], tapTimer;
 function tapTempo() {
+  if (tempoBlockLocked) return;
   const now = performance.now();
   if (taps.length && now - taps[taps.length-1] > 2300) taps = [];
   if (taps.length && now - taps[taps.length-1] < 110) return;
@@ -1365,18 +1404,19 @@ function tapTempo() {
   tapTimer = setTimeout(() => { $('tap').classList.remove('tapped'); $('tap').querySelector('span').textContent = 'Tap tempo'; }, taps.length === 1 ? 2300 : 110);
   feedback();
 }
-function nudge(delta) { updateTempo(prefs.bpm+delta); save(); feedback(); }
+function nudge(delta) { if (tempoBlockLocked) return; updateTempo(prefs.bpm+delta); save(); feedback(); }
 $('slower').onclick = () => nudge(-1);
 $('faster').onclick = () => nudge(1);
 $('bpm').onfocus = () => $('bpm').select();
 function commitTempo() {
+  if (tempoBlockLocked) return;
   const value = $('bpm').valueAsNumber;
   updateTempo(Number.isFinite(value) ? value : prefs.bpm); save();
 }
 $('bpm').onchange = () => { commitTempo(); feedback(); };
 $('bpm').onblur = commitTempo;
 $('bpm').onkeydown = event => { if (event.key === 'Enter') $('bpm').blur(); };
-$('tempoSlider').oninput = event => { updateTempo(+event.target.value); save(); };
+$('tempoSlider').oninput = event => { if (tempoBlockLocked) return; updateTempo(+event.target.value); save(); };
 function applyTheme(dark) {
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
   $('theme').setAttribute('aria-pressed',String(dark));
@@ -1417,7 +1457,6 @@ $('division').onchange = event => { prefs.division = +event.target.value; save()
 $('voice').onchange = event => { prefs.voice = event.target.value; save(); feedback(prefs.voice); };
 $('volume').oninput = event => { prefs.volume = +event.target.value; syncSound(); save(); };
 $('volume').onchange = () => feedback(prefs.voice);
-$('mute').onclick = () => { prefs.muted = !prefs.muted; syncSound(); save(); feedback(); };
 $('start').onclick = togglePlayback;
 $('tap').onclick = tapTempo;
 document.addEventListener('keydown', event => {
@@ -1579,6 +1618,7 @@ function jumpToSequenceBlock(rawIndex) {
   nextTime = context.currentTime + .055;
   $('beatInfo').textContent = 'Jumping to block ' + (planIndex+1);
   const targetEntry = seqPlan[planIndex];
+  setTempoBlockLock(!!targetEntry.block.bpm && !(targetEntry.block.type === 'wait' && targetEntry.block.unit === 'seconds'));
   showTempoValue(targetEntry.block.type === 'wait' && targetEntry.block.unit === 'seconds' ? 60 : seqBeatTempo(targetEntry.block,targetEntry.modifiers,0),
     {live:true,rit:targetEntry.modifiers.some(mod => mod.kind === 'rit'),timedRest:targetEntry.block.type === 'wait' && targetEntry.block.unit === 'seconds'});
   markSeq(rawIndex,0);
@@ -1586,7 +1626,10 @@ function jumpToSequenceBlock(rawIndex) {
 }
 $('seqTrack').addEventListener('click', event => {
   const tile = event.target.closest('.track-item');
-  if (tile) jumpToSequenceBlock(Number(tile.dataset.seqIndex));
+  if (tile) {
+    jumpToSequenceBlock(Number(tile.dataset.seqIndex));
+    if (event.detail > 0 && matchMedia('(hover: none), (pointer: coarse)').matches) tile.blur();
+  }
 });
 
 function seqRow(target) {
