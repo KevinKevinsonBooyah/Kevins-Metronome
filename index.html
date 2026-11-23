@@ -544,6 +544,30 @@ body[data-view=seq] .stage{min-height:219px}
  body[data-view=seq] .track-pending{max-width:100%;min-width:0;min-height:40px}
 }
 @media(max-width:335px){body[data-view=seq] .seq-track{grid-template-columns:repeat(auto-fit,minmax(min(98px,100%),1fr))}body[data-view=seq] .track-item .track-mod{font-size:.74rem}}
+
+/* v9: in-flow modifier stacks resize with their labels, avoiding clipping on
+   narrow screens and overlap when two or more modifiers target one block. */
+.seq-track{align-items:flex-end;padding:8px 2px 13px;row-gap:12px;overflow-y:visible}
+.track-item{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-end;height:auto;min-height:49px}
+.track-item .tseg{flex:none;height:49px;min-height:49px}
+.track-item .track-mods{position:relative;z-index:2;width:100%;display:flex;flex-direction:column;align-items:center;gap:5px;margin-bottom:13px;min-width:0}
+.track-item .track-mod{position:relative;inset:auto;bottom:auto;left:auto;transform:none;min-width:0;max-width:100%;width:max-content;min-height:23px;padding:4px 7px;line-height:1.13;overflow-wrap:anywhere;box-sizing:border-box}
+.track-item .track-mod::before,.track-item .track-mod::after{content:none}
+.track-item .track-mod + .track-mod::before{content:"";position:absolute;left:50%;top:-6px;width:2px;height:5px;transform:translateX(-50%);background:#8d63d7}
+.track-item .track-mods::before{content:"";position:absolute;bottom:-10px;left:50%;height:10px;width:2px;transform:translateX(-50%);background:#8d63d7}
+.track-item .track-mods::after{content:"";position:absolute;bottom:-12px;left:50%;width:6px;height:6px;border-bottom:2px solid #8d63d7;border-right:2px solid #8d63d7;transform:translateX(-50%) rotate(45deg)}
+.track-pending-stack{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-end;gap:5px;min-width:85px;max-width:125px}
+.track-pending-stack .track-pending{max-width:100%;min-height:26px;flex:none}
+/* Connect stacked modifiers in the editor, with a single arrowhead at the target. */
+.sblk.mod:not(.mod-pending):not(.drag) + .sblk.mod::before{content:"";position:absolute;top:-3px;left:calc(clamp(12px,3vw,36px) + clamp(24px,3vw,37px) - 2px);width:6px;height:6px;border-radius:50%;background:#8d63d7;z-index:4;pointer-events:none}
+@media(max-width:720px),(hover:none) and (pointer:coarse) and (orientation:landscape) and (max-height:650px){
+ body[data-view=seq] .seq-track{gap:12px 8px;padding:7px 1px 12px;align-items:end}
+ body[data-view=seq] .track-item{height:auto;min-height:49px;align-self:stretch;justify-content:flex-end}
+ body[data-view=seq] .track-item .track-mod{min-width:0;width:max-content;max-width:100%;font-size:.77rem;padding:4px 5px}
+ body[data-view=seq] .track-pending-stack{min-width:0;max-width:100%}
+ body[data-view=seq] .sblk.mod:not(.mod-pending):not(.drag) + .sblk.mod::before{left:25px}
+}
+@media(max-width:335px){body[data-view=seq] .track-item .track-mod{font-size:.74rem}}
 </style>
 </head>
 <body>
@@ -576,7 +600,7 @@ body[data-view=seq] .stage{min-height:219px}
 <div class="top-actions"><button class="audio-btn" id="theme" type="button" aria-label="Dark mode" aria-pressed="false"><span aria-hidden="true">☾</span><span>Dark mode</span></button><button class="audio-btn" id="mute" type="button" aria-pressed="true" aria-label="Enable sound"><svg class="icon" aria-hidden="true"><use href="#i-volume"/></svg><span>Sound on</span></button></div>
 </div></header>
 <main class="wrap">
-<div class="heading-row"><h1 id="viewTitle">Metronome</h1><div class="view-toggle" role="group" aria-label="Mode"><button type="button" id="tabPractice" aria-pressed="true"><svg class="icon" aria-hidden="true"><use href="#i-speed"/></svg><span>Practice</span></button><button type="button" id="tabSeq" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-seq"/></svg><span>Sequencer</span></button></div></div>
+<div class="heading-row"><h1 id="viewTitle">Metronome</h1><div class="view-toggle" role="group" aria-label="Mode"><button type="button" id="tabPractice" aria-pressed="true"><svg class="icon" aria-hidden="true"><use href="#i-speed"/></svg><span>Metronome</span></button><button type="button" id="tabSeq" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-seq"/></svg><span>Sequence</span></button></div></div>
 <div class="layout">
 <section class="card console" aria-label="Metronome">
 <div class="stage">
@@ -610,7 +634,7 @@ body[data-view=seq] .stage{min-height:219px}
 <div id="seqTrack" class="seq-track" aria-label="Sequence overview. Click a section or rest to jump to it."></div>
 <ol id="seqList" class="seq-list" aria-label="Sequence blocks, played in order"></ol>
 <div class="seq-add"><button type="button" class="action tap" id="addSection"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg><span>Add section</span></button><button type="button" class="action tap" id="addWait"><svg class="icon" aria-hidden="true"><use href="#i-wait"/></svg><span>Add rest</span></button></div>
-<div class="mod-add" aria-label="Add modifiers"><span class="mod-add-label">Modifiers <span>· affect the next block below</span></span><div class="mod-add-buttons"><button type="button" class="storage-button" id="addRit">↘ Add Rit.</button><button type="button" class="storage-button" id="addFermata">𝄐 Add Fermata</button></div></div>
+<div class="mod-add" aria-label="Add modifiers"><span class="mod-add-label">Modifiers <span>· stack above and affect the same next block</span></span><div class="mod-add-buttons"><button type="button" class="storage-button" id="addRit">↘ Add Rit.</button><button type="button" class="storage-button" id="addFermata">𝄐 Add Fermata</button></div></div>
 </section>
 <dialog class="storage-dialog" id="sequenceDialog" aria-labelledby="sequenceDialogTitle">
  <div class="storage-dialog-head"><h2 id="sequenceDialogTitle">Save sequence</h2><button class="dialog-close" id="sequenceDialogClose" aria-label="Close saved sequences" type="button">×</button></div>
@@ -818,7 +842,7 @@ let barMeter;
 // Sequencer state: sections in counts, plus waits in tempo counts or real seconds.
 const seqKey = 'kevins-metronome.sequence.v1';
 const meterList = Array.from($('meter').options).map(option => option.value);
-let view = 'practice', seqOn = false, seqDone = false, seqIdx = 0, seqCount = 0, seqBlock = null, seqModifier = null, seqLoop = false, seqPlan = [];
+let view = 'practice', seqOn = false, seqDone = false, seqIdx = 0, seqCount = 0, seqBlock = null, seqModifiers = [], seqLoop = false, seqPlan = [];
 let seqList = [{id:1,type:'wait',meter:'4/4',counts:4,unit:'counts',bpm:0}, {id:2,type:'play',meter:'4/4',counts:16,bpm:0}, {id:3,type:'play',meter:'12/8',counts:12,bpm:0}];
 function validSequenceBlocks(raw) {
   if (!Array.isArray(raw)) return null;
@@ -826,7 +850,6 @@ function validSequenceBlocks(raw) {
   for (const b of raw.slice(0,150)) {
     if (!b || typeof b !== 'object') continue;
     if (b.type === 'mod') {
-      if (results.length && results[results.length-1].type === 'mod') continue; // never stack modifiers
       results.push({id:results.length+1,type:'mod',kind:b.kind === 'fermata' ? 'fermata' : 'rit',strength:clamp(Math.round(Number(b.strength)) || 25,5,80),curve:b.curve === 'late' ? 'late' : 'linear',hold:clamp(Number(b.hold) || 2,.5,30),holdUnit:b.holdUnit === 'seconds' ? 'seconds' : 'beats'});
     } else if ((b.type === 'play' || b.type === 'wait') && meterList.includes(b.meter) && Number.isInteger(b.counts) && b.counts >= 1 && b.counts <= (b.type === 'wait' && b.unit === 'seconds' ? 600 : 128)) {
       results.push({id:results.length+1,type:b.type,meter:b.meter,counts:b.counts,...(b.type === 'wait' ? {unit:b.unit === 'seconds' ? 'seconds' : 'counts'} : {}),bpm:Number.isInteger(b.bpm) && b.bpm >= 30 && b.bpm <= 300 ? b.bpm : 0});
@@ -834,20 +857,36 @@ function validSequenceBlocks(raw) {
   }
   return results;
 }
+// Consecutive modifiers form a stack. Every modifier in that stack belongs to
+// the first playable block below it, regardless of its position in the stack.
 function plannedSequence() {
-  return seqList.flatMap((block,index) => block.type === 'mod' ? [] : [{block,index,modifier:index > 0 && seqList[index-1].type === 'mod' ? seqList[index-1] : null}]);
+  const plan = [], pending = [];
+  seqList.forEach((block,index) => {
+    if (block.type === 'mod') pending.push(block);
+    else {
+      plan.push({block,index,modifiers:[...pending]});
+      pending.length = 0;
+    }
+  });
+  return plan;
 }
-function followingBlock(index) { return seqList[index+1]?.type === 'mod' ? null : seqList[index+1]; }
-function seqBeatTempo(block, modifier, countIndex) {
+function modifierTarget(index) { return seqList.slice(index+1).find(block => block.type !== 'mod') || null; }
+function seqBeatTempo(block, modifiers = [], countIndex = 0) {
   const base = block.bpm || prefs.bpm;
-  if (!modifier || modifier.kind !== 'rit' || (block.type === 'wait' && block.unit === 'seconds')) return base;
-  const ratio = block.counts <= 1 ? 1 : countIndex / (block.counts-1);
-  const progress = modifier.curve === 'late' ? ratio * ratio : ratio;
-  return Math.max(20, base * (1 - modifier.strength/100 * progress));
+  if (block.type === 'wait' && block.unit === 'seconds') return base;
+  const ratio = block.counts <= 1 ? 1 : countIndex/(block.counts-1);
+  // Multiple Rit. modifiers combine progressively rather than cancelling each other.
+  const factor = modifiers.filter(mod => mod.kind === 'rit').reduce((result,mod) => {
+    const progress = mod.curve === 'late' ? ratio*ratio : ratio;
+    return result * (1-mod.strength/100*progress);
+  },1);
+  return Math.max(20,base*factor);
 }
-function fermataExtra(block, modifier) {
-  if (!modifier || modifier.kind !== 'fermata') return 0;
-  return modifier.hold * (modifier.holdUnit === 'seconds' ? 1 : 60/(block.bpm || prefs.bpm));
+function fermataExtra(block, modifiers = []) {
+  // Fermatas add their holds. Beat-based holds use the ending (ritarded) tempo.
+  const beatBpm = seqBeatTempo(block,modifiers,Math.max(0,block.counts-1));
+  return modifiers.filter(mod => mod.kind === 'fermata').reduce((sum,mod) =>
+    sum + mod.hold*(mod.holdUnit === 'seconds' ? 1 : 60/beatBpm),0);
 }
 let seqSeed = 4;
 try {
@@ -981,7 +1020,7 @@ function scheduler() {
   while (nextTime < now + .12) {
     if (seqOn && part === 0) {
       if (seqIdx >= seqPlan.length) { seqDone = true; visualQueue.push({end:true, time:nextTime}); return; }
-      seqBlock = seqPlan[seqIdx].block; seqModifier = seqPlan[seqIdx].modifier;
+      seqBlock = seqPlan[seqIdx].block; seqModifiers = seqPlan[seqIdx].modifiers;
       beat = seqCount % seqSpan(seqBlock);
     }
     const waiting = seqOn && seqBlock.type === 'wait';
@@ -990,13 +1029,13 @@ function scheduler() {
       if (seqOn) { barMeter = seqBlock.meter; barLength = seqSpan(seqBlock); }
       else if (beat === 0) { barMeter = prefs.meter; barLength = beatsPerBar(); }
       partsThisBeat = counting ? 1 : prefs.division;
-      beatLength = waiting && seqBlock.unit === 'seconds' ? 1 : 60/(seqOn ? seqBeatTempo(seqBlock, seqModifier, seqCount) : prefs.bpm);
+      beatLength = waiting && seqBlock.unit === 'seconds' ? 1 : 60/(seqOn ? seqBeatTempo(seqBlock, seqModifiers, seqCount) : prefs.bpm);
       const lead = leadBeats > 0;
       const eventData = {meter:barMeter, time:nextTime, count:counting, beat:lead ? 4-leadBeats : beat, total:lead ? 4 : barLength, duration:beatLength};
       if (seqOn) {
         eventData.seq = seqPlan[seqIdx].index;
         eventData.prog = Math.min(1, (seqCount+1)/seqBlock.counts);
-        eventData.info = '#' + (seqIdx+1) + ' · ' + (waiting ? 'rest ' + (seqCount+1) + ' of ' + seqBlock.counts + (seqBlock.unit === 'seconds' ? ' sec' : ' counts') : seqBlock.meter + ' · beat ' + (beat+1)) + (seqModifier?.kind === 'rit' ? ' · Rit ' + Math.round(seqBeatTempo(seqBlock,seqModifier,seqCount)) + ' BPM' : seqBlock.bpm && !(waiting && seqBlock.unit === 'seconds') ? ' · ' + seqBlock.bpm + ' BPM' : '');
+        eventData.info = '#' + (seqIdx+1) + ' · ' + (waiting ? 'rest ' + (seqCount+1) + ' of ' + seqBlock.counts + (seqBlock.unit === 'seconds' ? ' sec' : ' counts') : seqBlock.meter + ' · beat ' + (beat+1)) + (seqModifiers.some(mod => mod.kind === 'rit') ? ' · Rit ' + Math.round(seqBeatTempo(seqBlock,seqModifiers,seqCount)) + ' BPM' : seqBlock.bpm && !(waiting && seqBlock.unit === 'seconds') ? ' · ' + seqBlock.bpm + ' BPM' : '');
       }
       visualQueue.push(eventData);
     }
@@ -1009,9 +1048,9 @@ function scheduler() {
       part = 0;
       if (seqOn) {
         if (++seqCount >= seqBlock.counts) {
-          const hold = fermataExtra(seqBlock,seqModifier);
+          const hold = fermataExtra(seqBlock,seqModifiers);
           if (hold > 0) {
-            visualQueue.push({time:nextTime, seq:seqPlan[seqIdx].index, hold:true, duration:hold, info:'𝄐 Fermata · holding ' + (seqModifier.holdUnit === 'seconds' ? seqModifier.hold + ' seconds' : seqModifier.hold + ' beats')});
+            visualQueue.push({time:nextTime, seq:seqPlan[seqIdx].index, hold:true, duration:hold, info:'𝄐 Fermata · holding ' + +hold.toFixed(2) + ' seconds'});
             nextTime += hold; // audible silence, scheduled with the Web Audio clock
           }
           seqCount = 0; seqIdx++;
@@ -1172,35 +1211,41 @@ function seqBarsText(block) {
   const bars = block.counts / seqSpan(block);
   return '= ' + String(+bars.toFixed(1)) + (bars === 1 ? ' bar' : ' bars');
 }
-function seqDuration(block, modifier = null) {
+function seqDuration(block, modifiers = []) {
   if (block.type === 'mod') return 0;
   const base = block.type === 'wait' && block.unit === 'seconds' ? block.counts :
-    Array.from({length:block.counts}, (_,i) => 60/seqBeatTempo(block,modifier,i)).reduce((a,b) => a+b,0);
-  return base + fermataExtra(block,modifier);
+    Array.from({length:block.counts}, (_,i) => 60/seqBeatTempo(block,modifiers,i)).reduce((a,b) => a+b,0);
+  return base + fermataExtra(block,modifiers);
 }
 function renderSummary() {
   const runnable = plannedSequence();
   const total = runnable.filter(x => !(x.block.type === 'wait' && x.block.unit === 'seconds')).reduce((sum,x) => sum + x.block.counts,0);
   const timedWait = runnable.filter(x => x.block.type === 'wait' && x.block.unit === 'seconds').reduce((sum,x) => sum + x.block.counts,0);
-  const seconds = runnable.reduce((sum,x) => sum + seqDuration(x.block,x.modifier),0);
+  const seconds = runnable.reduce((sum,x) => sum + seqDuration(x.block,x.modifiers),0);
   const mods = seqList.filter(b => b.type === 'mod').length;
   $('seqSummary').textContent = runnable.length ? runnable.length + (runnable.length === 1 ? ' block' : ' blocks') + (mods ? ' + ' + mods + (mods === 1 ? ' modifier' : ' modifiers') : '') + ' · ' + total + ' counts' + (timedWait ? ' + ' + timedWait + 's of timed rest' : '') + ' · ' + seqTime(seconds) : 'Add a Section or Rest to begin';
 }
 function renderTrack() {
-  // Every playable block owns its modifier in the overview. A pending modifier
-  // without a playable block is shown separately, without an incorrect arrow.
+  // Modifiers render inside their target tile, stacked vertically in play order.
+  // The entire tile remains one click target for skipping to that playable block.
   const runnable = plannedSequence();
-  const tiles = runnable.map(({block:b,index,modifier:mod},position) => {
+  const modCaption = mod => mod.kind === 'rit'
+    ? 'Ritardando: slow this block by ' + mod.strength + '% (' + (mod.curve === 'late' ? 'late' : 'even') + ')'
+    : 'Fermata: add ' + mod.hold + ' ' + mod.holdUnit + ' after this block';
+  const modLabel = mod => mod.kind === 'rit' ? 'Rit.' : '𝄐 Fermata';
+  const tiles = runnable.map(({block:b,index,modifiers:mods},position) => {
     const title = b.type === 'wait' ? 'Rest ' + b.counts + ' ' + (b.unit === 'seconds' ? 'seconds' : 'counts') : b.meter + ' · ' + b.counts + ' counts';
-    const modTitle = !mod ? '' : mod.kind === 'rit' ? 'Ritardando: slow next block by ' + mod.strength + '%' : 'Fermata: add ' + mod.hold + ' ' + mod.holdUnit + ' after this block';
-    const modLabel = !mod ? '' : mod.kind === 'rit' ? 'Rit.' : '𝄐 Fermata';
-    const badge = mod ? '<span class="track-mod" title="' + modTitle + '">' + modLabel + '</span>' : '';
+    const description = mods.map(modCaption).join(', ');
+    const badges = mods.length ? '<span class="track-mods" aria-hidden="true">' + mods.map(mod =>
+      '<span class="track-mod" title="' + modCaption(mod) + '">' + modLabel(mod) + '</span>').join('') + '</span>' : '';
     const label = b.type === 'wait' ? 'Rest' : b.meter;
-    return '<button type="button" class="track-item" data-seq-index="' + index + '" style="--block-flex:' + Math.max(seqDuration(b,mod),1).toFixed(2) + '" aria-label="Jump to block ' + (position + 1) + ': ' + title + (mod ? ', ' + modTitle : '') + '" title="Click to jump to ' + title + (mod ? ' · ' + modTitle : '') + '">' +
-      badge + '<span class="tseg ' + b.type + '"><i></i><span>' + label + '</span></span></button>';
+    return '<button type="button" class="track-item" data-seq-index="' + index + '" style="--block-flex:' + Math.max(seqDuration(b,mods),1).toFixed(2) + '" aria-label="Jump to block ' + (position + 1) + ': ' + title + (mods.length ? ', ' + description : '') + '" title="Click to jump to ' + title + (mods.length ? ' · ' + description : '') + '">' +
+      badges + '<span class="tseg ' + b.type + '"><i></i><span>' + label + '</span></span></button>';
   });
-  const pending = seqList.at(-1)?.type === 'mod' ? seqList.at(-1) : null;
-  if (pending) tiles.push('<span class="track-pending" title="Add a Section or Rest below this modifier">' + (pending.kind === 'rit' ? '↘ Rit.' : '𝄐 Fermata') + ' · pending</span>');
+  const afterLast = runnable.length ? runnable[runnable.length-1].index+1 : 0;
+  const pending = seqList.slice(afterLast).filter(block => block.type === 'mod');
+  if (pending.length) tiles.push('<span class="track-pending-stack" title="Add a Section or Rest below to apply these modifiers">' +
+    pending.map(mod => '<span class="track-pending">' + modLabel(mod) + ' · pending</span>').join('') + '</span>');
   $('seqTrack').innerHTML = tiles.join('');
   $('seqTrack').hidden = !seqList.length;
   renderSummary();
@@ -1213,9 +1258,9 @@ function refreshSeqTempo() {
 function seqBlockEl(b) {
   if (b.type === 'mod') {
     const li = document.createElement('li');
-    li.className = 'sblk mod' + (seqList[seqList.length-1] === b ? ' mod-pending' : ''); li.dataset.id = b.id;
+    li.className = 'sblk mod' + (!modifierTarget(seqList.indexOf(b)) ? ' mod-pending' : ''); li.dataset.id = b.id;
     const rit = b.kind === 'rit';
-    const pending = seqList[seqList.length-1] === b;
+    const pending = !modifierTarget(seqList.indexOf(b));
     li.innerHTML = '<button type="button" class="grip" aria-label="Drag modifier to the position before a section or rest">' + seqIcon('grip') + '</button>' +
       '<div class="sbody"><div class="shead"><span class="skind">' + (rit ? '↘ Rit.' : '𝄐 Fermata') + '</span></div>' +
       '<div class="sctrl">' + (rit ?
@@ -1257,7 +1302,9 @@ function renderSeq() {
 function seqChanged() { renderSeq(); seqSave(); if (phase === 'idle') showIdle(); }
 function markSeq(index, prog = 0) {
   document.querySelectorAll('#seqList .sblk').forEach((li, i) => {
-    li.classList.toggle('active', i === index || (index > 0 && i === index-1 && seqList[i]?.type === 'mod'));
+    let start = index;
+    while (start > 0 && seqList[start-1]?.type === 'mod') start--;
+    li.classList.toggle('active', i >= start && i <= index);
   });
   document.querySelectorAll('#seqTrack .track-item').forEach(tile => {
     const i = Number(tile.dataset.seqIndex);
@@ -1293,7 +1340,7 @@ function jumpToSequenceBlock(rawIndex) {
   seqPlan = planned;
   seqIdx = planIndex;
   seqCount = 0; beat = 0; part = 0; leadBeats = 0;
-  seqDone = false; seqBlock = null; seqModifier = null;
+  seqDone = false; seqBlock = null; seqModifiers = [];
   visualQueue.length = 0;
   nextTime = context.currentTime + .055;
   $('beatInfo').textContent = 'Jumping to block ' + (planIndex+1);
@@ -1317,7 +1364,6 @@ function setCounts(li, block, value) {
 }
 function syncOrder() {
   const ordered = Array.from(seqUL.children).filter(el => el.dataset.id).map(el => seqList.find(b => b.id == el.dataset.id));
-  if (ordered.some((b,i) => b.type === 'mod' && ordered[i+1]?.type === 'mod')) { renderSeq(); report('Modifiers cannot go on top of each other. Place one directly before a Section or Rest.'); return; }
   seqList = ordered; renderSeq(); seqSave();
   if (phase === 'idle') showIdle();
 }
@@ -1427,10 +1473,6 @@ function addBlock(type) {
 
 function addModifier(kind) {
   if (phase !== 'idle') stop();
-  if (seqList.at(-1)?.type === 'mod') {
-    report('Add a Section or Rest below the current modifier before adding another.');
-    return;
-  }
   report('');
   seqList.push({id:seqSeed++,type:'mod',kind,strength:25,curve:'linear',hold:2,holdUnit:'beats'});
   seqChanged(); feedback();
@@ -1535,7 +1577,7 @@ function setView(next) {
   $('tabPractice').setAttribute('aria-pressed', String(!seq));
   $('tabSeq').setAttribute('aria-pressed', String(seq));
   $('seqCard').hidden = !seq;
-  $('viewTitle').textContent = seq ? 'Sequencer' : 'Metronome';
+  $('viewTitle').textContent = seq ? 'Sequence' : 'Metronome';
   $('meter').closest('.field').hidden = seq;
   $('countIn').hidden = seq;
   $('loopSequence').hidden = !seq;
