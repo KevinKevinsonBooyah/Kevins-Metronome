@@ -903,6 +903,13 @@ body[data-view=seq] .stage{min-height:219px}
 .training-fields label{display:inline-flex;align-items:center;gap:5px;font-size:.75rem;color:var(--muted)}
 .training-fields input,.training-fields select{width:58px;height:32px;border:1px solid #9398b1;background:#fff;border-radius:6px;padding:3px 6px;font-size:16px;text-align:center;color:#22232b}
 .training-fields select{width:116px;text-align:left;padding-right:8px;appearance:auto}
+/* Keep Tempo Trainer's sentence readable when its controls wrap on phones. */
+.tempo-trainer-fields{column-gap:15px;row-gap:8px}
+.tempo-trainer-fields .trainer-phrase{display:inline-flex;align-items:center;flex-wrap:wrap;gap:5px;color:var(--muted);font-size:.82rem;line-height:1.35}
+.tempo-trainer-fields .trainer-phrase label{font-size:inherit;gap:5px}
+.tempo-trainer-fields select{width:126px}
+@media(max-width:360px){.tempo-trainer-fields{column-gap:8px}.tempo-trainer-fields select{width:116px}}
+
 [data-theme=dark] .training-setting{background:#2c2c3a;border-color:#585873}
 [data-theme=dark] .training-fields input,[data-theme=dark] .training-fields select{background:#252631;color:#f0edf8;border-color:#6d6a80}
 .seq-add{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -1036,7 +1043,11 @@ body.performance-active{overflow:hidden!important}
 <div class="training-heading">Practice challenges <span>· optional</span></div>
 <div class="training-setting">
 <button class="switch-row" role="switch" aria-checked="false" id="tempoTrainer" type="button"><span>Tempo Trainer</span><span class="switch-track" aria-hidden="true"></span></button>
-<div class="training-fields"><label>Increase <input id="trainerStep" type="number" inputmode="numeric" min="1" max="30" step="1" value="4" aria-label="Tempo increase BPM"> BPM</label><label>Every <select id="trainerMode" aria-label="Tempo trainer interval"><option value="bars">bars</option><option value="loop">sequence loop</option></select></label><label id="trainerBarsField"><input id="trainerBars" type="number" inputmode="numeric" min="1" max="32" value="4" aria-label="Bars between tempo increases"> bars</label><label>Target <input id="trainerTarget" type="number" inputmode="numeric" min="30" max="300" value="160" aria-label="Maximum training BPM"> BPM</label></div>
+<div class="training-fields tempo-trainer-fields">
+  <span class="trainer-phrase">Increase tempo by <label><input id="trainerStep" type="number" inputmode="numeric" min="1" max="30" step="1" value="4" aria-label="Tempo increase in BPM"> BPM</label></span>
+  <span class="trainer-phrase">every <label id="trainerBarsField"><input id="trainerBars" type="number" inputmode="numeric" min="1" max="32" value="4" aria-label="Number of bars between increases"></label><label><select id="trainerMode" aria-label="Tempo trainer interval"><option value="bars">bars</option><option value="loop">sequence loop</option></select></label></span>
+  <span class="trainer-phrase">up to <label><input id="trainerTarget" type="number" inputmode="numeric" min="30" max="300" value="160" aria-label="Maximum training BPM"> BPM</label></span>
+</div>
 </div>
 <div class="training-setting">
 <button class="switch-row" role="switch" aria-checked="false" id="memoryChallenge" type="button"><span>Memory Challenge</span><span class="switch-track" aria-hidden="true"></span></button>
@@ -1234,7 +1245,7 @@ function syncSwitches() {
   for (const id of ['accent','countIn','silentSmall','randomBeatSilencing','randomBarSilencing','tempoTrainer','memoryChallenge']) $(id).setAttribute('aria-checked', String(prefs[id]));
   for (const key of ['trainerStep','trainerBars','trainerTarget','memorySoundBars','memorySilentBars']) $(key).value = prefs[key];
   renderPracticeAccents();
-  $('trainerMode').value = prefs.trainerMode; $('trainerBarsField').hidden = prefs.trainerMode === 'loop';
+  $('trainerMode').value = prefs.trainerMode; $('trainerBarsField').hidden = prefs.trainerMode === 'loop'; $('trainerMode').options[0].textContent = prefs.trainerBars === 1 ? 'bar' : 'bars';
   for (const [key,control,out] of [['randomBeatChance','randomBeatChance','randomBeatChanceOut'],['randomBarChance','randomBarChance','randomBarChanceOut']]) {
     $(control).value = prefs[key];
     $(out).value = prefs[key] + '%';
