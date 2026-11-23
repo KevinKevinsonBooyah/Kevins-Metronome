@@ -771,7 +771,7 @@ body[data-view=seq] .stage{min-height:219px}
  .track-item:focus:not(:focus-visible){outline:none}
  .track-item{-webkit-tap-highlight-color:transparent;tap-highlight-color:transparent}
 }
-/* v15: compact, accessible phone-speaker loudness option */
+/* Original v14 click sounds, with transparent optional boost (v16). */
 .loud-switch{gap:12px;align-items:center}
 .loud-switch>span:first-child{display:flex;flex-direction:column;align-items:flex-start;gap:1px;min-width:0}
 .loud-switch strong{font-size:.92rem;font-weight:750}
@@ -837,8 +837,8 @@ body[data-view=seq] .stage{min-height:219px}
 <div class="field"><label for="voice">Click sound</label><div class="select-wrap"><svg class="icon" aria-hidden="true"><use href="#i-wave"/></svg><select id="voice"><option value="wood">Woodblock</option><option value="classic">Classic click</option><option value="soft">Soft beep</option></select><svg class="icon chevron" aria-hidden="true"><use href="#i-chevron"/></svg></div></div>
 </div>
 <div class="volume"><div class="volume-top"><label for="volume">Volume</label><output for="volume" id="volumeOut">75%</output></div><div class="volume-slider"><svg class="icon" aria-hidden="true"><use href="#i-low"/></svg><input id="volume" type="range" min="0" max="100" value="75" aria-label="Sound volume"><svg class="icon" aria-hidden="true"><use href="#i-volume"/></svg></div></div>
-<div class="switches"><button class="switch-row" role="switch" aria-checked="true" type="button" id="countIn"><span>4-beat count-in</span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row" role="switch" aria-checked="true" type="button" id="accent"><span>Accent first beat</span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row loud-switch" role="switch" aria-checked="false" type="button" id="loudMode" aria-describedby="loudModeHelp"><span><strong>Loud Mode</strong><small>Extra punch for phone speakers</small></span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row" role="switch" aria-checked="false" type="button" id="loopSequence" hidden><span>Loop Sequence</span><span class="switch-track" aria-hidden="true"></span></button></div>
-<p class="loud-mode-help" id="loudModeHelp">Makes clicks fuller and more audible. Maximum loudness still depends on your phone.</p><div class="sequence-storage" id="sequenceStorage" hidden aria-label="Sequence files and saved sequences">
+<div class="switches"><button class="switch-row" role="switch" aria-checked="true" type="button" id="countIn"><span>4-beat count-in</span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row" role="switch" aria-checked="true" type="button" id="accent"><span>Accent first beat</span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row loud-switch" role="switch" aria-checked="false" type="button" id="loudMode" aria-describedby="loudModeHelp"><span><strong>Loud Mode</strong><small>Small, clean volume boost</small></span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row" role="switch" aria-checked="false" type="button" id="loopSequence" hidden><span>Loop Sequence</span><span class="switch-track" aria-hidden="true"></span></button></div>
+<p class="loud-mode-help" id="loudModeHelp">Keeps the original click sounds. Adds only a small volume boost; maximum loudness depends on your phone.</p><div class="sequence-storage" id="sequenceStorage" hidden aria-label="Sequence files and saved sequences">
 <button type="button" class="storage-button" id="saveSequence"><svg class="icon" aria-hidden="true"><use href="#i-save"/></svg><span>Save sequence</span></button>
 <button type="button" class="storage-button" id="loadSequence"><svg class="icon" aria-hidden="true"><use href="#i-folder"/></svg><span>Load sequence</span></button>
 <button type="button" class="storage-button storage-file" id="downloadSequence"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg><span>Download sequence</span></button>
@@ -1026,12 +1026,9 @@ function syncSound() {
   $('volume').value = prefs.volume;
   $('volumeOut').textContent = prefs.volume + '%';
   updateRange($('volume'));
+  // Transparent level boost only: no EQ, compression, added harmonics or re-synthesis.
   if (master && context) {
-    const now = context.currentTime;
-    master.gain.setTargetAtTime(prefs.muted ? 0 : prefs.volume/100, now, .012);
-    // Drive raises average loudness; a fast dynamics limiter catches transients.
-    clickDrive?.gain.setTargetAtTime(prefs.loud ? 2.6 : 1.35, now, .018);
-    phoneEQ?.gain.setTargetAtTime(prefs.loud ? 4.5 : 2.5, now, .018);
+    master.gain.setTargetAtTime(prefs.muted ? 0 : (prefs.volume / 100) * (prefs.loud ? 1.16 : 1), context.currentTime, .009);
   }
 }
 function syncSwitches() {
@@ -1107,7 +1104,7 @@ function showBeat(event) {
   }
 }
 // The audio clock sets the time for each click. Animation frames only paint indicators.
-let context, master, transportBus, mediaRoute, silenceURL, idleTimer, phoneEQ, clickDrive, clickLimiter;
+let context, master, transportBus, mediaRoute, silenceURL, idleTimer;
 const sampleCache = new Map();
 let timer, frame, generation = 0, visualQueue = [];
 let barMeter;
@@ -1205,27 +1202,8 @@ function activateAudio() {
     const Audio = window.AudioContext || window.webkitAudioContext;
     if (!Audio) throw new Error('This browser does not support Web Audio.');
     context = new Audio({latencyHint:'interactive'});
-    // One shared chain for all click variants, including count-ins and sequence clicks.
-    // Midrange emphasis helps tiny phone speakers; controlled drive increases
-    // perceived loudness while compression prevents overload from fast subdivisions.
-    phoneEQ = context.createBiquadFilter();
-    phoneEQ.type = 'peaking';
-    phoneEQ.frequency.value = 1650;
-    phoneEQ.Q.value = .8;
-    phoneEQ.gain.value = prefs.loud ? 4.5 : 2.5;
-    clickDrive = context.createGain();
-    clickDrive.gain.value = prefs.loud ? 2.6 : 1.35;
-    clickLimiter = context.createDynamicsCompressor();
-    clickLimiter.threshold.value = -8;
-    clickLimiter.knee.value = 2;
-    clickLimiter.ratio.value = 16;
-    clickLimiter.attack.value = .001;
-    clickLimiter.release.value = .085;
     master = context.createGain();
-    master.gain.value = prefs.muted ? 0 : prefs.volume/100;
-    phoneEQ.connect(clickDrive);
-    clickDrive.connect(clickLimiter);
-    clickLimiter.connect(master);
+    master.gain.value = prefs.muted ? 0 : prefs.volume/100 * (prefs.loud ? 1.16 : 1);
     master.connect(context.destination);
     context.addEventListener('statechange', () => {
       if (phase === 'running' && context.state !== 'running') {
@@ -1250,52 +1228,39 @@ function soundBuffer(voice, level) {
   if (sampleCache.has(key)) return sampleCache.get(key);
   const rate = context.sampleRate;
   const ui = voice === 'ui';
-  // Longer, fuller tails (rather than 10 ms clicks) give phone speakers
-  // enough midrange energy to reproduce clearly at reasonable levels.
-  const duration = ui ? .06 : voice === 'soft' ? .145 : voice === 'wood' ? .108 : .105;
-  const buffer = context.createBuffer(1, Math.ceil(rate * duration), rate);
+  const duration = ui ? .048 : voice === 'soft' ? .075 : .064;
+  const buffer = context.createBuffer(1, Math.ceil(rate*duration), rate);
   const data = buffer.getChannelData(0);
-  const base = {wood:970, classic:1230, soft:990, count:1020, ui:700}[voice] || 970;
-  const smallDotPitch = {wood:.79, classic:.77, soft:.88};
+  const base = {wood:855, classic:1320, soft:720, count:1010, ui:540}[voice];
+  const smallDotPitch = {wood:.72, classic:.68, soft:.79};
+  // Count-in timbres follow the selected voice; they have a recognizable
+  // higher/lower tone and a clearer first-beat accent, rather than a generic beep.
   const countVariant = level === 'count' || level === 'count-accent';
   const restVariant = level === 'rest';
-  const pitch = base * (level === 'accent' ? 1.16 : level === 'small' ? (smallDotPitch[voice] || .8) :
-    level === 'sub' ? .9 : level === 'count-accent' ? 1.24 : countVariant ? 1.08 : restVariant ? .88 : 1);
-  const targetPeak = (ui ? .28 : .83) * (level === 'accent' ? 1.05 : level === 'small' ? .69 :
-    level === 'sub' ? .49 : level === 'count-accent' ? 1.03 : countVariant ? .81 :
-    restVariant ? .61 : 1);
-  let seed = 7, prevNoise = 0, peak = 0;
+  const pitch = base * (level === 'accent' ? 1.36 : level === 'small' ? smallDotPitch[voice] : level === 'sub' ? .82 :
+    level === 'count-accent' ? 1.48 : countVariant ? 1.17 : restVariant ? .86 : 1);
+  const loudness = (ui ? .21 : .72) * (level === 'accent' ? 1.13 : level === 'small' ? .60 : level === 'sub' ? .45 :
+    level === 'count-accent' ? 1.04 : countVariant ? .77 : restVariant ? .53 : .9);
+  let seed = 7, previousNoise = 0;
   for (let i = 0; i < data.length; i++) {
-    const t = i / rate, w = 2 * Math.PI * pitch * t;
-    const attack = Math.min(1, t / (voice === 'soft' ? .0022 : .0007));
-    const release = Math.min(1, (duration - t) / .009);
+    const t = i/rate, w = 2*Math.PI*pitch*t;
+    const attack = Math.min(1, t / (voice === 'soft' ? .003 : .0012));
     let value;
     if (voice === 'wood') {
-      seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+      seed = (Math.imul(seed,1664525) + 1013904223) >>> 0;
       const noise = seed / 2147483648 - 1;
-      value = .69 * Math.sin(w) * Math.exp(-t / .037) +
-              .29 * Math.sin(1.62*w) * Math.exp(-t / .027) +
-              .20 * Math.sin(.70*w) * Math.exp(-t / .046) +
-              .14 * (noise - prevNoise) * Math.exp(-t / .008);
-      prevNoise = noise;
+      value = .67*Math.sin(w)*Math.exp(-84*t) + .30*Math.sin(1.57*w)*Math.exp(-112*t) + .12*(noise-previousNoise)*Math.exp(-430*t);
+      previousNoise = noise;
     } else if (voice === 'classic') {
-      value = .73 * Math.sin(w) * Math.exp(-t / .034) +
-              .35 * Math.sin(1.87*w) * Math.exp(-t / .025) +
-              .13 * Math.sin(2.75*w) * Math.exp(-t / .013);
+      value = (.74*Math.sin(w) + .26*Math.sin(2.05*w))*Math.exp(-138*t);
     } else if (ui) {
-      value = (.8 * Math.sin(w) + .2 * Math.sin(1.8*w)) * Math.exp(-t / .025);
+      value = (.78*Math.sin(w) + .22*Math.sin(1.5*w))*Math.exp(-115*t);
     } else {
-      // Soft stays smooth, but with just enough upper harmonics to speak on phones.
-      value = (.94 * Math.sin(w) + .14 * Math.sin(1.69*w)) * Math.exp(-t / .059);
+      value = Math.sin(w)*Math.exp(-(voice === 'count' ? 105 : 49)*t);
     }
-    data[i] = value * attack * release;
-    peak = Math.max(peak, Math.abs(data[i]));
+    data[i] = value*loudness*attack*Math.min(1, (duration-t)/.005);
   }
-  // Consistent headroom and relative accents across all voices. The downstream
-  // limiter protects against louder clicks stacking in dense subdivisions.
-  const gain = peak > .00001 ? targetPeak / peak : 0;
-  for (let i = 0; i < data.length; i++) data[i] *= gain;
-  sampleCache.set(key, buffer);
+  sampleCache.set(key,buffer);
   return buffer;
 }
 function clickAt(time, voice, level, output) {
@@ -1310,7 +1275,7 @@ async function feedback(voice = 'ui') {
   const ticket = generation;
   try {
     await activateAudio();
-    if (ticket === generation && context.state === 'running') clickAt(context.currentTime + .003, voice, 'main', phoneEQ);
+    if (ticket === generation && context.state === 'running') clickAt(context.currentTime + .003, voice, 'main', master);
   } catch { /* The transport reports audio failures when playback is requested. */ }
   finally { if (phase === 'idle') releaseWhenIdle(); }
 }
@@ -1411,7 +1376,7 @@ async function togglePlayback() {
     if (generation !== ticket) return;
     if (context.state !== 'running') throw new Error('Audio did not start.');
     transportBus = context.createGain();
-    transportBus.connect(phoneEQ);
+    transportBus.connect(master);
     phase = 'running';
     leadBeats = prefs.countIn ? 4 : 0;
     beat = 0; part = 0; barLength = beatsPerBar();
@@ -1668,7 +1633,7 @@ function jumpToSequenceBlock(rawIndex) {
     setTimeout(() => { try { previousBus.disconnect(); } catch {} },60);
   }
   transportBus = context.createGain();
-  transportBus.connect(phoneEQ);
+  transportBus.connect(master);
   seqPlan = planned;
   seqIdx = planIndex;
   seqCount = 0; beat = 0; part = 0; leadBeats = 0;
