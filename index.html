@@ -991,6 +991,12 @@ $('saveTempos').addEventListener('click', saveTempoPresets);
 $('customTempos').addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); saveTempoPresets(); event.target.blur(); } });
 $('customTempos').addEventListener('change', saveTempoPresets);
 function beatsPerBar() { return Number(prefs.meter.split('/')[0]); }
+// At a fixed BPM, eighth-note pulses are twice as frequent as quarter-note
+// pulses. Keep 2/2 on its original half-note beat interpretation.
+function secondsPerPulse(meter, bpm) {
+  const denominator = Number(meter.split('/')[1]);
+  return (60 / bpm) * (denominator === 8 ? .5 : 1);
+}
 function subdivisionNames(meter) {
   const unit = Number(meter.split('/')[1]);
   const notes = {2:'Half notes',4:'Quarter notes',8:'Eighth notes',16:'Sixteenth notes',32:'32nd notes',64:'64th notes'};
@@ -1006,7 +1012,7 @@ function syncDivisionLabels() {
   const notes = {2:'half notes',4:'quarter notes',8:'eighth notes',16:'sixteenth notes'};
   const names = subdivisionNames(prefs.meter);
   Array.from($('division').options).forEach((option, i) => option.textContent = names[i]);
-  $('pulseHelp').textContent = 'Tempo counts ' + (notes[unit] || 'beats') + ' in ' + prefs.meter + '.';
+  $('pulseHelp').textContent = unit === 8 ? 'BPM uses a quarter-note reference: eighth-note pulses click twice as fast, with the same beat grouping.' : 'Tempo counts ' + (notes[unit] || 'beats') + ' in ' + prefs.meter + '.';
 }
 function syncSound() {
   $('volume').value = prefs.volume;
@@ -1137,7 +1143,7 @@ function fermataExtra(block, modifiers = []) {
   // Fermatas add their holds. Beat-based holds use the ending (ritarded) tempo.
   const beatBpm = seqBeatTempo(block,modifiers,Math.max(0,block.counts-1));
   return modifiers.filter(mod => mod.kind === 'fermata').reduce((sum,mod) =>
-    sum + mod.hold*(mod.holdUnit === 'seconds' ? 1 : 60/beatBpm),0);
+    sum + mod.hold*(mod.holdUnit === 'seconds' ? 1 : secondsPerPulse(block.meter,beatBpm)),0);
 }
 let seqSeed = 4;
 try {
@@ -1287,7 +1293,9 @@ function scheduler() {
       else if (beat === 0) { barMeter = prefs.meter; barLength = beatsPerBar(); }
       partsThisBeat = counting ? 1 : seqOn ? (seqBlock.division || prefs.division) : prefs.division;
       const effectiveBpm = waiting && seqBlock.unit === 'seconds' ? 60 : (seqOn ? seqBeatTempo(seqBlock, seqModifiers, seqCount) : prefs.bpm);
-      beatLength = 60/effectiveBpm;
+      // Count-ins and timed rests remain in real seconds/quarter-note beats.
+      // Active /8 Sections click each eighth note at twice the /4 pulse rate.
+      beatLength = counting ? 60/effectiveBpm : secondsPerPulse(barMeter,effectiveBpm);
       const lead = leadBeats > 0;
       const eventData = {meter:barMeter, time:nextTime, count:counting, beat:lead ? 4-leadBeats : beat, total:lead ? 4 : barLength, duration:beatLength};
       if (seqOn) {
@@ -1296,7 +1304,7 @@ function scheduler() {
         eventData.rit = seqModifiers.some(mod => mod.kind === 'rit') && !(waiting && seqBlock.unit === 'seconds');
         eventData.timedRest = waiting && seqBlock.unit === 'seconds';
         eventData.prog = Math.min(1, (seqCount+1)/seqBlock.counts);
-        eventData.info = '#' + (seqIdx+1) + ' · ' + (waiting ? 'rest ' + (seqCount+1) + ' of ' + seqBlock.counts + (seqBlock.unit === 'seconds' ? ' sec' : ' counts') : seqBlock.meter + ' · beat ' + (beat+1)) + (seqModifiers.some(mod => mod.kind === 'rit') ? ' · Rit ' + Math.round(seqBeatTempo(seqBlock,seqModifiers,seqCount)) + ' BPM' : seqBlock.bpm && !(waiting && seqBlock.unit === 'seconds') ? ' · ' + seqBlock.bpm + ' BPM' : '');
+        eventData.info = '#' + (seqIdx+1) + ' · ' + (waiting ? 'rest ' + (seqCount+1) + ' of ' + seqBlock.counts + (seqBlock.unit === 'seconds' ? ' sec' : ' counts') : seqBlock.meter + ' · ' + (seqBlock.meter.endsWith('/8') ? 'eighth ' : 'beat ') + (beat+1)) + (seqModifiers.some(mod => mod.kind === 'rit') ? ' · Rit ' + Math.round(seqBeatTempo(seqBlock,seqModifiers,seqCount)) + ' BPM' : seqBlock.bpm && !(waiting && seqBlock.unit === 'seconds') ? ' · ' + seqBlock.bpm + ' BPM' : '');
       }
       visualQueue.push(eventData);
     }
@@ -1479,7 +1487,7 @@ function seqBarsText(block) {
 function seqDuration(block, modifiers = []) {
   if (block.type === 'mod') return 0;
   const base = block.type === 'wait' && block.unit === 'seconds' ? block.counts :
-    Array.from({length:block.counts}, (_,i) => 60/seqBeatTempo(block,modifiers,i)).reduce((a,b) => a+b,0);
+    Array.from({length:block.counts}, (_,i) => secondsPerPulse(block.meter,seqBeatTempo(block,modifiers,i))).reduce((a,b) => a+b,0);
   return base + fermataExtra(block,modifiers);
 }
 function renderSummary() {
