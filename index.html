@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#f9f8f3">
-<meta name="description" content="Kevin’s metronome and sequence builder with per-section subdivisions, dropout and tempo modifiers, and customizable clicks.">
+<meta name="description" content="Kevin’s metronome and sequence builder with per-section subdivisions, randomized beat/bar silence practice, tempo modifiers, and customizable clicks.">
 <title>Kevin’s Metronome</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Crect x='1' y='1' width='58' height='58' rx='14' fill='%233c55e8'/%3E%3Cpath d='M29 11c-22 0-27 33-2 36 27 2 32-28 3-36M16 30q11 19 25-2' fill='none' stroke='white' stroke-width='4' stroke-linecap='round'/%3E%3Cg fill='white'%3E%3Ccircle cx='22' cy='24' r='2.6'/%3E%3Ccircle cx='35' cy='22' r='2.6'/%3E%3C/g%3E%3C/svg%3E">
 <style>
@@ -830,7 +830,6 @@ body[data-view=seq] .stage{min-height:219px}
 /* Extra modifiers fit on phones and wrap instead of squeezing their controls. */
 .mod-add-buttons{grid-template-columns:repeat(auto-fit,minmax(min(135px,100%),1fr));gap:8px}
 .mod-add-buttons .storage-button{white-space:normal;line-height:1.2}
-.mod-setting .moddrop{width:60px}
 @media(max-width:720px){
   body[data-view=seq] .mod-add-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}
   body[data-view=seq] .sblk.mod .sctrl{gap:7px 9px}
@@ -860,6 +859,19 @@ body[data-view=seq] .stage{min-height:219px}
 :root[data-theme=dark] .track-item.active .tseg{box-shadow:inset 0 0 0 2px #9b86d7,0 2px 0 #0b0c17!important}
 :root[data-theme=dark] .tempo-tag:hover{box-shadow:2px 4px 0 #0b0c17!important}
 :root[data-theme=dark] :is(button,select,input):focus-visible{outline:2px solid #a695ef;outline-offset:2px}
+
+/* Independent, persistent random silence exercises; visually compact on phones. */
+.random-silence-list{display:grid;gap:8px;padding-top:9px;margin-top:2px;border-top:1.5px dashed #c5c4c0;min-width:0}
+.random-silence-setting{padding:5px 10px 7px;border:1px solid #d6d6e2;border-radius:10px;background:#f7f7ff;min-width:0}
+.random-silence-setting .switch-row{min-height:30px;padding:2px 0;font-size:.82rem;gap:8px}
+.random-silence-row{display:grid;grid-template-columns:minmax(85px,auto) minmax(35px,1fr) 40px;align-items:center;gap:8px;min-width:0;margin-top:2px}
+.random-silence-row label{font-size:.72rem;color:var(--muted);font-weight:600;white-space:nowrap}
+.random-silence-row input[type=range]{height:23px;min-width:0}
+.random-silence-row output{font:700 .75rem/1.1 ui-monospace,Consolas,monospace;text-align:right;color:var(--blue-deep)}
+[data-theme=dark] .random-silence-list{border-top-color:#565967}
+[data-theme=dark] .random-silence-setting{background:#2c2d3b;border-color:#505366}
+.beat.silenced{opacity:.68;box-shadow:inset 0 0 0 2px #b073c0;border-style:dashed}
+@media(max-width:390px){.random-silence-setting{padding-inline:8px}.random-silence-row{grid-template-columns:minmax(69px,auto) minmax(20px,1fr) 38px;gap:5px}.random-silence-row label{font-size:.68rem}}
 </style>
 </head>
 <body>
@@ -919,6 +931,16 @@ body[data-view=seq] .stage{min-height:219px}
 </div>
 <div class="volume"><div class="volume-top"><label for="volume">Volume</label><output for="volume" id="volumeOut">75%</output></div><div class="volume-slider"><svg class="icon" aria-hidden="true"><use href="#i-low"/></svg><input id="volume" type="range" min="0" max="100" value="75" aria-label="Sound volume"><svg class="icon" aria-hidden="true"><use href="#i-volume"/></svg></div></div>
 <div class="switches"><button class="switch-row" role="switch" aria-checked="true" type="button" id="countIn"><span>4-beat count-in</span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row" role="switch" aria-checked="true" type="button" id="accent"><span>Accent first beat</span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row" role="switch" aria-checked="false" type="button" id="silentSmall"><span>Mute small /8 beats</span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row" role="switch" aria-checked="false" type="button" id="loopSequence" hidden><span>Loop Sequence</span><span class="switch-track" aria-hidden="true"></span></button></div>
+<div class="random-silence-list" role="group" aria-label="Random silencing practice settings">
+<div class="random-silence-setting">
+<button class="switch-row" role="switch" aria-checked="false" type="button" id="randomBeatSilencing"><span>Random Beat Silencing</span><span class="switch-track" aria-hidden="true"></span></button>
+<div class="random-silence-row"><label for="randomBeatChance">Chance per beat</label><input id="randomBeatChance" type="range" min="0" max="100" step="5" value="25" aria-label="Chance of silencing each beat in percent"><output for="randomBeatChance" id="randomBeatChanceOut">25%</output></div>
+</div>
+<div class="random-silence-setting">
+<button class="switch-row" role="switch" aria-checked="false" type="button" id="randomBarSilencing"><span>Random Bar Silencing</span><span class="switch-track" aria-hidden="true"></span></button>
+<div class="random-silence-row"><label for="randomBarChance">Chance per bar</label><input id="randomBarChance" type="range" min="0" max="100" step="5" value="25" aria-label="Chance of silencing the entire bar in percent"><output for="randomBarChance" id="randomBarChanceOut">25%</output></div>
+</div>
+</div>
 <div class="sequence-storage" id="sequenceStorage" hidden aria-label="Sequence files and saved sequences">
 <button type="button" class="storage-button" id="saveSequence"><svg class="icon" aria-hidden="true"><use href="#i-save"/></svg><span>Save sequence</span></button>
 <button type="button" class="storage-button" id="loadSequence"><svg class="icon" aria-hidden="true"><use href="#i-folder"/></svg><span>Load sequence</span></button>
@@ -932,7 +954,7 @@ body[data-view=seq] .stage{min-height:219px}
 <div id="seqTrack" class="seq-track" aria-label="Sequence overview. Click a section or rest to jump to it."></div>
 <ol id="seqList" class="seq-list" aria-label="Sequence blocks, played in order"></ol>
 <div class="seq-add"><button type="button" class="action tap" id="addSection"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg><span>Add section</span></button><button type="button" class="action tap" id="addWait"><svg class="icon" aria-hidden="true"><use href="#i-wait"/></svg><span>Add rest</span></button></div>
-<div class="mod-add" aria-label="Add modifiers"><span class="mod-add-label">Modifiers <span>· stack above and affect the same next block</span></span><div class="mod-add-buttons"><button type="button" class="storage-button" id="addRit">↘ Add Rit.</button><button type="button" class="storage-button" id="addFermata">𝄐 Add Fermata</button><button type="button" class="storage-button" id="addAccel">↗ Add Accel.</button><button type="button" class="storage-button" id="addDropout">◌ Add Dropout</button></div></div>
+<div class="mod-add" aria-label="Add modifiers"><span class="mod-add-label">Modifiers <span>· stack above and affect the same next block</span></span><div class="mod-add-buttons"><button type="button" class="storage-button" id="addRit">↘ Add Rit.</button><button type="button" class="storage-button" id="addFermata">𝄐 Add Fermata</button><button type="button" class="storage-button" id="addAccel">↗ Add Accel.</button></div></div>
 </section>
 <dialog class="storage-dialog" id="sequenceDialog" aria-labelledby="sequenceDialogTitle">
  <div class="storage-dialog-head"><h2 id="sequenceDialogTitle">Save sequence</h2><button class="dialog-close" id="sequenceDialogClose" aria-label="Close saved sequences" type="button">×</button></div>
@@ -963,18 +985,18 @@ desktopPointer.addEventListener?.('change', fitDesktop);
 
 const $ = (id) => document.getElementById(id);
 const clamp = (value, low, high) => Math.min(high, Math.max(low, value));
-const defaults = { bpm:120, meter:'4/4', division:1, voice:'wood', volume:75, countIn:true, accent:true, silentSmall:false, muted:false };
+const defaults = { bpm:120, meter:'4/4', division:1, voice:'wood', volume:75, countIn:true, accent:true, silentSmall:false, randomBeatSilencing:false, randomBarSilencing:false, randomBeatChance:25, randomBarChance:25, muted:false };
 const storeKey = 'kevins-metronome.settings.v1';
 const prefs = { ...defaults };
 try {
   const saved = JSON.parse(localStorage.getItem(storeKey)) || {};
-  for (const [key, low, high] of [['bpm',30,300], ['division',1,4], ['volume',0,100]]) {
+  for (const [key, low, high] of [['bpm',30,300], ['division',1,4], ['volume',0,100], ['randomBeatChance',0,100], ['randomBarChance',0,100]]) {
     if (Number.isInteger(saved[key])) prefs[key] = clamp(saved[key], low, high);
   }
   for (const key of ['meter','voice']) {
     if (Array.from($(key).options).some(option => option.value === saved[key])) prefs[key] = saved[key];
   }
-  for (const key of ['countIn','accent','silentSmall']) {
+  for (const key of ['countIn','accent','silentSmall','randomBeatSilencing','randomBarSilencing']) {
     if (typeof saved[key] === 'boolean') prefs[key] = saved[key];
   }
 } catch {}
@@ -1078,7 +1100,13 @@ function syncSound() {
   }
 }
 function syncSwitches() {
-  for (const id of ['accent','countIn','silentSmall']) $(id).setAttribute('aria-checked', String(prefs[id]));
+  for (const id of ['accent','countIn','silentSmall','randomBeatSilencing','randomBarSilencing']) $(id).setAttribute('aria-checked', String(prefs[id]));
+  for (const [key,control,out] of [['randomBeatChance','randomBeatChance','randomBeatChanceOut'],['randomBarChance','randomBarChance','randomBarChanceOut']]) {
+    $(control).value = prefs[key];
+    $(out).value = prefs[key] + '%';
+    $(out).textContent = prefs[key] + '%';
+    updateRange($(control));
+  }
 }
 let phase = 'idle';
 let screenMode = '', characterMotion;
@@ -1137,7 +1165,7 @@ function showBeat(event) {
   const dots = $('beats').querySelectorAll('.beat');
   if (event.count) {
     for (let i = 0; i <= event.beat; i++) dots[i].classList.add('filled');
-  } else dots[event.beat].classList.add('current');
+  } else { dots[event.beat].classList.add('current'); if (event.randomSilenced) dots[event.beat].classList.add('silenced'); }
   $('beatInfo').textContent = event.info || ((event.count ? 'Count-in ' : 'Beat ') + (event.beat + 1) + ' of ' + event.total);
   if (event.seq !== undefined) markSeq(event.seq, event.prog);
   if (!reduceMotion.matches && typeof $('kevin').animate === 'function') {
@@ -1164,9 +1192,9 @@ function validSequenceBlocks(raw) {
   for (const b of raw.slice(0,150)) {
     if (!b || typeof b !== 'object') continue;
     if (b.type === 'mod') {
-      // Cresc. and Subito from older saved sequences are retired, not repurposed.
-      if (!['rit','fermata','accel','dropout'].includes(b.kind)) continue;
-      results.push({id:results.length+1,type:'mod',kind:b.kind,strength:clamp(Math.round(Number(b.strength)) || 25,5,80),curve:b.curve === 'late' ? 'late' : 'linear',hold:clamp(Number(b.hold) || 2,.5,30),holdUnit:b.holdUnit === 'seconds' ? 'seconds' : 'beats',dropEvery:clamp(Math.round(Number(b.dropEvery)) || 2,2,8)});
+      // Retired Cresc., Subito, Swing, and Dropout blocks are ignored in old saved/imported sequences.
+      if (!['rit','fermata','accel'].includes(b.kind)) continue;
+      results.push({id:results.length+1,type:'mod',kind:b.kind,strength:clamp(Math.round(Number(b.strength)) || 25,5,80),curve:b.curve === 'late' ? 'late' : 'linear',hold:clamp(Number(b.hold) || 2,.5,30),holdUnit:b.holdUnit === 'seconds' ? 'seconds' : 'beats'});
     } else if ((b.type === 'play' || b.type === 'wait') && meterList.includes(b.meter) && Number.isInteger(b.counts) && b.counts >= 1 && b.counts <= (b.type === 'wait' && b.unit === 'seconds' ? 600 : 128)) {
       results.push({id:results.length+1,type:b.type,meter:b.meter,counts:b.counts,...(b.type === 'wait' ? {unit:b.unit === 'seconds' ? 'seconds' : 'counts'} : {}),bpm:Number.isInteger(b.bpm) && b.bpm >= 30 && b.bpm <= 300 ? b.bpm : 0,...(b.type === 'play' ? {division:Number.isInteger(b.division) && b.division >= 1 && b.division <= 4 ? b.division : 0} : {})});
     }
@@ -1198,10 +1226,12 @@ function seqBeatTempo(block, modifiers = [], countIndex = 0) {
   },1);
   return clamp(base*factor,20,300);
 }
-// Dropout keeps the clock running but makes every Nth whole beat silent.
-function isDroppedBeat(block, modifiers, countIndex) {
-  return block.type === 'play' && modifiers.some(mod => mod.kind === 'dropout' && (countIndex+1) % mod.dropEvery === 0);
+// Independent probability controls. Decisions are sampled on the Web Audio scheduler's
+// beat boundaries and remain fixed for every subdivision of the same beat/bar.
+function chanceSilenced(percent) {
+  return percent >= 100 || (percent > 0 && Math.random()*100 < percent);
 }
+let randomBarSilenced = false, randomBeatSilenced = false;
 function sequenceControlsTempo(entry) {
   return !!entry && !(entry.block.type === 'wait' && entry.block.unit === 'seconds') && !!entry.block.bpm;
 }
@@ -1367,12 +1397,21 @@ function scheduler() {
       else if (beat === 0) { barMeter = prefs.meter; barLength = beatsPerBar(); }
       const chosenSubdivision = counting ? 1 : seqOn ? (seqBlock.division || prefs.division) : prefs.division;
       partsThisBeat = chosenSubdivision;
+      // A bar is sampled only on its downbeat. Each beat is sampled once,
+      // and its subdivided clicks share the same decision. Count-ins and Rests
+      // always remain audible (unless the user sets the main volume to zero).
+      if (counting) { randomBarSilenced = false; randomBeatSilenced = false; }
+      else {
+        if (beat === 0) randomBarSilenced = prefs.randomBarSilencing && chanceSilenced(prefs.randomBarChance);
+        randomBeatSilenced = prefs.randomBeatSilencing && chanceSilenced(prefs.randomBeatChance);
+      }
       const effectiveBpm = waiting && seqBlock.unit === 'seconds' ? 60 : (seqOn ? seqBeatTempo(seqBlock, seqModifiers, seqCount) : prefs.bpm);
       // Count-ins and timed rests remain in real seconds/quarter-note beats.
       // Active /8 Sections click each eighth note at twice the /4 pulse rate.
       beatLength = counting ? 60/effectiveBpm : secondsPerPulse(barMeter,effectiveBpm);
       const lead = leadBeats > 0;
       const eventData = {meter:barMeter, time:nextTime, count:counting, beat:lead ? 4-leadBeats : beat, total:lead ? 4 : barLength, duration:beatLength};
+      eventData.randomSilenced = !counting && (randomBarSilenced || randomBeatSilenced);
       if (seqOn) {
         eventData.seq = seqPlan[seqIdx].index;
         eventData.bpm = effectiveBpm;
@@ -1388,8 +1427,8 @@ function scheduler() {
     const level = part ? 'sub' : countInBeat ? ((4-leadBeats) === 0 ? 'count-accent' : 'count') :
       waiting ? 'rest' : beat === 0 && prefs.accent ? 'accent' : 'main';
     const smallDot = !counting && mainBeats[barMeter] && !mainBeats[barMeter].includes(beat);
-    const silentByDropout = seqOn && !counting && isDroppedBeat(seqBlock,seqModifiers,seqCount);
-    if (!(prefs.silentSmall && smallDot) && !silentByDropout) {
+    const silentByRandom = !counting && (randomBarSilenced || randomBeatSilenced);
+    if (!(prefs.silentSmall && smallDot) && !silentByRandom) {
       clickAt(nextTime, prefs.voice, smallDot && part === 0 ? 'small' : level, transportBus);
     }
     nextTime += beatLength / partsThisBeat;
@@ -1446,7 +1485,7 @@ async function togglePlayback() {
     transportBus.connect(master);
     phase = 'running';
     leadBeats = prefs.countIn ? 4 : 0;
-    beat = 0; part = 0; barLength = beatsPerBar();
+    beat = 0; part = 0; barLength = beatsPerBar(); randomBarSilenced = false; randomBeatSilenced = false;
     seqOn = view === 'seq'; seqPlan = seqOn ? plannedSequence() : [];
     seqIdx = seqOn && Number.isInteger(requestedSequenceStart) ? clamp(requestedSequenceStart,0,seqPlan.length-1) : 0;
     requestedSequenceStart = null;
@@ -1463,6 +1502,7 @@ function stop() {
   generation++;
   phase = 'idle';
   seqOn = false;
+  randomBarSilenced = false; randomBeatSilenced = false;
   clearInterval(timer); cancelAnimationFrame(frame); visualQueue.length = 0;
   if (transportBus) {
     const bus = transportBus;
@@ -1523,6 +1563,13 @@ $('accent').onclick = () => {
   syncSwitches(); if (phase === 'idle') showIdle(); save(); feedback();
 };
 $('silentSmall').onclick = () => { prefs.silentSmall = !prefs.silentSmall; syncSwitches(); save(); feedback(); };
+for (const key of ['randomBeatSilencing','randomBarSilencing']) {
+  $(key).onclick = () => { prefs[key] = !prefs[key]; syncSwitches(); save(); feedback(); };
+}
+for (const key of ['randomBeatChance','randomBarChance']) {
+  $(key).oninput = event => { prefs[key] = clamp(Number(event.target.value),0,100); syncSwitches(); save(); };
+}
+
 $('loopSequence').onclick = () => {
   seqLoop = !seqLoop;
   $('loopSequence').setAttribute('aria-checked', String(seqLoop));
@@ -1576,10 +1623,9 @@ function renderTrack() {
   const modCaption = mod => ({
     rit:'Ritardando: slow this block by ' + mod.strength + '%',
     fermata:'Fermata: hold ' + mod.hold + ' ' + mod.holdUnit + ' after the block',
-    accel:'Accelerando: speed up this block by ' + mod.strength + '%',
-    dropout:'Dropout: silence every ' + mod.dropEvery + (mod.dropEvery === 2 ? 'nd' : mod.dropEvery === 3 ? 'rd' : 'th') + ' beat'
+    accel:'Accelerando: speed up this block by ' + mod.strength + '%'
   }[mod.kind] || 'Modifier');
-  const modLabel = mod => ({rit:'Rit.',fermata:'𝄐 Fermata',accel:'Accel.',dropout:'◌ /' + mod.dropEvery}[mod.kind] || 'Modifier');
+  const modLabel = mod => ({rit:'Rit.',fermata:'𝄐 Fermata',accel:'Accel.'}[mod.kind] || 'Modifier');
   const oldIds = new Set([...$('seqTrack').querySelectorAll('.track-item')].map(el => el.dataset.blockId));
   const tiles = runnable.map(({block:b,index,modifiers:mods},position) => {
     const title = b.type === 'wait' ? 'Rest ' + b.counts + ' ' + (b.unit === 'seconds' ? 'seconds' : 'counts') : b.meter + ' · ' + b.counts + ' counts';
@@ -1609,16 +1655,14 @@ function seqBlockEl(b) {
     li.className = 'sblk mod' + (!modifierTarget(seqList.indexOf(b)) ? ' mod-pending' : ''); li.dataset.id = b.id;
     const pending = !modifierTarget(seqList.indexOf(b));
     const tonal = b.kind === 'rit' || b.kind === 'accel';
-    const name = {rit:'↘ Rit.',fermata:'𝄐 Fermata',accel:'↗ Accel.',dropout:'◌ Dropout'}[b.kind] || 'Modifier';
-    const hint = {rit:'Gradually slows the next block.',fermata:'Silent hold after the next block.',accel:'Gradually speeds up the next block.',dropout:'Every Nth beat in the next Section goes silent; timing stays unchanged.'}[b.kind];
+    const name = {rit:'↘ Rit.',fermata:'𝄐 Fermata',accel:'↗ Accel.'}[b.kind] || 'Modifier';
+    const hint = {rit:'Gradually slows the next block.',fermata:'Silent hold after the next block.',accel:'Gradually speeds up the next block.'}[b.kind];
     const controls = tonal ?
       '<label class="mod-setting">' + (b.kind === 'rit' ? 'Slow by' : b.kind === 'accel' ? 'Speed by' : 'Soften by') +
       ' <input class="modstrength" type="number" inputmode="numeric" min="5" max="80" step="5" value="' + b.strength + '" aria-label="Modifier strength percentage">%</label>' +
       '<label class="mod-setting">Curve <select class="modcurve" aria-label="Tempo change curve"><option value="linear"' + (b.curve === 'linear' ? ' selected' : '') + '>Even</option><option value="late"' + (b.curve === 'late' ? ' selected' : '') + '>Late</option></select></label>' :
-      b.kind === 'fermata' ?
-        '<label class="mod-setting">Hold <input class="modhold" type="number" min="0.5" max="30" step="0.5" inputmode="decimal" value="' + b.hold + '" aria-label="Fermata hold duration"></label>' +
-        '<label class="mod-setting"><select class="modunit" aria-label="Fermata duration unit"><option value="beats"' + (b.holdUnit === 'beats' ? ' selected' : '') + '>beats</option><option value="seconds"' + (b.holdUnit === 'seconds' ? ' selected' : '') + '>seconds</option></select></label>' :
-        '<label class="mod-setting">Every <input class="moddrop" type="number" inputmode="numeric" min="2" max="8" step="1" value="' + b.dropEvery + '" aria-label="Dropout interval in beats"> beats</label>';
+      '<label class="mod-setting">Hold <input class="modhold" type="number" min="0.5" max="30" step="0.5" inputmode="decimal" value="' + b.hold + '" aria-label="Fermata hold duration"></label>' +
+      '<label class="mod-setting"><select class="modunit" aria-label="Fermata duration unit"><option value="beats"' + (b.holdUnit === 'beats' ? ' selected' : '') + '>beats</option><option value="seconds"' + (b.holdUnit === 'seconds' ? ' selected' : '') + '>seconds</option></select></label>';
     li.innerHTML = '<button type="button" class="grip" aria-label="Drag modifier to the position before a section or rest">' + seqIcon('grip') + '</button>' +
       '<div class="sbody"><div class="shead"><span class="skind">' + name + '</span></div>' +
       '<div class="sctrl">' + controls + '<span class="mod-hint">' + (pending ? 'Add a Section or Rest below to apply this modifier.' : hint) + '</span></div></div>' +
@@ -1746,7 +1790,6 @@ seqUL.addEventListener('input', event => {
   const [li, block] = row, t = event.target;
   if (t.classList.contains('modstrength') && t.value !== '') { block.strength = clamp(Math.round(t.valueAsNumber) || 25,5,80); renderTrack(); seqSave(); }
   if (t.classList.contains('modhold') && t.value !== '') { block.hold = clamp(t.valueAsNumber || 2,.5,30); renderTrack(); seqSave(); }
-  if (t.classList.contains('moddrop') && t.value !== '') { block.dropEvery = clamp(Math.round(t.valueAsNumber) || 2,2,8); renderTrack(); seqSave(); }
   if (t.classList.contains('scount') && t.value !== '') setCounts(li, block, t.valueAsNumber);
   if (t.classList.contains('sbpmin')) { block.bpm = t.value === '' ? 0 : clamp(Math.round(t.valueAsNumber) || 0, 30, 300); renderSummary(); seqSave(); }
 });
@@ -1755,7 +1798,6 @@ seqUL.addEventListener('change', event => {
   const [li, block] = row, t = event.target;
   if (t.classList.contains('modstrength')) t.value = block.strength;
   if (t.classList.contains('modhold')) t.value = block.hold;
-  if (t.classList.contains('moddrop')) t.value = block.dropEvery;
   if (t.classList.contains('modcurve')) { block.curve = t.value === 'late' ? 'late' : 'linear'; renderTrack(); seqSave(); }
   if (t.classList.contains('modunit')) { block.holdUnit = t.value === 'seconds' ? 'seconds' : 'beats'; renderTrack(); seqSave(); }
   if (t.classList.contains('scount')) t.value = block.counts;
@@ -1917,7 +1959,7 @@ function addBlock(type) {
 function addModifier(kind) {
   if (phase !== 'idle') stop();
   report('');
-  seqList.push({id:seqSeed++,type:'mod',kind,strength:25,curve:'linear',hold:2,holdUnit:'beats',dropEvery:2});
+  seqList.push({id:seqSeed++,type:'mod',kind,strength:25,curve:'linear',hold:2,holdUnit:'beats'});
   seqChanged(); feedback();
   seqUL.lastElementChild.scrollIntoView({block:'nearest',behavior:reduceMotion.matches ? 'auto' : 'smooth'});
 }
@@ -2004,7 +2046,7 @@ $('sequenceSaveForm').onsubmit = e => {
   if (existing && !confirm('Replace the existing saved sequence "' + existing.name + '"?')) return;
   if (!existing && namedSequences.length >= namedMax) { $('storageMessage').textContent = 'Limit of 40 saved sequences reached. Delete one to save another.'; return; }
   const previous = namedSequences.map(x => ({...x}));
-  const entry = {name,loop:seqLoop,list:seqList.map(b => b.type === 'mod' ? {type:'mod',kind:b.kind,strength:b.strength,curve:b.curve,hold:b.hold,holdUnit:b.holdUnit,dropEvery:b.dropEvery} : {type:b.type,meter:b.meter,counts:b.counts,...(b.type==='wait'?{unit:b.unit==='seconds'?'seconds':'counts'}:{division:b.division || 0}),bpm:b.bpm}),savedAt:Date.now()};
+  const entry = {name,loop:seqLoop,list:seqList.map(b => b.type === 'mod' ? {type:'mod',kind:b.kind,strength:b.strength,curve:b.curve,hold:b.hold,holdUnit:b.holdUnit} : {type:b.type,meter:b.meter,counts:b.counts,...(b.type==='wait'?{unit:b.unit==='seconds'?'seconds':'counts'}:{division:b.division || 0}),bpm:b.bpm}),savedAt:Date.now()};
   if (existing) Object.assign(existing,entry); else namedSequences.unshift(entry);
   if (persistNamedSequences()) { activeSequenceName = name; seqSave(); closeSequenceDialog(); showSeqToast('Saved “' + name + '”'); feedback(); }
   else namedSequences = previous;
@@ -2026,7 +2068,7 @@ function showSeqToast(message, isError = false) {
 }
 function portableSequenceBlocks() {
   return seqList.map(b => b.type === 'mod' ?
-    {type:'mod',kind:b.kind,strength:b.strength,curve:b.curve,hold:b.hold,holdUnit:b.holdUnit,dropEvery:b.dropEvery} :
+    {type:'mod',kind:b.kind,strength:b.strength,curve:b.curve,hold:b.hold,holdUnit:b.holdUnit} :
     {type:b.type,meter:b.meter,counts:b.counts,...(b.type === 'wait' ? {unit:b.unit === 'seconds' ? 'seconds' : 'counts'} : {division:b.division || 0}),bpm:b.bpm});
 }
 function downloadSequenceJSON() {
@@ -2084,7 +2126,6 @@ $('addWait').onclick = () => addBlock('wait');
 $('addRit').onclick = () => addModifier('rit');
 $('addFermata').onclick = () => addModifier('fermata');
 $('addAccel').onclick = () => addModifier('accel');
-$('addDropout').onclick = () => addModifier('dropout');
 function setView(next) {
   if (view === next) return;
   if (phase !== 'idle') stop();
