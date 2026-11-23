@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#f9f8f3">
-<meta name="description" content="Practice with Kevin, a beat-bobbing stickman metronome with tap tempo, count-in, and adjustable clicks.">
+<meta name="description" content="Kevin’s metronome and sequence builder with per-section subdivisions, ritardando, fermatas, and customizable clicks.">
 <title>Kevin’s Metronome</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Crect x='1' y='1' width='58' height='58' rx='14' fill='%233c55e8'/%3E%3Cpath d='M29 11c-22 0-27 33-2 36 27 2 32-28 3-36M16 30q11 19 25-2' fill='none' stroke='white' stroke-width='4' stroke-linecap='round'/%3E%3Cg fill='white'%3E%3Ccircle cx='22' cy='24' r='2.6'/%3E%3Ccircle cx='35' cy='22' r='2.6'/%3E%3C/g%3E%3C/svg%3E">
 <style>
@@ -692,6 +692,65 @@ body[data-view=seq] .stage{min-height:219px}
 }
 @media(prefers-reduced-motion:reduce){.sblk.active,.sblk.mod.active{animation:none!important;filter:none!important}}
 
+/* v12 — calmer mobile Sequence editor and predictable overview tiles. */
+/* The heading icon is decorative. Hovering over Sequence should not "select" it. */
+.seq:hover .seq-head .settings-icon{transform:rotate(-4deg);background:#e6eaff}
+[data-theme=dark] .seq:hover .seq-head .settings-icon{background:#374264}
+.seq-head .settings-icon{pointer-events:none}
+.track-item,.track-item *{-webkit-user-select:none;user-select:none}
+.track-item .track-mods,.track-item .track-mod,.track-item .tseg{pointer-events:none}
+/* Individual section subdivision. Inherit is the default for older sequences. */
+.sdivfield{display:flex;align-items:center;gap:6px;min-width:0;font-size:.79rem;font-weight:700;color:var(--muted)}
+.sdivfield>span{flex:none}
+.sdivision{width:144px;min-width:0;max-width:100%;height:36px;padding:0 25px 0 10px;font-size:.83rem;font-weight:700;background:#fafaf7;border:1.5px solid #85868a;border-radius:7px}
+[data-theme=dark] .sdivision{background:#31333e;border-color:#74758a;color:var(--ink)}
+.tempo-live-indicator{display:inline-flex;align-items:center;gap:5px;margin-left:6px;font:800 .65rem/1 ui-monospace,Consolas,monospace;letter-spacing:.055em;color:#3c3fa7;background:#eef0ff;border:1px solid #969adb;border-radius:7px;padding:4px 6px}
+.tempo-live-indicator::before{content:'';display:block;width:6px;height:6px;border-radius:50%;background:#6855ca;box-shadow:0 0 0 2px #6855ca22}
+[data-theme=dark] .tempo-live-indicator{background:#363854;color:#d9dcff;border-color:#696b98}
+[data-theme=dark] .tempo-live-indicator::before{background:#ada0ff}
+.tempo-live-indicator[hidden]{display:none!important}
+/* Replace native bright-white selections and focus rectangles in dark mode. */
+[data-theme=dark] ::selection{background:#6450a2;color:#faf7ff}
+[data-theme=dark] input::selection,[data-theme=dark] textarea::selection{background:#7661b8;color:#fff}
+[data-theme=dark] :is(button,select,input):focus-visible{outline:2px solid #9983da;outline-offset:2px}
+[data-theme=dark] .bpm:focus{outline-color:#9983da;background:#34374b;color:#f5f1ff}
+[data-theme=dark] .track-item:focus-visible{outline-color:#9983da}
+[data-theme=dark] .track-item.active .tseg{box-shadow:inset 0 0 0 2px #9b86d7,0 2px 0 #10111a}
+@media (max-width:720px),(hover:none) and (pointer:coarse) and (orientation:landscape) and (max-height:650px){
+  body[data-view=seq] .seq{padding:13px 12px 16px}
+  body[data-view=seq] .seq-head{display:flex;flex-direction:column;align-items:stretch;gap:4px;margin-bottom:9px}
+  body[data-view=seq] .seq-sum{max-width:100%;font-size:.72rem;line-height:1.35}
+  /* Fixed equal-width tiles, instead of auto-fit columns that jump around. */
+  body[data-view=seq] .seq-track{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 8px;padding:12px 7px 19px;margin:0 0 12px;overflow:visible;align-items:end;min-width:0}
+  body[data-view=seq] .track-item{display:flex;flex-direction:column;width:100%;min-width:0;max-width:100%;align-self:end;justify-content:flex-end;gap:0;transform:none}
+  body[data-view=seq] .track-item .tseg{height:46px;min-height:46px;flex:0 0 46px;font-size:1rem;border-radius:8px}
+  body[data-view=seq] .track-item .track-mods{width:100%;min-width:0;gap:4px;margin-bottom:11px}
+  body[data-view=seq] .track-item .track-mod{width:max-content;max-width:100%;padding:4px 5px;font-size:.73rem;line-height:1.12;overflow-wrap:anywhere}
+  body[data-view=seq] .track-pending-stack{width:100%;min-width:0;max-width:100%}
+  body[data-view=seq] .seq-list{gap:9px;padding:11px 6px 16px 4px}
+  body[data-view=seq] .sblk:not(.mod){gap:7px 5px;padding:10px 7px 11px 4px}
+  /* Each section has a compact duration row, then side-by-side tempo/subdivision. */
+  body[data-view=seq] .sblk.play .sctrl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 8px;align-items:end}
+  body[data-view=seq] .sblk.play .stepper{grid-column:1/-1;min-width:0}
+  body[data-view=seq] .sblk.play .sbpm{align-self:end;display:flex;align-items:center;min-width:0}
+  body[data-view=seq] .sblk.play .sbpmin{width:min(100%,76px);min-width:0;height:35px}
+  body[data-view=seq] .sblk.play .sdivfield{display:flex;flex-direction:column;align-items:stretch;gap:3px;font-size:.71rem;min-width:0}
+  body[data-view=seq] .sblk.play .sdivfield>span{font-size:.7rem;line-height:1.1}
+  body[data-view=seq] .sblk.play .sdivision{width:100%;height:35px;min-height:35px;padding:0 23px 0 6px;font-size:.78rem}
+  body[data-view=seq] .sblk.play .stepper .scount{height:34px}
+  body[data-view=seq] .sblk.play .stepper .mini-btn{height:34px}
+  /* Remove layout ambiguity when labels wrap into the next row. */
+  body[data-view=seq] .sctrl,body[data-view=seq] .shead{max-width:100%;overflow-wrap:anywhere}
+}
+@media(max-width:355px){
+  body[data-view=seq] .seq-track{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 9px}
+  body[data-view=seq] .sblk.play .sctrl{gap:6px}
+  body[data-view=seq] .sblk.play .sdivision{font-size:.73rem}
+}
+@media(hover:hover){
+ /* Hover should never mimic the selected/playing state. */
+ .seq:hover .seq-head .settings-icon{transform:rotate(-4deg)!important}
+}
 </style>
 </head>
 <body>
@@ -729,7 +788,7 @@ body[data-view=seq] .stage{min-height:219px}
 <section class="card console" aria-label="Metronome">
 <div class="stage">
 <div class="tempo">
-<label class="eyebrow" for="bpm"><svg class="icon" aria-hidden="true"><use href="#i-speed"/></svg>Tempo</label>
+<label class="eyebrow" for="bpm"><svg class="icon" aria-hidden="true"><use href="#i-speed"/></svg>Tempo <span id="tempoLive" class="tempo-live-indicator" hidden>LIVE</span></label>
 <div class="number-row"><input id="bpm" class="bpm" type="number" inputmode="numeric" min="30" max="300" step="1" value="120" aria-label="Tempo in beats per minute"><span class="unit">BPM</span></div>
 <div class="tempo-tag"><svg class="icon" aria-hidden="true"><use href="#i-note"/></svg><span id="tempoName">Allegro</span></div>
 <div class="tempo-adjust"><button type="button" class="mini-btn" id="slower" aria-label="Decrease tempo by one"><svg class="icon" aria-hidden="true"><use href="#i-minus"/></svg></button><input id="tempoSlider" type="range" min="30" max="300" value="120" aria-label="Adjust tempo"><button type="button" class="mini-btn" id="faster" aria-label="Increase tempo by one"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button></div>
@@ -819,15 +878,26 @@ function setIcon(element, name) {
 function updateRange(element) {
   element.style.setProperty('--pct', (element.value-element.min)/(element.max-element.min)*100 + '%');
 }
+const tempoNames = [[40,'Grave'],[60,'Largo'],[66,'Larghetto'],[76,'Adagio'],[108,'Andante'],[120,'Moderato'],[156,'Allegro'],[176,'Vivace'],[200,'Presto'],[301,'Prestissimo']];
+function showTempoValue(value, {live=false, rit=false, timedRest=false} = {}) {
+  const bpm = clamp(Math.round(value), 20, 300);
+  // The live display is separate from prefs.bpm: a section's own tempo or
+  // its ritardando must never overwrite the user's saved default tempo.
+  const input = $('bpm');
+  input.min = live ? '20' : '30';
+  $('tempoSlider').min = live ? '20' : '30';
+  if (!live || document.activeElement !== input) input.value = bpm;
+  input.style.width = String(bpm).length + 'ch';
+  $('tempoSlider').value = bpm;
+  $('tempoSlider').setAttribute('aria-valuetext', bpm + ' beats per minute' + (live ? ', currently playing' : ''));
+  updateRange($('tempoSlider'));
+  const name = tempoNames.find(([limit]) => bpm < limit)[1];
+  $('tempoName').textContent = live && timedRest ? 'Timed rest · seconds' : live && rit ? 'Rit. · ' + name : name;
+  $('tempoLive').hidden = !live;
+}
 function updateTempo(value) {
   prefs.bpm = clamp(Math.round(value), 30, 300);
-  $('bpm').value = prefs.bpm;
-  $('bpm').style.width = String(prefs.bpm).length + 'ch';
-  $('tempoSlider').value = prefs.bpm;
-  $('tempoSlider').setAttribute('aria-valuetext', prefs.bpm + ' beats per minute');
-  updateRange($('tempoSlider'));
-  const names = [[40,'Grave'],[60,'Largo'],[66,'Larghetto'],[76,'Adagio'],[108,'Andante'],[120,'Moderato'],[156,'Allegro'],[176,'Vivace'],[200,'Presto'],[301,'Prestissimo']];
-  $('tempoName').textContent = names.find(([limit]) => prefs.bpm < limit)[1];
+  if (phase !== 'running' || !seqOn) showTempoValue(prefs.bpm);
   refreshSeqTempo();
   renderTempoPresets();
 }
@@ -883,12 +953,22 @@ $('saveTempos').addEventListener('click', saveTempoPresets);
 $('customTempos').addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); saveTempoPresets(); event.target.blur(); } });
 $('customTempos').addEventListener('change', saveTempoPresets);
 function beatsPerBar() { return Number(prefs.meter.split('/')[0]); }
+function subdivisionNames(meter) {
+  const unit = Number(meter.split('/')[1]);
+  const notes = {2:'Half notes',4:'Quarter notes',8:'Eighth notes',16:'Sixteenth notes',32:'32nd notes',64:'64th notes'};
+  return [notes[unit] || 'Main beats', notes[unit*2] || '2 per beat', 'Triplets', notes[unit*4] || '4 per beat'];
+}
+function divisionOptions(meter, selected) {
+  const names = subdivisionNames(meter);
+  return '<option value="0"' + (!selected ? ' selected' : '') + '>Session default</option>' +
+    names.map((name,index) => '<option value="' + (index+1) + '"' + (selected === index+1 ? ' selected' : '') + '>' + name + '</option>').join('');
+}
 function syncDivisionLabels() {
   const unit = Number(prefs.meter.split('/')[1]);
-  const notes = {2:'Half notes',4:'Quarter notes',8:'Eighth notes',16:'Sixteenth notes',32:'32nd notes'};
-  const names = [notes[unit], notes[unit*2], 'Triplets', notes[unit*4]];
+  const notes = {2:'half notes',4:'quarter notes',8:'eighth notes',16:'sixteenth notes'};
+  const names = subdivisionNames(prefs.meter);
   Array.from($('division').options).forEach((option, i) => option.textContent = names[i]);
-  $('pulseHelp').textContent = 'Tempo counts ' + notes[unit].toLowerCase() + ' in ' + prefs.meter + '.';
+  $('pulseHelp').textContent = 'Tempo counts ' + (notes[unit] || 'beats') + ' in ' + prefs.meter + '.';
 }
 function syncSound() {
   $('volume').value = prefs.volume;
@@ -938,6 +1018,7 @@ function setMode(mode) {
 }
 function showIdle() {
   setMode('idle');
+  showTempoValue(prefs.bpm);
   markSeq(-1);
   if (view === 'seq') {
     const first = plannedSequence()[0]?.block;
@@ -950,6 +1031,8 @@ function showIdle() {
 }
 function showBeat(event) {
   setMode(event.count ? 'count' : 'playing');
+  if (seqOn && event.seq !== undefined && Number.isFinite(event.bpm))
+    showTempoValue(event.bpm, {live:true,rit:!!event.rit,timedRest:!!event.timedRest});
   circles(event.total, !event.count && prefs.accent, event.count ? null : event.meter);
   const dots = $('beats').querySelectorAll('.beat');
   if (event.count) {
@@ -983,7 +1066,7 @@ function validSequenceBlocks(raw) {
     if (b.type === 'mod') {
       results.push({id:results.length+1,type:'mod',kind:b.kind === 'fermata' ? 'fermata' : 'rit',strength:clamp(Math.round(Number(b.strength)) || 25,5,80),curve:b.curve === 'late' ? 'late' : 'linear',hold:clamp(Number(b.hold) || 2,.5,30),holdUnit:b.holdUnit === 'seconds' ? 'seconds' : 'beats'});
     } else if ((b.type === 'play' || b.type === 'wait') && meterList.includes(b.meter) && Number.isInteger(b.counts) && b.counts >= 1 && b.counts <= (b.type === 'wait' && b.unit === 'seconds' ? 600 : 128)) {
-      results.push({id:results.length+1,type:b.type,meter:b.meter,counts:b.counts,...(b.type === 'wait' ? {unit:b.unit === 'seconds' ? 'seconds' : 'counts'} : {}),bpm:Number.isInteger(b.bpm) && b.bpm >= 30 && b.bpm <= 300 ? b.bpm : 0});
+      results.push({id:results.length+1,type:b.type,meter:b.meter,counts:b.counts,...(b.type === 'wait' ? {unit:b.unit === 'seconds' ? 'seconds' : 'counts'} : {}),bpm:Number.isInteger(b.bpm) && b.bpm >= 30 && b.bpm <= 300 ? b.bpm : 0,...(b.type === 'play' ? {division:Number.isInteger(b.division) && b.division >= 1 && b.division <= 4 ? b.division : 0} : {})});
     }
   }
   return results;
@@ -1095,8 +1178,14 @@ function soundBuffer(voice, level) {
   const data = buffer.getChannelData(0);
   const base = {wood:855, classic:1320, soft:720, count:1010, ui:540}[voice];
   const smallDotPitch = {wood:.72, classic:.68, soft:.79};
-  const pitch = base * (level === 'accent' ? 1.36 : level === 'small' ? smallDotPitch[voice] : level === 'sub' ? .82 : 1);
-  const loudness = (ui ? .21 : .72) * (level === 'accent' ? 1.13 : level === 'small' ? .60 : level === 'sub' ? .45 : .9);
+  // Count-in timbres follow the selected voice; they have a recognizable
+  // higher/lower tone and a clearer first-beat accent, rather than a generic beep.
+  const countVariant = level === 'count' || level === 'count-accent';
+  const restVariant = level === 'rest';
+  const pitch = base * (level === 'accent' ? 1.36 : level === 'small' ? smallDotPitch[voice] : level === 'sub' ? .82 :
+    level === 'count-accent' ? 1.48 : countVariant ? 1.17 : restVariant ? .86 : 1);
+  const loudness = (ui ? .21 : .72) * (level === 'accent' ? 1.13 : level === 'small' ? .60 : level === 'sub' ? .45 :
+    level === 'count-accent' ? 1.04 : countVariant ? .77 : restVariant ? .53 : .9);
   let seed = 7, previousNoise = 0;
   for (let i = 0; i < data.length; i++) {
     const t = i/rate, w = 2*Math.PI*pitch*t;
@@ -1159,20 +1248,26 @@ function scheduler() {
     if (part === 0) {
       if (seqOn) { barMeter = seqBlock.meter; barLength = seqSpan(seqBlock); }
       else if (beat === 0) { barMeter = prefs.meter; barLength = beatsPerBar(); }
-      partsThisBeat = counting ? 1 : prefs.division;
-      beatLength = waiting && seqBlock.unit === 'seconds' ? 1 : 60/(seqOn ? seqBeatTempo(seqBlock, seqModifiers, seqCount) : prefs.bpm);
+      partsThisBeat = counting ? 1 : seqOn ? (seqBlock.division || prefs.division) : prefs.division;
+      const effectiveBpm = waiting && seqBlock.unit === 'seconds' ? 60 : (seqOn ? seqBeatTempo(seqBlock, seqModifiers, seqCount) : prefs.bpm);
+      beatLength = 60/effectiveBpm;
       const lead = leadBeats > 0;
       const eventData = {meter:barMeter, time:nextTime, count:counting, beat:lead ? 4-leadBeats : beat, total:lead ? 4 : barLength, duration:beatLength};
       if (seqOn) {
         eventData.seq = seqPlan[seqIdx].index;
+        eventData.bpm = effectiveBpm;
+        eventData.rit = seqModifiers.some(mod => mod.kind === 'rit') && !(waiting && seqBlock.unit === 'seconds');
+        eventData.timedRest = waiting && seqBlock.unit === 'seconds';
         eventData.prog = Math.min(1, (seqCount+1)/seqBlock.counts);
         eventData.info = '#' + (seqIdx+1) + ' · ' + (waiting ? 'rest ' + (seqCount+1) + ' of ' + seqBlock.counts + (seqBlock.unit === 'seconds' ? ' sec' : ' counts') : seqBlock.meter + ' · beat ' + (beat+1)) + (seqModifiers.some(mod => mod.kind === 'rit') ? ' · Rit ' + Math.round(seqBeatTempo(seqBlock,seqModifiers,seqCount)) + ' BPM' : seqBlock.bpm && !(waiting && seqBlock.unit === 'seconds') ? ' · ' + seqBlock.bpm + ' BPM' : '');
       }
       visualQueue.push(eventData);
     }
-    const level = part ? 'sub' : !counting && beat === 0 && prefs.accent ? 'accent' : 'main';
+    const countInBeat = leadBeats > 0;
+    const level = part ? 'sub' : countInBeat ? ((4-leadBeats) === 0 ? 'count-accent' : 'count') :
+      waiting ? 'rest' : beat === 0 && prefs.accent ? 'accent' : 'main';
     const smallDot = !counting && part === 0 && mainBeats[barMeter] && !mainBeats[barMeter].includes(beat);
-    clickAt(nextTime, counting ? 'count' : prefs.voice, smallDot ? 'small' : level, transportBus);
+    clickAt(nextTime, prefs.voice, smallDot ? 'small' : level, transportBus);
     nextTime += beatLength / partsThisBeat;
     part++;
     if (part === partsThisBeat) {
@@ -1415,7 +1510,8 @@ function seqBlockEl(b) {
     '<div class="sctrl"><div class="stepper"><button type="button" class="mini-btn smin" aria-label="Decrease duration">' + seqIcon('minus') + '</button><input class="scount" type="number" inputmode="numeric" min="1" max="' + (wait && b.unit === 'seconds' ? 600 : 128) + '" value="' + b.counts + '" aria-label="' + (wait && b.unit === 'seconds' ? 'Rest duration in seconds' : 'Duration in counts') + '"><button type="button" class="mini-btn splus" aria-label="Increase duration">' + seqIcon('plus') + '</button>' +
     (wait ? '<div class="select-wrap swaitwrap"><select class="swaitunit" aria-label="Rest in counts or seconds"><option value="counts"' + (b.unit !== 'seconds' ? ' selected' : '') + '>Counts</option><option value="seconds"' + (b.unit === 'seconds' ? ' selected' : '') + '>Seconds</option></select>' + seqIcon('chevron').replace('class="icon"','class="icon chevron"') + '</div>' : '<span class="slabel">counts</span>') +
     '<span class="sbars">' + seqBarsText(b) + '</span></div>' +
-    (wait && b.unit === 'seconds' ? '' : '<label class="sbpm"><span class="sbpm-title">Tempo</span><input class="sbpmin" type="number" inputmode="numeric" min="30" max="300" placeholder="' + prefs.bpm + '" value="' + (b.bpm || '') + '" aria-label="Tempo for this block, optional"> BPM</label>') + '</div></div>' +
+    (wait && b.unit === 'seconds' ? '' : '<label class="sbpm"><span class="sbpm-title">Tempo</span><input class="sbpmin" type="number" inputmode="numeric" min="30" max="300" placeholder="' + prefs.bpm + '" value="' + (b.bpm || '') + '" aria-label="Tempo for this block, optional"> BPM</label>') +
+    (wait ? '' : '<label class="sdivfield"><span>Subdivision</span><select class="sdivision" aria-label="Subdivision for this section">' + divisionOptions(b.meter,b.division || 0) + '</select></label>') + '</div></div>' +
     '<div class="sacts"><button type="button" class="mini-btn sdup" aria-label="Duplicate block">' + seqIcon('copy') + '</button><button type="button" class="mini-btn sdel" aria-label="Delete block">' + seqIcon('trash') + '</button></div>' +
     '';
   return li;
@@ -1482,6 +1578,9 @@ function jumpToSequenceBlock(rawIndex) {
   visualQueue.length = 0;
   nextTime = context.currentTime + .055;
   $('beatInfo').textContent = 'Jumping to block ' + (planIndex+1);
+  const targetEntry = seqPlan[planIndex];
+  showTempoValue(targetEntry.block.type === 'wait' && targetEntry.block.unit === 'seconds' ? 60 : seqBeatTempo(targetEntry.block,targetEntry.modifiers,0),
+    {live:true,rit:targetEntry.modifiers.some(mod => mod.kind === 'rit'),timedRest:targetEntry.block.type === 'wait' && targetEntry.block.unit === 'seconds'});
   markSeq(rawIndex,0);
   scheduler();
 }
@@ -1529,6 +1628,11 @@ seqUL.addEventListener('change', event => {
   if (t.classList.contains('modunit')) { block.holdUnit = t.value === 'seconds' ? 'seconds' : 'beats'; renderTrack(); seqSave(); }
   if (t.classList.contains('scount')) t.value = block.counts;
   if (t.classList.contains('sbpmin')) t.value = block.bpm || '';
+  if (t.classList.contains('sdivision') && block.type === 'play') {
+    block.division = clamp(Number(t.value) || 0,0,4);
+    seqSave();
+    showSeqToast(block.division ? 'Section subdivision: ' + subdivisionNames(block.meter)[block.division-1] : 'Section now uses session subdivision');
+  }
   if (t.classList.contains('swaitunit')) {
     if (phase !== 'idle') stop();
     block.unit = t.value === 'seconds' ? 'seconds' : 'counts';
@@ -1537,6 +1641,8 @@ seqUL.addEventListener('change', event => {
   }
   if (t.classList.contains('smeter')) {
     block.meter = t.value; li.querySelector('.sbars').textContent = seqBarsText(block);
+    const perSection = li.querySelector('.sdivision');
+    if (perSection) perSection.innerHTML = divisionOptions(block.meter,block.division || 0);
     renderTrack(); seqSave(); if (phase === 'idle') showIdle(); feedback();
   }
 });
@@ -1671,7 +1777,7 @@ seqUL.addEventListener('pointerdown', event => {
 function addBlock(type) {
   if (phase !== 'idle') stop();
   const play = type === 'play';
-  seqList.push({id:seqSeed++, type, meter:'4/4', counts:play ? 16 : 4, ...(play ? {} : {unit:'counts'}), bpm:0});
+  seqList.push({id:seqSeed++, type, meter:'4/4', counts:play ? 16 : 4, ...(play ? {division:0} : {unit:'counts'}), bpm:0});
   seqChanged(); feedback();
   seqUL.lastElementChild.scrollIntoView({block:'nearest', behavior:reduceMotion.matches ? 'auto' : 'smooth'});
 }
@@ -1766,7 +1872,7 @@ $('sequenceSaveForm').onsubmit = e => {
   if (existing && !confirm('Replace the existing saved sequence "' + existing.name + '"?')) return;
   if (!existing && namedSequences.length >= namedMax) { $('storageMessage').textContent = 'Limit of 40 saved sequences reached. Delete one to save another.'; return; }
   const previous = namedSequences.map(x => ({...x}));
-  const entry = {name,loop:seqLoop,list:seqList.map(b => b.type === 'mod' ? {type:'mod',kind:b.kind,strength:b.strength,curve:b.curve,hold:b.hold,holdUnit:b.holdUnit} : {type:b.type,meter:b.meter,counts:b.counts,...(b.type==='wait'?{unit:b.unit==='seconds'?'seconds':'counts'}:{}),bpm:b.bpm}),savedAt:Date.now()};
+  const entry = {name,loop:seqLoop,list:seqList.map(b => b.type === 'mod' ? {type:'mod',kind:b.kind,strength:b.strength,curve:b.curve,hold:b.hold,holdUnit:b.holdUnit} : {type:b.type,meter:b.meter,counts:b.counts,...(b.type==='wait'?{unit:b.unit==='seconds'?'seconds':'counts'}:{division:b.division || 0}),bpm:b.bpm}),savedAt:Date.now()};
   if (existing) Object.assign(existing,entry); else namedSequences.unshift(entry);
   if (persistNamedSequences()) { activeSequenceName = name; seqSave(); closeSequenceDialog(); showSeqToast('Saved “' + name + '”'); feedback(); }
   else namedSequences = previous;
@@ -1789,7 +1895,7 @@ function showSeqToast(message, isError = false) {
 function portableSequenceBlocks() {
   return seqList.map(b => b.type === 'mod' ?
     {type:'mod',kind:b.kind,strength:b.strength,curve:b.curve,hold:b.hold,holdUnit:b.holdUnit} :
-    {type:b.type,meter:b.meter,counts:b.counts,...(b.type === 'wait' ? {unit:b.unit === 'seconds' ? 'seconds' : 'counts'} : {}),bpm:b.bpm});
+    {type:b.type,meter:b.meter,counts:b.counts,...(b.type === 'wait' ? {unit:b.unit === 'seconds' ? 'seconds' : 'counts'} : {division:b.division || 0}),bpm:b.bpm});
 }
 function downloadSequenceJSON() {
   if (!seqList.some(b => b.type !== 'mod')) {
