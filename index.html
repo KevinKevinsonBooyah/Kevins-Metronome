@@ -966,6 +966,51 @@ body.performance-active{overflow:hidden!important}
 .practice-accent-editor .accent-field-label span{font-weight:520;color:var(--muted)}
 [data-theme=dark] .practice-accent-editor{background:#2b2c3c;border-color:#696787}
 @media(max-width:650px){.performance-main{align-content:center;grid-template-rows:auto auto;gap:3.5vh;flex:1;min-height:0}.performance-kevin{height:min(30vh,235px);max-height:30vh;width:min(55vw,245px);margin:0 auto}.performance-kevin svg{height:100%;max-height:100%;width:100%}.performance-screen{justify-content:space-between}.performance-data{gap:9px}.performance-bpm{font-size:clamp(5.4rem,24vw,8rem)}}
+
+
+/* v25 — timeline checkpoints are distinct from Section/Rest modifier stacks. */
+.seq-track .track-checkpoint{
+  flex:0 0 auto;align-self:flex-end;min-width:100px;max-width:155px;min-height:49px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  padding:6px 9px;background:#e7f5ff;color:#235579;border:1.5px dashed #6289ae;
+  border-radius:11px;box-shadow:0 2px 0 #5680a34d;cursor:pointer;
+  text-align:center;overflow-wrap:anywhere;transition:background .16s,border-color .16s;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+.seq-track .track-checkpoint .checkpoint-flag{font-size:1.08rem;line-height:1}
+.seq-track .track-checkpoint .checkpoint-name{font-weight:820;font-size:.81rem;line-height:1.15;max-width:100%;overflow-wrap:anywhere}
+.seq-track .track-checkpoint .checkpoint-caption{font-size:.61rem;font-weight:760;line-height:1.1;letter-spacing:.04em;text-transform:uppercase;opacity:.7}
+.seq-track .track-checkpoint:hover{background:#d9effe;border-color:#3d79b2}
+.seq-track .track-checkpoint:focus-visible{outline:2px solid #7186dc;outline-offset:3px}
+.seq-track .track-checkpoint:focus:not(:focus-visible){outline:none}
+.seq-track .checkpoint-end{opacity:.75;cursor:default;box-shadow:none}
+[data-theme=dark] .seq-track .track-checkpoint{background:#263b4b;color:#d9f0ff;border-color:#6c9bbc;box-shadow:0 2px 0 #0d1826}
+[data-theme=dark] .seq-track .track-checkpoint:hover{background:#2d4a60;border-color:#85b3d1}
+[data-theme=dark] .seq-track .checkpoint-end{box-shadow:none}
+.seq-list .sblk.mod:has(+ .sblk.marker)::after{content:none!important}
+.seq-list .sblk.mod + .sblk.marker::before{content:none!important}
+@media(max-width:720px),(hover:none) and (pointer:coarse) and (orientation:landscape) and (max-height:650px){
+  body[data-view=seq] .seq-track .track-checkpoint{
+    grid-column:1/-1;display:flex;flex-direction:row;justify-content:center;align-items:center;
+    gap:9px;width:100%;max-width:none;min-width:0;min-height:38px;
+    padding:7px 10px;border-radius:9px;
+  }
+  body[data-view=seq] .seq-track .track-checkpoint .checkpoint-name{font-size:.84rem;line-height:1.2}
+  body[data-view=seq] .seq-track .track-checkpoint .checkpoint-caption{margin-left:auto;font-size:.62rem}
+}
+/* v25 — genuinely larger, full-body Kevin in phone Full Screen. */
+@media(max-width:650px){
+  .performance-screen{padding:clamp(10px,1.8vh,18px)}
+  .performance-main{grid-template-columns:1fr;grid-template-rows:auto auto;align-content:center;gap:clamp(6px,1.2vh,14px);min-height:0}
+  .performance-data{gap:clamp(5px,1vh,10px)}
+  .performance-bpm{font-size:clamp(5.5rem,24vw,8.5rem)}
+  .performance-kevin{height:min(43dvh,395px);max-height:none;width:min(84vw,405px);max-width:100%;margin:0 auto;align-self:center}
+  .performance-kevin svg{height:100%;width:100%;max-height:100%;object-fit:contain}
+}
+@media(max-width:650px) and (max-height:670px){
+  .performance-kevin{height:min(35dvh,240px)}
+  .performance-bpm{font-size:clamp(4.6rem,20vw,7.2rem)}
+}
 </style>
 </head>
 <body>
@@ -998,7 +1043,7 @@ body.performance-active{overflow:hidden!important}
 <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M4 17v3h16v-3"/></symbol><symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4m-4 4 4-4 4 4M4 17v3h16v-3"/></symbol></defs></svg>
 <header><div class="wrap topbar">
 <div class="brand"><span class="logo" aria-hidden="true"><svg viewBox="0 0 60 60" fill="none" stroke="white" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"><path d="M31 9C15 7 4 20 6 33c2 12 15 18 29 15 14-3 20-13 17-23-2-6-12-15-21-18M16 29q11 21 25-2"/><g fill="white" stroke="none"><circle cx="22" cy="23" r="2.7"/><circle cx="35" cy="21" r="2.7"/></g></svg></span><span>Kevin’s <em>Metronome</em></span></div>
-<div class="top-actions"><button type="button" class="audio-btn performance-open" id="performanceOpen" title="Open distraction-free Performance Mode" aria-label="Open Performance Mode"><span aria-hidden="true">⛶</span><span class="performance-open-label">Performance</span></button><button class="audio-btn" id="theme" type="button" aria-label="Dark mode" aria-pressed="false"><span aria-hidden="true">☾</span><span>Dark mode</span></button></div>
+<div class="top-actions"><button type="button" class="audio-btn performance-open" id="performanceOpen" title="Open Kevin's Full Screen" aria-label="Open Kevin's Full Screen"><span aria-hidden="true">⛶</span><span class="performance-open-label">Full Screen</span></button><button class="audio-btn" id="theme" type="button" aria-label="Dark mode" aria-pressed="false"><span aria-hidden="true">☾</span><span>Dark mode</span></button></div>
 </div></header>
 <main class="wrap">
 <div class="heading-row"><h1 id="viewTitle">Metronome</h1><div class="view-toggle" role="group" aria-label="Mode"><button type="button" id="tabPractice" aria-pressed="true"><svg class="icon" aria-hidden="true"><use href="#i-speed"/></svg><span>Metronome</span></button><button type="button" id="tabSeq" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-seq"/></svg><span>Sequence</span></button></div></div>
@@ -1072,7 +1117,7 @@ body.performance-active{overflow:hidden!important}
 <button type="button" class="seq-head-button" id="redoSequence" disabled title="Redo (Ctrl+Y or Ctrl+Shift+Z)" aria-label="Redo last sequence change"><svg class="icon" aria-hidden="true"><use href="#i-redo"/></svg><span>Redo</span></button>
 </div></div>
 <span id="seqSummary" class="seq-sum"></span></div>
-<div id="seqTrack" class="seq-track" aria-label="Sequence overview. Click a section or rest to jump to it."></div>
+<div id="seqTrack" class="seq-track" aria-label="Sequence overview. Select a section, rest, or checkpoint to jump there."></div>
 <ol id="seqList" class="seq-list" aria-label="Sequence blocks, played in order"></ol>
 <div class="seq-add"><button type="button" class="action tap" id="addSection"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg><span>Add section</span></button><button type="button" class="action tap" id="addWait"><svg class="icon" aria-hidden="true"><use href="#i-wait"/></svg><span>Add rest</span></button><button type="button" class="action tap" id="addMarker"><span aria-hidden="true">⚑</span><span>Add marker</span></button></div>
 <div class="mod-add" aria-label="Add modifiers"><span class="mod-add-label">Modifiers <span>· stack above and affect the same next block</span></span><div class="mod-add-buttons"><button type="button" class="storage-button" id="addRit">↘ Add Rit.</button><button type="button" class="storage-button" id="addFermata">𝄐 Add Fermata</button><button type="button" class="storage-button" id="addAccel">↗ Add Accel.</button><button type="button" class="storage-button" id="addRepeat">⟳ Add Repeat</button></div></div>
@@ -1096,8 +1141,8 @@ body.performance-active{overflow:hidden!important}
 <div id="seqToast" class="seq-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
 <div class="shortcuts" aria-label="Keyboard shortcuts"><span><svg class="icon" aria-hidden="true"><use href="#i-keys"/></svg>Shortcuts</span><span><kbd>Space</kbd> Start / stop</span><span><kbd>T</kbd> Tap tempo</span><span><kbd>↑</kbd><kbd>↓</kbd> Adjust tempo</span></div>
 </main>
-<section class="performance-screen" id="performanceScreen" role="dialog" aria-modal="true" aria-label="Performance Mode" hidden>
- <header class="performance-header"><div class="performance-brand">⏱ Kevin's <strong>Performance Mode</strong></div><button type="button" id="performanceExit" class="performance-button secondary">✕ Exit</button></header>
+<section class="performance-screen" id="performanceScreen" role="dialog" aria-modal="true" aria-label="Kevin's Full Screen" hidden>
+ <header class="performance-header"><div class="performance-brand">⏱ Kevin's <strong>Full Screen</strong></div><button type="button" id="performanceExit" class="performance-button secondary">✕ Exit</button></header>
  <div class="performance-main">
    <div class="performance-data"><span class="performance-eyebrow" id="performanceStatus">Ready to practice</span><div id="performanceBpm" class="performance-bpm">120<span>BPM</span></div><div id="performanceMeter" class="performance-meter">4/4 · Metronome</div><div id="performanceBeatText" class="performance-beat-text">Press Play to begin</div><div class="performance-dots" id="performanceDots" aria-hidden="true"></div><div id="performanceNext" class="performance-next">Stay with the beat.</div></div>
    <div class="performance-kevin" aria-hidden="true" id="performanceKevin"></div>
@@ -1897,9 +1942,10 @@ function renderSummary() {
   $('seqSummary').textContent = runnable.length ? runnable.length + (runnable.length === 1 ? ' block' : ' blocks') + (mods ? ' + ' + mods + (mods === 1 ? ' modifier' : ' modifiers') : '') + (markersCount ? ' · '+markersCount+' marker'+(markersCount===1?'':'s') : '') + ' · ' + total + ' counts' + (timedWait ? ' + ' + timedWait + 's of timed rest' : '') + ' · ' + seqTime(seconds) : 'Add a Section or Rest to begin';
 }
 function renderTrack() {
-  // Modifiers render inside their target tile, stacked vertically in play order.
-  // The entire tile remains one click target for skipping to that playable block.
+  // Checkpoints are *standalone timeline stops*. Only modifiers belong inside
+  // a Section/Rest tile. Checkpoints do not consume beats or change audio timing.
   const runnable = plannedSequence();
+  const byIndex = new Map(runnable.map(entry => [entry.index, entry]));
   const modCaption = mod => ({
     rit:'Ritardando: slow this block by ' + mod.strength + '%',
     fermata:'Fermata: hold ' + mod.hold + ' ' + mod.holdUnit + ' after the block',
@@ -1908,20 +1954,34 @@ function renderTrack() {
   }[mod.kind] || 'Modifier');
   const modLabel = mod => ({rit:'Rit.',fermata:'𝄐 Fermata',accel:'Accel.',repeat:'⟳ '+mod.times+'×'}[mod.kind] || 'Modifier');
   const oldIds = new Set([...$('seqTrack').querySelectorAll('.track-item')].map(el => el.dataset.blockId));
-  const tiles = runnable.map(({block:b,index,modifiers:mods,markers},position) => {
-    const title = b.type === 'wait' ? 'Rest ' + b.counts + ' ' + (b.unit === 'seconds' ? 'seconds' : 'counts') : b.meter + ' · ' + b.counts + ' counts';
+  const tiles = [];
+  let position = 0;
+  seqList.forEach((b,index) => {
+    if (b.type === 'mod') return;
+    if (b.type === 'marker') {
+      const next = runnable.find(entry => entry.index > index);
+      const name = escapeText(b.name || 'Marker');
+      const label = 'Checkpoint ' + (b.name || 'Marker');
+      // An ending checkpoint remains visible but has no playable block to seek to.
+      tiles.push(next ?
+        '<button type="button" class="track-checkpoint" data-marker-id="' + b.id + '" data-seq-index="' + next.index + '" aria-label="Jump to ' + escapeText(label) + '" title="Jump to checkpoint: ' + name + '"><span class="checkpoint-flag" aria-hidden="true">⚑</span><span class="checkpoint-name">' + name + '</span><span class="checkpoint-caption">Checkpoint</span></button>' :
+        '<span class="track-checkpoint checkpoint-end" role="note" title="Checkpoint at the end of the sequence"><span class="checkpoint-flag" aria-hidden="true">⚑</span><span class="checkpoint-name">' + name + '</span><span class="checkpoint-caption">End checkpoint</span></span>');
+      return;
+    }
+    const {block,modifiers:mods} = byIndex.get(index);
+    const title = block.type === 'wait' ? 'Rest ' + block.counts + ' ' + (block.unit === 'seconds' ? 'seconds' : 'counts') : block.meter + ' · ' + block.counts + ' counts';
     const description = mods.map(modCaption).join(', ');
-    const flags = markers.length ? '<span class="track-markers">'+ markers.map(m=>'<span class="track-marker">⚑ '+escapeText(m.name)+'</span>').join('') + '</span>' : '';
     const badges = mods.length ? '<span class="track-mods" aria-hidden="true">' + mods.map(mod =>
       '<span class="track-mod" title="' + modCaption(mod) + '">' + modLabel(mod) + '</span>').join('') + '</span>' : '';
-    const label = b.type === 'wait' ? 'Rest' : b.meter;
-    return '<button type="button" class="track-item' + (oldIds.has(String(b.id)) ? '' : ' track-new') + '" data-block-id="' + b.id + '" data-seq-index="' + index + '" style="--block-flex:' + Math.max(seqDuration(b,mods),1).toFixed(2) + '" aria-label="Jump to block ' + (position + 1) + ': ' + title + (mods.length ? ', ' + description : '') + '" title="Click to jump to ' + title + (mods.length ? ' · ' + description : '') + '">' +
-      flags + badges + '<span class="tseg ' + b.type + '"><i></i><span>' + label + '</span></span></button>';
+    const label = block.type === 'wait' ? 'Rest' : block.meter;
+    tiles.push('<button type="button" class="track-item' + (oldIds.has(String(block.id)) ? '' : ' track-new') + '" data-block-id="' + block.id + '" data-seq-index="' + index + '" style="--block-flex:' + Math.max(seqDuration(block,mods),1).toFixed(2) + '" aria-label="Jump to block ' + (++position) + ': ' + title + (mods.length ? ', ' + description : '') + '" title="Click to jump to ' + title + (mods.length ? ' · ' + description : '') + '">' +
+      badges + '<span class="tseg ' + block.type + '"><i></i><span>' + label + '</span></span></button>');
   });
+  // Unattached end-of-sequence modifiers still need an explanatory notice.
   const afterLast = runnable.length ? runnable[runnable.length-1].index+1 : 0;
-  const pending = seqList.slice(afterLast).filter(block => block.type === 'mod' || block.type === 'marker');
+  const pending = seqList.slice(afterLast).filter(block => block.type === 'mod');
   if (pending.length) tiles.push('<span class="track-pending-stack" title="Add a Section or Rest below to apply these modifiers">' +
-    pending.map(mod => '<span class="track-pending' + (mod.type === 'marker' ? ' marker-pending' : '') + '">' + (mod.type === 'marker' ? '⚑ '+escapeText(mod.name) : modLabel(mod)) + ' · pending</span>').join('') + '</span>');
+    pending.map(mod => '<span class="track-pending">' + modLabel(mod) + ' · pending</span>').join('') + '</span>');
   $('seqTrack').innerHTML = tiles.join('');
   $('seqTrack').hidden = !seqList.length;
   renderSummary();
@@ -2049,7 +2109,7 @@ function jumpToSequenceBlock(rawIndex) {
   scheduler();
 }
 $('seqTrack').addEventListener('click', event => {
-  const tile = event.target.closest('.track-item');
+  const tile = event.target.closest('.track-item, .track-checkpoint[data-seq-index]');
   if (tile) {
     jumpToSequenceBlock(Number(tile.dataset.seqIndex));
     if (event.detail > 0 && matchMedia('(hover: none), (pointer: coarse)').matches) tile.blur();
@@ -2129,15 +2189,21 @@ seqUL.addEventListener('focusin', event => { if (event.target.matches('input')) 
 function attachedRows(li) {
   if (li.classList.contains('mod') || li.classList.contains('marker')) return [li]; // modifiers may be reassigned individually
   const members = [li];
-  for (let prior = li.previousElementSibling; prior && (prior.classList.contains('mod') || prior.classList.contains('marker'));  prior = prior.previousElementSibling) members.unshift(prior);
+  for (let prior = li.previousElementSibling; prior && prior.classList.contains('mod'); prior = prior.previousElementSibling) members.unshift(prior);
   return members;
 }
 function sortableGroups(excluded = new Set()) {
   const groups = [], pending = [];
   for (const row of seqUL.querySelectorAll(':scope > .sblk')) {
     if (excluded.has(row)) continue;
+    if (row.classList.contains('marker')) {
+      // Checkpoints are independent stops; never bundle them with adjacent blocks.
+      if (pending.length) groups.push(pending.splice(0));
+      groups.push([row]);
+      continue;
+    }
     pending.push(row);
-    if (!row.classList.contains('mod') && !row.classList.contains('marker')) { groups.push(pending.splice(0)); }
+    if (!row.classList.contains('mod')) groups.push(pending.splice(0));
   }
   if (pending.length) groups.push(pending);
   return groups;
@@ -2486,7 +2552,7 @@ async function openPerformance() {
   performanceReturnFocus=document.activeElement;performanceOpened=true;
   $('performanceScreen').hidden=false;document.body.classList.add('performance-active');
   const original=$('kevin').ownerSVGElement;
-  if(!$('performanceKevin').firstChild && original){const svg=original.cloneNode(true);const img=svg.querySelector('#kevin');img?.removeAttribute('id');svg.querySelector('#ink')?.removeAttribute('id');img?.removeAttribute('filter');$('performanceKevin').append(svg);}
+  if(!$('performanceKevin').firstChild && original){const svg=original.cloneNode(true);if(matchMedia('(max-width:650px)').matches) svg.setAttribute('viewBox','38 0 214 245');const img=svg.querySelector('#kevin');img?.removeAttribute('id');svg.querySelector('#ink')?.removeAttribute('id');img?.removeAttribute('filter');$('performanceKevin').append(svg);}
   renderPerformanceIdle();
   $('performanceExit').focus();
   try{await $('performanceScreen').requestFullscreen?.({navigationUI:'hide'});}catch{/* iOS Safari and embedded browsers can use the overlay instead. */}
