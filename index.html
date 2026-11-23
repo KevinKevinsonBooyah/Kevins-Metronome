@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#f9f8f3">
-<meta name="description" content="Kevin’s metronome and sequence builder with per-section subdivisions, new musical modifiers, and customizable clicks.">
+<meta name="description" content="Kevin’s metronome and sequence builder with per-section subdivisions, swing and dropout modifiers, and customizable clicks.">
 <title>Kevin’s Metronome</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Crect x='1' y='1' width='58' height='58' rx='14' fill='%233c55e8'/%3E%3Cpath d='M29 11c-22 0-27 33-2 36 27 2 32-28 3-36M16 30q11 19 25-2' fill='none' stroke='white' stroke-width='4' stroke-linecap='round'/%3E%3Cg fill='white'%3E%3Ccircle cx='22' cy='24' r='2.6'/%3E%3Ccircle cx='35' cy='22' r='2.6'/%3E%3C/g%3E%3C/svg%3E">
 <style>
@@ -830,11 +830,36 @@ body[data-view=seq] .stage{min-height:219px}
 /* Extra modifiers fit on phones and wrap instead of squeezing their controls. */
 .mod-add-buttons{grid-template-columns:repeat(auto-fit,minmax(min(135px,100%),1fr));gap:8px}
 .mod-add-buttons .storage-button{white-space:normal;line-height:1.2}
-.mod-setting .modtempo{width:76px}
+.mod-setting :is(.modswing,.moddrop){width:60px}
 @media(max-width:720px){
   body[data-view=seq] .mod-add-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}
   body[data-view=seq] .sblk.mod .sctrl{gap:7px 9px}
 }
+
+/* v19: unified dark hover surfaces and dark, never-white depth shadows. */
+:root[data-theme=dark] :is(.action,.mini-btn,.audio-btn,.storage-button,.view-toggle,.sblk,.card){
+  box-shadow:2px 3px 0 #0b0c17;
+}
+:root[data-theme=dark] .card{box-shadow:4px 5px 0 #0b0c17}
+:root[data-theme=dark] :is(.action,.mini-btn,.audio-btn,.storage-button,.view-toggle button):hover{
+  box-shadow:2px 5px 0 #0b0c17!important;
+}
+:root[data-theme=dark] :is(.action.tap,.mini-btn,.audio-btn,.storage-button,.storage-button.secondary,.view-toggle button):hover{
+  background:#35364c!important;color:#f3f0ff;
+}
+:root[data-theme=dark] :is(.storage-file,.storage-file:hover){background:#423a62!important}
+:root[data-theme=dark] .action.start:hover{background:#4559d1!important;color:#fff}
+:root[data-theme=dark] .view-toggle button[aria-pressed=true]:hover{background:var(--blue)!important;color:white}
+:root[data-theme=dark] :is(.action,.mini-btn,.audio-btn,.storage-button):active{
+  box-shadow:0 1px 0 #0b0c17!important;
+}
+:root[data-theme=dark] .sblk:not(.drag):hover{box-shadow:3px 5px 0 #0b0c17!important}
+:root[data-theme=dark] .sblk.active:not(.drag),:root[data-theme=dark] .sblk.wait.active:not(.drag){
+  box-shadow:inset 0 0 0 2px #9b89d65a,2px 3px 0 #0b0c17!important;
+}
+:root[data-theme=dark] .track-item.active .tseg{box-shadow:inset 0 0 0 2px #9b86d7,0 2px 0 #0b0c17!important}
+:root[data-theme=dark] .tempo-tag:hover{box-shadow:2px 4px 0 #0b0c17!important}
+:root[data-theme=dark] :is(button,select,input):focus-visible{outline:2px solid #a695ef;outline-offset:2px}
 </style>
 </head>
 <body>
@@ -907,7 +932,7 @@ body[data-view=seq] .stage{min-height:219px}
 <div id="seqTrack" class="seq-track" aria-label="Sequence overview. Click a section or rest to jump to it."></div>
 <ol id="seqList" class="seq-list" aria-label="Sequence blocks, played in order"></ol>
 <div class="seq-add"><button type="button" class="action tap" id="addSection"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg><span>Add section</span></button><button type="button" class="action tap" id="addWait"><svg class="icon" aria-hidden="true"><use href="#i-wait"/></svg><span>Add rest</span></button></div>
-<div class="mod-add" aria-label="Add modifiers"><span class="mod-add-label">Modifiers <span>· stack above and affect the same next block</span></span><div class="mod-add-buttons"><button type="button" class="storage-button" id="addRit">↘ Add Rit.</button><button type="button" class="storage-button" id="addFermata">𝄐 Add Fermata</button><button type="button" class="storage-button" id="addAccel">↗ Add Accel.</button><button type="button" class="storage-button" id="addCresc">◢ Add Cresc.</button><button type="button" class="storage-button" id="addSubito">♩ Add Subito</button></div></div>
+<div class="mod-add" aria-label="Add modifiers"><span class="mod-add-label">Modifiers <span>· stack above and affect the same next block</span></span><div class="mod-add-buttons"><button type="button" class="storage-button" id="addRit">↘ Add Rit.</button><button type="button" class="storage-button" id="addFermata">𝄐 Add Fermata</button><button type="button" class="storage-button" id="addAccel">↗ Add Accel.</button><button type="button" class="storage-button" id="addSwing">♫ Add Swing</button><button type="button" class="storage-button" id="addDropout">◌ Add Dropout</button></div></div>
 </section>
 <dialog class="storage-dialog" id="sequenceDialog" aria-labelledby="sequenceDialogTitle">
  <div class="storage-dialog-head"><h2 id="sequenceDialogTitle">Save sequence</h2><button class="dialog-close" id="sequenceDialogClose" aria-label="Close saved sequences" type="button">×</button></div>
@@ -1139,7 +1164,9 @@ function validSequenceBlocks(raw) {
   for (const b of raw.slice(0,150)) {
     if (!b || typeof b !== 'object') continue;
     if (b.type === 'mod') {
-      results.push({id:results.length+1,type:'mod',kind:['rit','fermata','accel','cresc','subito'].includes(b.kind) ? b.kind : 'rit',strength:clamp(Math.round(Number(b.strength)) || 25,5,80),curve:b.curve === 'late' ? 'late' : 'linear',hold:clamp(Number(b.hold) || 2,.5,30),holdUnit:b.holdUnit === 'seconds' ? 'seconds' : 'beats',targetBpm:clamp(Math.round(Number(b.targetBpm)) || 140,30,300)});
+      // Cresc. and Subito from older saved sequences are retired, not repurposed.
+      if (!['rit','fermata','accel','swing','dropout'].includes(b.kind)) continue;
+      results.push({id:results.length+1,type:'mod',kind:b.kind,strength:clamp(Math.round(Number(b.strength)) || 25,5,80),curve:b.curve === 'late' ? 'late' : 'linear',hold:clamp(Number(b.hold) || 2,.5,30),holdUnit:b.holdUnit === 'seconds' ? 'seconds' : 'beats',swing:clamp(Math.round(Number(b.swing)) || 67,55,75),dropEvery:clamp(Math.round(Number(b.dropEvery)) || 2,2,8)});
     } else if ((b.type === 'play' || b.type === 'wait') && meterList.includes(b.meter) && Number.isInteger(b.counts) && b.counts >= 1 && b.counts <= (b.type === 'wait' && b.unit === 'seconds' ? 600 : 128)) {
       results.push({id:results.length+1,type:b.type,meter:b.meter,counts:b.counts,...(b.type === 'wait' ? {unit:b.unit === 'seconds' ? 'seconds' : 'counts'} : {}),bpm:Number.isInteger(b.bpm) && b.bpm >= 30 && b.bpm <= 300 ? b.bpm : 0,...(b.type === 'play' ? {division:Number.isInteger(b.division) && b.division >= 1 && b.division <= 4 ? b.division : 0} : {})});
     }
@@ -1161,7 +1188,7 @@ function plannedSequence() {
 }
 function modifierTarget(index) { return seqList.slice(index+1).find(block => block.type !== 'mod') || null; }
 function seqBeatTempo(block, modifiers = [], countIndex = 0) {
-  const base = [...modifiers].reverse().find(mod => mod.kind === 'subito')?.targetBpm || block.bpm || prefs.bpm;
+  const base = block.bpm || prefs.bpm;
   if (block.type === 'wait' && block.unit === 'seconds') return base;
   const ratio = block.counts <= 1 ? 1 : countIndex/(block.counts-1);
   const factor = modifiers.reduce((factor,mod) => {
@@ -1171,16 +1198,16 @@ function seqBeatTempo(block, modifiers = [], countIndex = 0) {
   },1);
   return clamp(base*factor,20,300);
 }
-// Cresc. only changes the gain of this block's original samples.
-function crescendoVolume(block, modifiers, countIndex) {
-  if (!modifiers.some(mod => mod.kind === 'cresc')) return 1;
-  const ratio = block.counts <= 1 ? 1 : countIndex/(block.counts-1);
-  return modifiers.filter(mod => mod.kind === 'cresc').reduce((gain,mod) =>
-    gain * (1-(mod.strength/100)*(1-ratio)),1);
+// Swing divides each beat into unequal long-short halves (2 or 4 subdivisions).
+// Dropout keeps the clock running but makes every Nth whole beat silent.
+function swingFor(block, modifiers) {
+  return block.type === 'play' ? modifiers.find(mod => mod.kind === 'swing') : null;
+}
+function isDroppedBeat(block, modifiers, countIndex) {
+  return block.type === 'play' && modifiers.some(mod => mod.kind === 'dropout' && (countIndex+1) % mod.dropEvery === 0);
 }
 function sequenceControlsTempo(entry) {
-  return !!entry && !(entry.block.type === 'wait' && entry.block.unit === 'seconds') &&
-    (!!entry.block.bpm || entry.modifiers.some(mod => mod.kind === 'subito'));
+  return !!entry && !(entry.block.type === 'wait' && entry.block.unit === 'seconds') && !!entry.block.bpm;
 }
 function fermataExtra(block, modifiers = []) {
   // Fermatas add their holds. Beat-based holds use the ending (ritarded) tempo.
@@ -1342,7 +1369,9 @@ function scheduler() {
     if (part === 0) {
       if (seqOn) { barMeter = seqBlock.meter; barLength = seqSpan(seqBlock); }
       else if (beat === 0) { barMeter = prefs.meter; barLength = beatsPerBar(); }
-      partsThisBeat = counting ? 1 : seqOn ? (seqBlock.division || prefs.division) : prefs.division;
+      const chosenSubdivision = counting ? 1 : seqOn ? (seqBlock.division || prefs.division) : prefs.division;
+      // Swing supplies an audible offbeat even when the section is set to quarters.
+      partsThisBeat = seqOn && !counting && swingFor(seqBlock,seqModifiers) ? (chosenSubdivision === 4 ? 4 : 2) : chosenSubdivision;
       const effectiveBpm = waiting && seqBlock.unit === 'seconds' ? 60 : (seqOn ? seqBeatTempo(seqBlock, seqModifiers, seqCount) : prefs.bpm);
       // Count-ins and timed rests remain in real seconds/quarter-note beats.
       // Active /8 Sections click each eighth note at twice the /4 pulse rate.
@@ -1364,11 +1393,16 @@ function scheduler() {
     const level = part ? 'sub' : countInBeat ? ((4-leadBeats) === 0 ? 'count-accent' : 'count') :
       waiting ? 'rest' : beat === 0 && prefs.accent ? 'accent' : 'main';
     const smallDot = !counting && mainBeats[barMeter] && !mainBeats[barMeter].includes(beat);
-    if (!(prefs.silentSmall && smallDot)) {
-      const gain = seqOn ? crescendoVolume(seqBlock,seqModifiers,seqCount) : 1;
-      clickAt(nextTime, prefs.voice, smallDot && part === 0 ? 'small' : level, transportBus, gain);
+    const silentByDropout = seqOn && !counting && isDroppedBeat(seqBlock,seqModifiers,seqCount);
+    if (!(prefs.silentSmall && smallDot) && !silentByDropout) {
+      clickAt(nextTime, prefs.voice, smallDot && part === 0 ? 'small' : level, transportBus);
     }
-    nextTime += beatLength / partsThisBeat;
+    const swing = seqOn && !counting ? swingFor(seqBlock,seqModifiers) : null;
+    // With 4 subdivisions, swing each pair of sixteenths within half a beat.
+    // Two subdivisions swing the usual eighth-note pair within the full beat.
+    nextTime += swing && partsThisBeat % 2 === 0
+      ? beatLength / (partsThisBeat/2) * (part % 2 === 0 ? swing.swing/100 : 1-swing.swing/100)
+      : beatLength / partsThisBeat;
     part++;
     if (part === partsThisBeat) {
       part = 0;
@@ -1553,10 +1587,10 @@ function renderTrack() {
     rit:'Ritardando: slow this block by ' + mod.strength + '%',
     fermata:'Fermata: hold ' + mod.hold + ' ' + mod.holdUnit + ' after the block',
     accel:'Accelerando: speed up this block by ' + mod.strength + '%',
-    cresc:'Crescendo: rise from ' + (100-mod.strength) + '% volume to normal',
-    subito:'Subito: set this block to ' + mod.targetBpm + ' BPM'
+    swing:'Swing: first subdivision lasts ' + mod.swing + '% of each pair',
+    dropout:'Dropout: silence every ' + mod.dropEvery + (mod.dropEvery === 2 ? 'nd' : mod.dropEvery === 3 ? 'rd' : 'th') + ' beat'
   }[mod.kind] || 'Modifier');
-  const modLabel = mod => ({rit:'Rit.',fermata:'𝄐 Fermata',accel:'Accel.',cresc:'Cresc.',subito:'♩ ' + mod.targetBpm}[mod.kind] || 'Modifier');
+  const modLabel = mod => ({rit:'Rit.',fermata:'𝄐 Fermata',accel:'Accel.',swing:'♫ ' + mod.swing + '%',dropout:'◌ /' + mod.dropEvery}[mod.kind] || 'Modifier');
   const oldIds = new Set([...$('seqTrack').querySelectorAll('.track-item')].map(el => el.dataset.blockId));
   const tiles = runnable.map(({block:b,index,modifiers:mods},position) => {
     const title = b.type === 'wait' ? 'Rest ' + b.counts + ' ' + (b.unit === 'seconds' ? 'seconds' : 'counts') : b.meter + ' · ' + b.counts + ' counts';
@@ -1585,17 +1619,19 @@ function seqBlockEl(b) {
     const li = document.createElement('li');
     li.className = 'sblk mod' + (!modifierTarget(seqList.indexOf(b)) ? ' mod-pending' : ''); li.dataset.id = b.id;
     const pending = !modifierTarget(seqList.indexOf(b));
-    const tonal = b.kind === 'rit' || b.kind === 'accel' || b.kind === 'cresc';
-    const name = {rit:'↘ Rit.',fermata:'𝄐 Fermata',accel:'↗ Accel.',cresc:'◢ Cresc.',subito:'♩ Subito'}[b.kind] || 'Modifier';
-    const hint = {rit:'Gradually slows the next block.',fermata:'Silent hold after the next block.',accel:'Gradually speeds up the next block.',cresc:'Fades in to normal volume.',subito:'Sets the next block’s tempo instantly.'}[b.kind];
+    const tonal = b.kind === 'rit' || b.kind === 'accel';
+    const name = {rit:'↘ Rit.',fermata:'𝄐 Fermata',accel:'↗ Accel.',swing:'♫ Swing',dropout:'◌ Dropout'}[b.kind] || 'Modifier';
+    const hint = {rit:'Gradually slows the next block.',fermata:'Silent hold after the next block.',accel:'Gradually speeds up the next block.',swing:'Alternates long and short subdivisions in the next Section.',dropout:'Every Nth beat in the next Section goes silent; timing stays unchanged.'}[b.kind];
     const controls = tonal ?
       '<label class="mod-setting">' + (b.kind === 'rit' ? 'Slow by' : b.kind === 'accel' ? 'Speed by' : 'Soften by') +
       ' <input class="modstrength" type="number" inputmode="numeric" min="5" max="80" step="5" value="' + b.strength + '" aria-label="Modifier strength percentage">%</label>' +
-      (b.kind === 'cresc' ? '' : '<label class="mod-setting">Curve <select class="modcurve" aria-label="Tempo change curve"><option value="linear"' + (b.curve === 'linear' ? ' selected' : '') + '>Even</option><option value="late"' + (b.curve === 'late' ? ' selected' : '') + '>Late</option></select></label>') :
+      '<label class="mod-setting">Curve <select class="modcurve" aria-label="Tempo change curve"><option value="linear"' + (b.curve === 'linear' ? ' selected' : '') + '>Even</option><option value="late"' + (b.curve === 'late' ? ' selected' : '') + '>Late</option></select></label>' :
       b.kind === 'fermata' ?
         '<label class="mod-setting">Hold <input class="modhold" type="number" min="0.5" max="30" step="0.5" inputmode="decimal" value="' + b.hold + '" aria-label="Fermata hold duration"></label>' +
         '<label class="mod-setting"><select class="modunit" aria-label="Fermata duration unit"><option value="beats"' + (b.holdUnit === 'beats' ? ' selected' : '') + '>beats</option><option value="seconds"' + (b.holdUnit === 'seconds' ? ' selected' : '') + '>seconds</option></select></label>' :
-        '<label class="mod-setting">BPM <input class="modtempo" type="number" min="30" max="300" step="1" inputmode="numeric" value="' + b.targetBpm + '" aria-label="Subito tempo BPM"></label>';
+      b.kind === 'swing' ?
+        '<label class="mod-setting">Long note <input class="modswing" type="number" inputmode="numeric" min="55" max="75" step="1" value="' + b.swing + '" aria-label="Swing percentage of long subdivision">%</label>' :
+        '<label class="mod-setting">Every <input class="moddrop" type="number" inputmode="numeric" min="2" max="8" step="1" value="' + b.dropEvery + '" aria-label="Dropout interval in beats"> beats</label>';
     li.innerHTML = '<button type="button" class="grip" aria-label="Drag modifier to the position before a section or rest">' + seqIcon('grip') + '</button>' +
       '<div class="sbody"><div class="shead"><span class="skind">' + name + '</span></div>' +
       '<div class="sctrl">' + controls + '<span class="mod-hint">' + (pending ? 'Add a Section or Rest below to apply this modifier.' : hint) + '</span></div></div>' +
@@ -1723,7 +1759,8 @@ seqUL.addEventListener('input', event => {
   const [li, block] = row, t = event.target;
   if (t.classList.contains('modstrength') && t.value !== '') { block.strength = clamp(Math.round(t.valueAsNumber) || 25,5,80); renderTrack(); seqSave(); }
   if (t.classList.contains('modhold') && t.value !== '') { block.hold = clamp(t.valueAsNumber || 2,.5,30); renderTrack(); seqSave(); }
-  if (t.classList.contains('modtempo') && t.value !== '') { block.targetBpm = clamp(Math.round(t.valueAsNumber) || 140,30,300); renderTrack(); seqSave(); }
+  if (t.classList.contains('modswing') && t.value !== '') { block.swing = clamp(Math.round(t.valueAsNumber) || 67,55,75); renderTrack(); seqSave(); }
+  if (t.classList.contains('moddrop') && t.value !== '') { block.dropEvery = clamp(Math.round(t.valueAsNumber) || 2,2,8); renderTrack(); seqSave(); }
   if (t.classList.contains('scount') && t.value !== '') setCounts(li, block, t.valueAsNumber);
   if (t.classList.contains('sbpmin')) { block.bpm = t.value === '' ? 0 : clamp(Math.round(t.valueAsNumber) || 0, 30, 300); renderSummary(); seqSave(); }
 });
@@ -1732,7 +1769,8 @@ seqUL.addEventListener('change', event => {
   const [li, block] = row, t = event.target;
   if (t.classList.contains('modstrength')) t.value = block.strength;
   if (t.classList.contains('modhold')) t.value = block.hold;
-  if (t.classList.contains('modtempo')) t.value = block.targetBpm;
+  if (t.classList.contains('modswing')) t.value = block.swing;
+  if (t.classList.contains('moddrop')) t.value = block.dropEvery;
   if (t.classList.contains('modcurve')) { block.curve = t.value === 'late' ? 'late' : 'linear'; renderTrack(); seqSave(); }
   if (t.classList.contains('modunit')) { block.holdUnit = t.value === 'seconds' ? 'seconds' : 'beats'; renderTrack(); seqSave(); }
   if (t.classList.contains('scount')) t.value = block.counts;
@@ -1894,7 +1932,7 @@ function addBlock(type) {
 function addModifier(kind) {
   if (phase !== 'idle') stop();
   report('');
-  seqList.push({id:seqSeed++,type:'mod',kind,strength:25,curve:'linear',hold:2,holdUnit:'beats',targetBpm:140});
+  seqList.push({id:seqSeed++,type:'mod',kind,strength:25,curve:'linear',hold:2,holdUnit:'beats',swing:67,dropEvery:2});
   seqChanged(); feedback();
   seqUL.lastElementChild.scrollIntoView({block:'nearest',behavior:reduceMotion.matches ? 'auto' : 'smooth'});
 }
@@ -1981,7 +2019,7 @@ $('sequenceSaveForm').onsubmit = e => {
   if (existing && !confirm('Replace the existing saved sequence "' + existing.name + '"?')) return;
   if (!existing && namedSequences.length >= namedMax) { $('storageMessage').textContent = 'Limit of 40 saved sequences reached. Delete one to save another.'; return; }
   const previous = namedSequences.map(x => ({...x}));
-  const entry = {name,loop:seqLoop,list:seqList.map(b => b.type === 'mod' ? {type:'mod',kind:b.kind,strength:b.strength,curve:b.curve,hold:b.hold,holdUnit:b.holdUnit} : {type:b.type,meter:b.meter,counts:b.counts,...(b.type==='wait'?{unit:b.unit==='seconds'?'seconds':'counts'}:{division:b.division || 0}),bpm:b.bpm}),savedAt:Date.now()};
+  const entry = {name,loop:seqLoop,list:seqList.map(b => b.type === 'mod' ? {type:'mod',kind:b.kind,strength:b.strength,curve:b.curve,hold:b.hold,holdUnit:b.holdUnit,swing:b.swing,dropEvery:b.dropEvery} : {type:b.type,meter:b.meter,counts:b.counts,...(b.type==='wait'?{unit:b.unit==='seconds'?'seconds':'counts'}:{division:b.division || 0}),bpm:b.bpm}),savedAt:Date.now()};
   if (existing) Object.assign(existing,entry); else namedSequences.unshift(entry);
   if (persistNamedSequences()) { activeSequenceName = name; seqSave(); closeSequenceDialog(); showSeqToast('Saved “' + name + '”'); feedback(); }
   else namedSequences = previous;
@@ -2003,7 +2041,7 @@ function showSeqToast(message, isError = false) {
 }
 function portableSequenceBlocks() {
   return seqList.map(b => b.type === 'mod' ?
-    {type:'mod',kind:b.kind,strength:b.strength,curve:b.curve,hold:b.hold,holdUnit:b.holdUnit} :
+    {type:'mod',kind:b.kind,strength:b.strength,curve:b.curve,hold:b.hold,holdUnit:b.holdUnit,swing:b.swing,dropEvery:b.dropEvery} :
     {type:b.type,meter:b.meter,counts:b.counts,...(b.type === 'wait' ? {unit:b.unit === 'seconds' ? 'seconds' : 'counts'} : {division:b.division || 0}),bpm:b.bpm});
 }
 function downloadSequenceJSON() {
@@ -2033,7 +2071,8 @@ async function importSequenceJSON(file) {
     if (!Array.isArray(raw) || raw.length < 1 || raw.length > 150) throw Error('Expected 1–150 sequence blocks.');
     if (raw.some(b => !b || !['play','wait','mod'].includes(b.type))) throw Error('The sequence has an invalid block type.');
     const parsed = validSequenceBlocks(raw);
-    if (!parsed || parsed.length !== raw.length || !parsed.some(b => b.type !== 'mod')) throw Error('Some blocks have invalid settings.');
+    const removedRetired = raw.filter(b => b.type === 'mod' && ['cresc','subito'].includes(b.kind)).length;
+    if (!parsed || parsed.length !== raw.length - removedRetired || !parsed.some(b => b.type !== 'mod')) throw Error('Some blocks have invalid settings.');
     if (phase !== 'idle') stop();
     seqList = parsed;
     seqSeed = seqList.length + 1;
@@ -2041,7 +2080,7 @@ async function importSequenceJSON(file) {
     activeSequenceName = typeof data.name === 'string' && data.name.trim() ? data.name.trim().slice(0,60) : file.name.replace(/\.json$/i,'').slice(0,60);
     $('loopSequence').setAttribute('aria-checked', String(seqLoop));
     seqChanged();
-    showSeqToast('Imported “' + activeSequenceName + '”');
+    showSeqToast('Imported “' + activeSequenceName + '”' + (removedRetired ? ' · removed ' + removedRetired + ' retired modifier(s)' : ''));
     feedback();
   } catch (error) {
     showSeqToast('Could not import: ' + (error instanceof Error ? error.message : 'Invalid JSON'), true);
@@ -2060,8 +2099,8 @@ $('addWait').onclick = () => addBlock('wait');
 $('addRit').onclick = () => addModifier('rit');
 $('addFermata').onclick = () => addModifier('fermata');
 $('addAccel').onclick = () => addModifier('accel');
-$('addCresc').onclick = () => addModifier('cresc');
-$('addSubito').onclick = () => addModifier('subito');
+$('addSwing').onclick = () => addModifier('swing');
+$('addDropout').onclick = () => addModifier('dropout');
 function setView(next) {
   if (view === next) return;
   if (phase !== 'idle') stop();
