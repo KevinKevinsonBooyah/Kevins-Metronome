@@ -489,6 +489,61 @@ body[data-view=seq] .stage{min-height:219px}
   .mod-add-buttons{gap:8px}
   .mod-add-buttons .storage-button{min-height:38px;padding:5px;font-size:.79rem}
 }
+
+/* v8: slim modifiers with a visible purple wire to their own next block. */
+.seq-list{--mod-wire:#8d63d7}
+.sblk.mod{display:flex;align-items:center;min-height:43px;width:calc(100% - clamp(22px,7vw,92px));margin-left:clamp(12px,3vw,36px);padding:5px 8px 5px 3px;border-radius:9px;overflow:visible;gap:5px;box-shadow:1px 2px 0 var(--ink)}
+.sblk.mod .grip{align-self:center;flex:0 0 25px;width:25px;height:30px;min-height:30px;background:transparent}
+.sblk.mod .sbody{display:flex;flex:1 1 auto;align-items:center;flex-wrap:wrap;gap:4px 11px;min-width:0}
+.sblk.mod .shead,.sblk.mod .sctrl{display:flex;align-items:center;gap:4px 9px;flex-wrap:wrap;min-width:0}
+.sblk.mod .skind{font-size:.75rem;padding:2px 7px;box-shadow:none;transform:none}
+.sblk.mod .mod-setting{font-size:.74rem;gap:4px}
+.sblk.mod .mod-setting select,.sblk.mod .mod-setting input{font-size:.79rem;height:29px;min-height:29px;padding:3px 6px}
+.sblk.mod .mod-setting input[type=number]{width:56px}
+.sblk.mod .mod-setting select{max-width:105px;padding-right:17px}
+.sblk.mod .sacts{margin-left:auto;align-self:center}
+.sblk.mod .sacts .mini-btn{height:29px;width:29px}
+.sblk.mod .mod-hint{display:none}
+.sblk.mod:not(.mod-pending):not(.drag)::after{content:"";position:absolute;left:clamp(24px,3vw,37px);top:calc(100% + 1px);height:calc(var(--mod-gap,12px) + 3px);width:3px;background:var(--mod-wire);border-radius:8px;z-index:3;pointer-events:none;box-shadow:0 0 0 1px #ffffff52}
+.sblk.mod:not(.mod-pending):not(.drag) + .sblk:not(.mod)::before{content:"";position:absolute;top:-4px;left:calc(clamp(12px,3vw,36px) + clamp(24px,3vw,37px) - 4px);width:11px;height:7px;border-radius:5px;background:#8d63d7;z-index:4;pointer-events:none}
+.seq-list:has(.sblk.mod){--mod-gap:12px}
+.sblk.mod.mod-pending{border-style:dashed}
+[data-theme=dark] .sblk.mod{box-shadow:1px 2px 0 #08090d}
+/* Clickable overview groups. Purple modifier labels are attached to their targets. */
+.seq-track{display:flex;align-items:flex-end;column-gap:6px;overflow-x:auto;overflow-y:hidden;padding:35px 2px 15px;row-gap:30px}
+.track-item{position:relative;display:block;flex:var(--block-flex) 1 0;min-width:92px;height:49px;margin:0;padding:0;overflow:visible;cursor:pointer;isolation:isolate;touch-action:manipulation;--track-ink:#7460ae}
+.track-item .tseg{width:100%;height:100%;min-width:0;display:grid;place-items:center;padding:3px 5px;font-size:1.06rem;transition:background .12s,box-shadow .12s}
+.track-item:hover .tseg{box-shadow:inset 0 0 0 2px #8b84cb}
+.track-item:focus-visible{outline:3px solid #7460ae;outline-offset:4px;border-radius:7px}
+.track-item .track-mod{position:absolute;z-index:2;bottom:calc(100% + 11px);left:50%;transform:translateX(-50%);display:grid;place-items:center;min-width:75px;max-width:calc(100% + 10px);min-height:21px;padding:2px 5px;border:1.5px solid #7460ae;border-radius:5px;background:#efeaff;color:#453273;font:800 .78rem/1.1 ui-monospace,Consolas,monospace;text-align:center;white-space:normal;overflow:visible;overflow-wrap:break-word;box-shadow:0 1px 0 #5c4c91}
+.track-item .track-mod::before{content:"";position:absolute;top:100%;left:50%;width:2px;height:9px;background:#8d63d7;transform:translateX(-50%)}
+.track-item .track-mod::after{content:"";position:absolute;top:calc(100% + 7px);left:50%;width:6px;height:6px;border-bottom:2px solid #8d63d7;border-right:2px solid #8d63d7;transform:translateX(-50%) rotate(45deg)}
+.track-item.active .tseg{transform:translateY(-1px);box-shadow:0 3px 0 var(--ink),inset 0 0 0 2px #8d63d7}
+.track-item.active .track-mod{background:#dbc9ff;border-color:#6d4bb9}
+.track-pending{display:inline-flex;align-self:center;align-items:center;justify-content:center;flex:0 0 auto;max-width:120px;min-height:33px;padding:4px 7px;background:#efeaff;color:#4b4076;border:1.5px dashed #7466ae;border-radius:7px;font-size:.7rem;font-weight:800;overflow-wrap:anywhere;text-align:center}
+[data-theme=dark] .track-item .track-mod,[data-theme=dark] .track-pending{background:#433958;color:#f0e5ff;border-color:#ad9ed8}
+[data-theme=dark] .track-item.active .track-mod{background:#604e84;color:#fff}
+@media(max-width:720px),(hover:none) and (pointer:coarse) and (orientation:landscape) and (max-height:650px){
+ body[data-view=seq] .seq-list{--mod-gap:8px}
+ body[data-view=seq] .sblk.mod{display:flex;grid-template-columns:none;grid-template-areas:none;gap:5px;padding:5px 6px 5px 3px;width:calc(100% - 16px);margin-left:12px;min-height:38px}
+ body[data-view=seq] .sblk.mod .sbody{display:flex;gap:3px 6px}
+ body[data-view=seq] .sblk.mod .shead,body[data-view=seq] .sblk.mod .sctrl{grid-area:auto;gap:3px 6px}
+ body[data-view=seq] .sblk.mod .grip{grid-area:auto;flex-basis:20px;width:20px;height:28px;min-height:28px}
+ body[data-view=seq] .sblk.mod .sacts{grid-area:auto}
+ body[data-view=seq] .sblk.mod .sacts .mini-btn{width:27px;height:29px}
+ body[data-view=seq] .sblk.mod .mod-setting{font-size:.7rem}
+ body[data-view=seq] .sblk.mod .mod-setting select,body[data-view=seq] .sblk.mod .mod-setting input{font-size:16px;min-height:28px;height:28px;padding:1px 3px}
+ body[data-view=seq] .sblk.mod .mod-setting select{max-width:95px}
+ body[data-view=seq] .sblk.mod .mod-setting input[type=number]{width:50px}
+ body[data-view=seq] .sblk.mod:not(.mod-pending):not(.drag)::after{left:27px;height:calc(var(--mod-gap,8px) + 3px)}
+ body[data-view=seq] .sblk.mod:not(.mod-pending):not(.drag) + .sblk:not(.mod)::before{left:35px}
+ body[data-view=seq] .seq-track{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(105px,100%),1fr));gap:36px 8px;overflow:visible;padding:32px 1px 12px;align-items:end}
+ body[data-view=seq] .track-item{width:100%;min-width:0;height:49px;min-height:49px;flex:none!important}
+ body[data-view=seq] .track-item .tseg{width:100%;height:100%;min-width:0;font-size:1.06rem;padding:4px}
+ body[data-view=seq] .track-item .track-mod{font-size:.78rem;min-width:0;width:max-content;max-width:100%;padding:3px 5px}
+ body[data-view=seq] .track-pending{max-width:100%;min-width:0;min-height:40px}
+}
+@media(max-width:335px){body[data-view=seq] .seq-track{grid-template-columns:repeat(auto-fit,minmax(min(98px,100%),1fr))}body[data-view=seq] .track-item .track-mod{font-size:.74rem}}
 </style>
 </head>
 <body>
@@ -552,7 +607,7 @@ body[data-view=seq] .stage{min-height:219px}
 </section></div>
 <section id="seqCard" class="seq card" aria-labelledby="seqTitle" hidden>
 <div class="seq-head"><div class="settings-title"><span class="settings-icon"><svg class="icon" aria-hidden="true"><use href="#i-seq"/></svg></span><h2 id="seqTitle">Your sequence</h2></div><span id="seqSummary" class="seq-sum"></span></div>
-<div id="seqTrack" class="seq-track" aria-hidden="true"></div>
+<div id="seqTrack" class="seq-track" aria-label="Sequence overview. Click a section or rest to jump to it."></div>
 <ol id="seqList" class="seq-list" aria-label="Sequence blocks, played in order"></ol>
 <div class="seq-add"><button type="button" class="action tap" id="addSection"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg><span>Add section</span></button><button type="button" class="action tap" id="addWait"><svg class="icon" aria-hidden="true"><use href="#i-wait"/></svg><span>Add rest</span></button></div>
 <div class="mod-add" aria-label="Add modifiers"><span class="mod-add-label">Modifiers <span>· affect the next block below</span></span><div class="mod-add-buttons"><button type="button" class="storage-button" id="addRit">↘ Add Rit.</button><button type="button" class="storage-button" id="addFermata">𝄐 Add Fermata</button></div></div>
@@ -1003,7 +1058,10 @@ async function togglePlayback() {
     phase = 'running';
     leadBeats = prefs.countIn ? 4 : 0;
     beat = 0; part = 0; barLength = beatsPerBar();
-    seqOn = view === 'seq'; seqPlan = seqOn ? plannedSequence() : []; seqIdx = 0; seqCount = 0; seqDone = false;
+    seqOn = view === 'seq'; seqPlan = seqOn ? plannedSequence() : [];
+    seqIdx = seqOn && Number.isInteger(requestedSequenceStart) ? clamp(requestedSequenceStart,0,seqPlan.length-1) : 0;
+    requestedSequenceStart = null;
+    seqCount = 0; seqDone = false;
     if (seqOn) leadBeats = 0;
     nextTime = context.currentTime + .055;
     scheduler(); timer = setInterval(scheduler, 25); paint();
@@ -1129,14 +1187,25 @@ function renderSummary() {
   $('seqSummary').textContent = runnable.length ? runnable.length + (runnable.length === 1 ? ' block' : ' blocks') + (mods ? ' + ' + mods + (mods === 1 ? ' modifier' : ' modifiers') : '') + ' · ' + total + ' counts' + (timedWait ? ' + ' + timedWait + 's of timed rest' : '') + ' · ' + seqTime(seconds) : 'Add a Section or Rest to begin';
 }
 function renderTrack() {
-  $('seqTrack').innerHTML = seqList.map((b,index) => {
-    if (b.type === 'mod') return '<div class="tseg mod" style="flex:.65 1 0" title="' + (b.kind === 'rit' ? 'Ritardando · slows next block by ' + b.strength + '%' : 'Fermata · hold next block ' + b.hold + ' ' + b.holdUnit) + '"><i></i><span>' + (b.kind === 'rit' ? 'Rit.' : '𝄐 Fermata') + '</span></div>';
-    const mod = index && seqList[index-1].type === 'mod' ? seqList[index-1] : null;
-    return '<div class="tseg ' + b.type + '" style="flex:' + Math.max(seqDuration(b,mod),1).toFixed(2) + ' 1 0" title="' + (b.type === 'wait' ? 'Rest ' + b.counts + ' ' + (b.unit === 'seconds' ? 'seconds' : 'counts') : b.meter + ' · ' + b.counts + ' counts') + '"><i></i><span>' + (b.type === 'wait' ? 'Rest' : b.meter) + '</span></div>';
-  }).join('');
+  // Every playable block owns its modifier in the overview. A pending modifier
+  // without a playable block is shown separately, without an incorrect arrow.
+  const runnable = plannedSequence();
+  const tiles = runnable.map(({block:b,index,modifier:mod},position) => {
+    const title = b.type === 'wait' ? 'Rest ' + b.counts + ' ' + (b.unit === 'seconds' ? 'seconds' : 'counts') : b.meter + ' · ' + b.counts + ' counts';
+    const modTitle = !mod ? '' : mod.kind === 'rit' ? 'Ritardando: slow next block by ' + mod.strength + '%' : 'Fermata: add ' + mod.hold + ' ' + mod.holdUnit + ' after this block';
+    const modLabel = !mod ? '' : mod.kind === 'rit' ? 'Rit.' : '𝄐 Fermata';
+    const badge = mod ? '<span class="track-mod" title="' + modTitle + '">' + modLabel + '</span>' : '';
+    const label = b.type === 'wait' ? 'Rest' : b.meter;
+    return '<button type="button" class="track-item" data-seq-index="' + index + '" style="--block-flex:' + Math.max(seqDuration(b,mod),1).toFixed(2) + '" aria-label="Jump to block ' + (position + 1) + ': ' + title + (mod ? ', ' + modTitle : '') + '" title="Click to jump to ' + title + (mod ? ' · ' + modTitle : '') + '">' +
+      badge + '<span class="tseg ' + b.type + '"><i></i><span>' + label + '</span></span></button>';
+  });
+  const pending = seqList.at(-1)?.type === 'mod' ? seqList.at(-1) : null;
+  if (pending) tiles.push('<span class="track-pending" title="Add a Section or Rest below this modifier">' + (pending.kind === 'rit' ? '↘ Rit.' : '𝄐 Fermata') + ' · pending</span>');
+  $('seqTrack').innerHTML = tiles.join('');
   $('seqTrack').hidden = !seqList.length;
   renderSummary();
 }
+
 function refreshSeqTempo() {
   document.querySelectorAll('.sbpmin').forEach(input => input.placeholder = prefs.bpm);
   renderSummary();
@@ -1144,7 +1213,7 @@ function refreshSeqTempo() {
 function seqBlockEl(b) {
   if (b.type === 'mod') {
     const li = document.createElement('li');
-    li.className = 'sblk mod'; li.dataset.id = b.id;
+    li.className = 'sblk mod' + (seqList[seqList.length-1] === b ? ' mod-pending' : ''); li.dataset.id = b.id;
     const rit = b.kind === 'rit';
     const pending = seqList[seqList.length-1] === b;
     li.innerHTML = '<button type="button" class="grip" aria-label="Drag modifier to the position before a section or rest">' + seqIcon('grip') + '</button>' +
@@ -1190,11 +1259,52 @@ function markSeq(index, prog = 0) {
   document.querySelectorAll('#seqList .sblk').forEach((li, i) => {
     li.classList.toggle('active', i === index || (index > 0 && i === index-1 && seqList[i]?.type === 'mod'));
   });
-  document.querySelectorAll('#seqTrack .tseg').forEach((seg, i) => {
-    seg.classList.toggle('active', i === index || (index > 0 && i === index-1 && seqList[i]?.type === 'mod'));
-    seg.firstElementChild.style.width = i < index ? '100%' : i === index ? prog*100 + '%' : '0';
+  document.querySelectorAll('#seqTrack .track-item').forEach(tile => {
+    const i = Number(tile.dataset.seqIndex);
+    const active = i === index;
+    tile.classList.toggle('active', active);
+    const fill = tile.querySelector('.tseg i');
+    if (fill) fill.style.width = i < index ? '100%' : active ? prog*100 + '%' : '0';
   });
 }
+// Seeking uses a new Web Audio gain bus, silencing all beats scheduled ahead
+// for the old block. The next scheduling pass starts on the new downbeat.
+let requestedSequenceStart = null;
+function jumpToSequenceBlock(rawIndex) {
+  const planned = plannedSequence();
+  const planIndex = planned.findIndex(entry => entry.index === rawIndex);
+  if (planIndex < 0 || phase === 'loading') return;
+  report('');
+  if (phase === 'idle') {
+    requestedSequenceStart = planIndex;
+    if (view !== 'seq') setView('seq');
+    togglePlayback();
+    return;
+  }
+  if (phase !== 'running' || !seqOn || !context || context.state !== 'running') return;
+  if (transportBus) {
+    const previousBus = transportBus;
+    previousBus.gain.cancelScheduledValues(context.currentTime);
+    previousBus.gain.setTargetAtTime(0,context.currentTime,.002);
+    setTimeout(() => { try { previousBus.disconnect(); } catch {} },60);
+  }
+  transportBus = context.createGain();
+  transportBus.connect(master);
+  seqPlan = planned;
+  seqIdx = planIndex;
+  seqCount = 0; beat = 0; part = 0; leadBeats = 0;
+  seqDone = false; seqBlock = null; seqModifier = null;
+  visualQueue.length = 0;
+  nextTime = context.currentTime + .055;
+  $('beatInfo').textContent = 'Jumping to block ' + (planIndex+1);
+  markSeq(rawIndex,0);
+  scheduler();
+}
+$('seqTrack').addEventListener('click', event => {
+  const tile = event.target.closest('.track-item');
+  if (tile) jumpToSequenceBlock(Number(tile.dataset.seqIndex));
+});
+
 function seqRow(target) {
   const li = target.closest && target.closest('.sblk');
   return li ? [li, seqList.find(b => b.id == li.dataset.id)] : null;
