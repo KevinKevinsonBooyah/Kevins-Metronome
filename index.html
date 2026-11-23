@@ -893,6 +893,72 @@ body[data-view=seq] .stage{min-height:219px}
 [data-theme=dark] .seq-danger-button:hover{background:#714854}
 @media(max-width:720px),(hover:none) and (pointer:coarse){body[data-view=seq] .seq-head-toolbar{align-items:flex-start;gap:8px}body[data-view=seq] .seq-head-actions{width:100%;display:grid;grid-template-columns:1.25fr .8fr .8fr;gap:6px}body[data-view=seq] .seq-head-button{width:100%;font-size:.75rem;padding:6px 4px;min-height:36px;gap:4px}body[data-view=seq] .seq-head-button .icon{width:14px;height:14px}}
 @media(max-width:330px){body[data-view=seq] .seq-head-button{font-size:.69rem}body[data-view=seq] .seq-head-button .icon{width:12px;height:12px}}
+
+/* v23: accessible and compact sequence extensions */
+.performance-open{white-space:nowrap}.performance-open-label{font-size:.83rem}
+.training-panel{margin-top:14px;border-top:1px dashed #a5a8bf;padding-top:12px;display:grid;gap:10px}
+.training-heading{font-weight:800;font-size:.92rem;letter-spacing:-.02em}.training-heading span{font-weight:550;font-size:.76rem;color:var(--muted)}
+.training-setting{border:1px solid #b9bcd1;border-radius:10px;padding:6px 11px 9px;background:#f5f5ff;min-width:0}
+.training-setting .switch-row{min-height:34px}.training-fields{display:flex;gap:8px 13px;align-items:center;flex-wrap:wrap;padding:5px 0 2px}
+.training-fields label{display:inline-flex;align-items:center;gap:5px;font-size:.75rem;color:var(--muted)}
+.training-fields input,.training-fields select{width:58px;height:32px;border:1px solid #9398b1;background:#fff;border-radius:6px;padding:3px 6px;font-size:16px;text-align:center;color:#22232b}
+.training-fields select{width:116px;text-align:left;padding-right:8px;appearance:auto}
+[data-theme=dark] .training-setting{background:#2c2c3a;border-color:#585873}
+[data-theme=dark] .training-fields input,[data-theme=dark] .training-fields select{background:#252631;color:#f0edf8;border-color:#6d6a80}
+.seq-add{grid-template-columns:repeat(3,minmax(0,1fr))}
+.sblk.marker{min-height:39px;width:calc(100% - clamp(22px,7vw,92px));margin-left:clamp(12px,3vw,36px);padding:6px 8px;overflow:visible;background:#e9f5ff;border-style:dashed;border-color:#5a83b7}
+.sblk.marker .skind{background:#3675a8;transform:none;font-size:.75rem}.sblk.marker .grip{align-self:center;height:29px;flex:0 0 26px}
+.sblk.marker .sbody{display:flex;align-items:center;gap:8px}.sblk.marker .sctrl{display:flex;flex:1;min-width:0}
+.sblk.marker .marker-name{min-width:0;max-width:265px;flex:1;height:31px;padding:4px 8px;border:1px solid #778ab6;border-radius:7px;font-size:16px;font-weight:700;background:#fff;color:#22232b}
+.sblk.marker .sacts .mini-btn{width:29px;height:29px}.sblk.marker.active{background:#d8ecff}
+.track-item .track-markers{position:relative;z-index:5;display:flex;flex-direction:column;gap:3px;align-items:center;width:100%;margin-bottom:6px}
+.track-item .track-marker{display:block;max-width:100%;padding:3px 7px;border:1px solid #5a7eaa;border-radius:5px;background:#e0f0ff;color:#205177;font-size:.75rem;font-weight:800;white-space:normal;overflow-wrap:anywhere}
+.track-item .track-markers+.track-mods{margin-top:5px}
+.track-item .track-markers{pointer-events:none}
+.track-pending.marker-pending{background:#e5f3ff;color:#214e76;border-color:#5c8cb6}
+[data-theme=dark] .sblk.marker{background:#29384b;border-color:#6689b2}[data-theme=dark] .sblk.marker .marker-name{background:#252b38;color:#f3f3fa;border-color:#758bac}
+[data-theme=dark] .track-item .track-marker{background:#334e68;color:#dceeff;border-color:#719ac0}
+[data-theme=dark] .track-pending.marker-pending{background:#304459;color:#dceeff}
+.sblk.play .accent-field{display:flex;flex-direction:column;gap:4px;flex-basis:100%;min-width:0;padding-top:3px}
+.accent-field-label{font-size:.72rem;color:var(--muted);font-weight:760}
+.accent-grid{display:flex;gap:5px;flex-wrap:wrap}
+.accent-grid .accent-beat{height:27px;width:29px;min-width:27px;background:#f4f5ff;color:#535675;border:1.5px solid #9c9fc4;border-radius:7px;font:800 .73rem ui-monospace,Consolas,monospace;box-shadow:none;cursor:pointer;padding:0}
+.accent-grid .accent-beat[aria-pressed=true]{background:#4e5be5;color:white;border-color:#4249a5}
+[data-theme=dark] .accent-grid .accent-beat{background:#313348;color:#c9c8e5;border-color:#676e8c;box-shadow:none!important}
+[data-theme=dark] .accent-grid .accent-beat[aria-pressed=true]{background:#6554b9;color:#fff;border-color:#ae9cec}
+[data-theme=dark] .accent-grid .accent-beat:hover{box-shadow:none!important}
+@media(max-width:720px){.seq-add{grid-template-columns:repeat(2,minmax(0,1fr))}.seq-add #addMarker{grid-column:1/-1}.performance-open-label{display:none}.performance-open{min-width:37px;height:35px;padding:5px 9px}.sblk.marker{width:calc(100% - 12px);margin-left:12px}.sblk.marker .marker-name{max-width:100%;width:100%}.sblk.play .accent-field{gap:4px}.accent-grid{gap:4px}.accent-grid .accent-beat{width:27px;min-width:27px;height:29px}.training-fields{gap:7px}}
+.performance-screen{position:fixed;inset:0;z-index:5000;overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;background:#e9ecff;background-image:linear-gradient(90deg,#7c8fcb1b 1px,transparent 1px),linear-gradient(#7c8fcb1b 1px,transparent 1px);background-size:24px 24px;color:#242538;padding:clamp(14px,3vw,32px);font-family:inherit}
+.performance-screen[hidden]{display:none!important}.performance-header{display:flex;align-items:center;justify-content:space-between;gap:12px;background:transparent;border:0}
+.performance-brand{font-weight:850;font-size:clamp(1rem,2vw,1.45rem)}.performance-brand strong{color:#4e5de5}
+.performance-main{width:min(1300px,100%);margin:auto;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);align-items:center;gap:2vw;flex:1}
+.performance-data{min-width:0;display:flex;flex-direction:column;gap:clamp(9px,2vh,18px)}
+.performance-eyebrow{font:800 clamp(.78rem,1.4vw,1rem) ui-monospace,Consolas,monospace;text-transform:uppercase;letter-spacing:.11em;color:#4a4f8b}
+.performance-bpm{font-size:clamp(5.8rem,14vw,15rem);line-height:.9;font-weight:850;letter-spacing:-.09em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.performance-bpm span{font-size:clamp(.9rem,2vw,1.5rem);letter-spacing:0;margin-left:.5em}
+.performance-meter{font-weight:850;font-size:clamp(1.2rem,2.5vw,2rem)}
+.performance-beat-text{font-weight:750;color:#4a4b77}.performance-next{font-weight:730;font-size:clamp(.82rem,1.6vw,1.15rem);color:#4c5687;min-height:1.4em}
+.performance-dots{display:flex;gap:6px;flex-wrap:wrap;max-width:680px}.performance-dot{border:2px solid #7c85c4;border-radius:50%;width:clamp(26px,4vw,48px);height:clamp(26px,4vw,48px);display:grid;place-items:center;font:800 .77rem ui-monospace,Consolas,monospace;background:#fff}
+.performance-dot.lit{background:#ffdc70;border-color:#20253f;color:#21243d;transform:scale(1.09)}.performance-dot.silent{opacity:.42;border-style:dashed}
+.performance-kevin{display:grid;place-items:center;max-height:min(64vh,570px);min-height:0;align-self:center;overflow:hidden}.performance-kevin svg{width:100%;height:100%;max-height:min(62vh,550px);object-fit:contain;overflow:visible}
+.performance-footer{display:flex;align-items:center;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:10px;font-size:.78rem;color:#4b5178}
+.performance-button{border:2px solid #262a47;border-radius:12px;padding:10px 18px;min-height:45px;font-weight:850;color:#222743;background:#fff;cursor:pointer}
+.performance-button.primary{background:#4f5ff0;color:white;min-width:140px;font-size:1.05rem}
+[data-theme=dark] .performance-screen{background-color:#202334;color:#ececfa;background-image:linear-gradient(90deg,#8796b21b 1px,transparent 1px),linear-gradient(#8796b21b 1px,transparent 1px)}
+[data-theme=dark] .performance-brand strong{color:#b6b8ff}[data-theme=dark] .performance-eyebrow,[data-theme=dark] .performance-next,[data-theme=dark] .performance-beat-text,[data-theme=dark] .performance-footer{color:#c2c7eb}
+[data-theme=dark] .performance-dot{background:#35374d;color:#f3f2ff}[data-theme=dark] .performance-dot.lit{background:#7562d0;color:white}
+@media(max-width:650px){.performance-main{grid-template-columns:1fr;gap:5px;text-align:center}.performance-data{align-items:center}.performance-bpm{font-size:clamp(5.4rem,24vw,9rem)}.performance-kevin{max-height:32vh}.performance-kevin svg{max-height:30vh}.performance-screen{padding:13px}.performance-dots{justify-content:center}.performance-footer{padding-bottom:env(safe-area-inset-bottom)}}
+@media(prefers-reduced-motion:reduce){.performance-dot.lit{transform:none}}
+body.performance-active{overflow:hidden!important}
+
+/* v23 polish: keep the white background of the source image invisible without changing Kevin's artwork. */
+.performance-kevin svg{mix-blend-mode:multiply}
+.performance-kevin{mix-blend-mode:multiply}
+.practice-accent-editor{margin-top:12px;border:1px dashed #abaed2;border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:7px;background:#f6f6ff}
+.practice-accent-editor[hidden]{display:none!important}
+.practice-accent-editor .accent-field-label span{font-weight:520;color:var(--muted)}
+[data-theme=dark] .practice-accent-editor{background:#2b2c3c;border-color:#696787}
+@media(max-width:650px){.performance-main{align-content:center;grid-template-rows:auto auto;gap:3.5vh;flex:1;min-height:0}.performance-kevin{height:min(30vh,235px);max-height:30vh;width:min(55vw,245px);margin:0 auto}.performance-kevin svg{height:100%;max-height:100%;width:100%}.performance-screen{justify-content:space-between}.performance-data{gap:9px}.performance-bpm{font-size:clamp(5.4rem,24vw,8rem)}}
 </style>
 </head>
 <body>
@@ -925,7 +991,7 @@ body[data-view=seq] .stage{min-height:219px}
 <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M4 17v3h16v-3"/></symbol><symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4m-4 4 4-4 4 4M4 17v3h16v-3"/></symbol></defs></svg>
 <header><div class="wrap topbar">
 <div class="brand"><span class="logo" aria-hidden="true"><svg viewBox="0 0 60 60" fill="none" stroke="white" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"><path d="M31 9C15 7 4 20 6 33c2 12 15 18 29 15 14-3 20-13 17-23-2-6-12-15-21-18M16 29q11 21 25-2"/><g fill="white" stroke="none"><circle cx="22" cy="23" r="2.7"/><circle cx="35" cy="21" r="2.7"/></g></svg></span><span>Kevin’s <em>Metronome</em></span></div>
-<div class="top-actions"><button class="audio-btn" id="theme" type="button" aria-label="Dark mode" aria-pressed="false"><span aria-hidden="true">☾</span><span>Dark mode</span></button></div>
+<div class="top-actions"><button type="button" class="audio-btn performance-open" id="performanceOpen" title="Open distraction-free Performance Mode" aria-label="Open Performance Mode"><span aria-hidden="true">⛶</span><span class="performance-open-label">Performance</span></button><button class="audio-btn" id="theme" type="button" aria-label="Dark mode" aria-pressed="false"><span aria-hidden="true">☾</span><span>Dark mode</span></button></div>
 </div></header>
 <main class="wrap">
 <div class="heading-row"><h1 id="viewTitle">Metronome</h1><div class="view-toggle" role="group" aria-label="Mode"><button type="button" id="tabPractice" aria-pressed="true"><svg class="icon" aria-hidden="true"><use href="#i-speed"/></svg><span>Metronome</span></button><button type="button" id="tabSeq" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-seq"/></svg><span>Sequence</span></button></div></div>
@@ -954,7 +1020,8 @@ body[data-view=seq] .stage{min-height:219px}
 <div class="field"><label for="voice">Click sound</label><div class="select-wrap"><svg class="icon" aria-hidden="true"><use href="#i-wave"/></svg><select id="voice"><option value="wood">Woodblock</option><option value="classic">Classic click</option><option value="soft">Soft beep</option></select><svg class="icon chevron" aria-hidden="true"><use href="#i-chevron"/></svg></div></div>
 </div>
 <div class="volume"><div class="volume-top"><label for="volume">Volume</label><output for="volume" id="volumeOut">75%</output></div><div class="volume-slider"><svg class="icon" aria-hidden="true"><use href="#i-low"/></svg><input id="volume" type="range" min="0" max="100" value="75" aria-label="Sound volume"><svg class="icon" aria-hidden="true"><use href="#i-volume"/></svg></div></div>
-<div class="switches"><button class="switch-row" role="switch" aria-checked="true" type="button" id="countIn"><span>4-beat count-in</span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row" role="switch" aria-checked="true" type="button" id="accent"><span>Accent first beat</span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row" role="switch" aria-checked="false" type="button" id="silentSmall"><span>Mute small /8 beats</span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row" role="switch" aria-checked="false" type="button" id="loopSequence" hidden><span>Loop Sequence</span><span class="switch-track" aria-hidden="true"></span></button></div>
+<div class="switches"><button class="switch-row" role="switch" aria-checked="true" type="button" id="countIn"><span>4-beat count-in</span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row" role="switch" aria-checked="true" type="button" id="accent"><span>Beat accents</span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row" role="switch" aria-checked="false" type="button" id="silentSmall"><span>Mute small /8 beats</span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row" role="switch" aria-checked="false" type="button" id="loopSequence" hidden><span>Loop Sequence</span><span class="switch-track" aria-hidden="true"></span></button></div>
+<div id="practiceAccentEditor" class="practice-accent-editor" aria-label="Custom accents for current time signature"><div class="accent-field-label">Custom beat accents <span>· tap the numbers to accent them</span></div><div class="accent-grid" id="practiceAccentGrid"></div></div>
 <div class="random-silence-list" role="group" aria-label="Random silencing practice settings">
 <div class="random-silence-setting">
 <button class="switch-row" role="switch" aria-checked="false" type="button" id="randomBeatSilencing"><span>Random Beat Silencing</span><span class="switch-track" aria-hidden="true"></span></button>
@@ -963,6 +1030,17 @@ body[data-view=seq] .stage{min-height:219px}
 <div class="random-silence-setting">
 <button class="switch-row" role="switch" aria-checked="false" type="button" id="randomBarSilencing"><span>Random Bar Silencing</span><span class="switch-track" aria-hidden="true"></span></button>
 <div class="random-silence-row"><label for="randomBarChance">Chance per bar</label><input id="randomBarChance" type="range" min="0" max="100" step="5" value="25" aria-label="Chance of silencing the entire bar in percent"><output for="randomBarChance" id="randomBarChanceOut">25%</output></div>
+</div>
+</div>
+<div class="training-panel" aria-label="Training features">
+<div class="training-heading">Practice challenges <span>· optional</span></div>
+<div class="training-setting">
+<button class="switch-row" role="switch" aria-checked="false" id="tempoTrainer" type="button"><span>Tempo Trainer</span><span class="switch-track" aria-hidden="true"></span></button>
+<div class="training-fields"><label>Increase <input id="trainerStep" type="number" inputmode="numeric" min="1" max="30" step="1" value="4" aria-label="Tempo increase BPM"> BPM</label><label>Every <select id="trainerMode" aria-label="Tempo trainer interval"><option value="bars">bars</option><option value="loop">sequence loop</option></select></label><label id="trainerBarsField"><input id="trainerBars" type="number" inputmode="numeric" min="1" max="32" value="4" aria-label="Bars between tempo increases"> bars</label><label>Target <input id="trainerTarget" type="number" inputmode="numeric" min="30" max="300" value="160" aria-label="Maximum training BPM"> BPM</label></div>
+</div>
+<div class="training-setting">
+<button class="switch-row" role="switch" aria-checked="false" id="memoryChallenge" type="button"><span>Memory Challenge</span><span class="switch-track" aria-hidden="true"></span></button>
+<div class="training-fields"><label>Play <input id="memorySoundBars" type="number" inputmode="numeric" min="1" max="32" value="4" aria-label="Audible bars"> bars</label><label>Silent <input id="memorySilentBars" type="number" inputmode="numeric" min="1" max="32" value="4" aria-label="Silent bars"> bars</label></div>
 </div>
 </div>
 <div class="sequence-storage" id="sequenceStorage" hidden aria-label="Sequence files and saved sequences">
@@ -985,8 +1063,8 @@ body[data-view=seq] .stage{min-height:219px}
 <span id="seqSummary" class="seq-sum"></span></div>
 <div id="seqTrack" class="seq-track" aria-label="Sequence overview. Click a section or rest to jump to it."></div>
 <ol id="seqList" class="seq-list" aria-label="Sequence blocks, played in order"></ol>
-<div class="seq-add"><button type="button" class="action tap" id="addSection"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg><span>Add section</span></button><button type="button" class="action tap" id="addWait"><svg class="icon" aria-hidden="true"><use href="#i-wait"/></svg><span>Add rest</span></button></div>
-<div class="mod-add" aria-label="Add modifiers"><span class="mod-add-label">Modifiers <span>· stack above and affect the same next block</span></span><div class="mod-add-buttons"><button type="button" class="storage-button" id="addRit">↘ Add Rit.</button><button type="button" class="storage-button" id="addFermata">𝄐 Add Fermata</button><button type="button" class="storage-button" id="addAccel">↗ Add Accel.</button></div></div>
+<div class="seq-add"><button type="button" class="action tap" id="addSection"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg><span>Add section</span></button><button type="button" class="action tap" id="addWait"><svg class="icon" aria-hidden="true"><use href="#i-wait"/></svg><span>Add rest</span></button><button type="button" class="action tap" id="addMarker"><span aria-hidden="true">⚑</span><span>Add marker</span></button></div>
+<div class="mod-add" aria-label="Add modifiers"><span class="mod-add-label">Modifiers <span>· stack above and affect the same next block</span></span><div class="mod-add-buttons"><button type="button" class="storage-button" id="addRit">↘ Add Rit.</button><button type="button" class="storage-button" id="addFermata">𝄐 Add Fermata</button><button type="button" class="storage-button" id="addAccel">↗ Add Accel.</button><button type="button" class="storage-button" id="addRepeat">⟳ Add Repeat</button></div></div>
 </section>
 <dialog class="storage-dialog" id="newSequenceDialog" aria-labelledby="newSequenceDialogTitle">
   <div class="storage-dialog-head"><h2 id="newSequenceDialogTitle">Start a new sequence?</h2><button type="button" class="dialog-close" id="newSequenceDialogClose" aria-label="Cancel new sequence">×</button></div>
@@ -1007,6 +1085,14 @@ body[data-view=seq] .stage{min-height:219px}
 <div id="seqToast" class="seq-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
 <div class="shortcuts" aria-label="Keyboard shortcuts"><span><svg class="icon" aria-hidden="true"><use href="#i-keys"/></svg>Shortcuts</span><span><kbd>Space</kbd> Start / stop</span><span><kbd>T</kbd> Tap tempo</span><span><kbd>↑</kbd><kbd>↓</kbd> Adjust tempo</span></div>
 </main>
+<section class="performance-screen" id="performanceScreen" role="dialog" aria-modal="true" aria-label="Performance Mode" hidden>
+ <header class="performance-header"><div class="performance-brand">⏱ Kevin's <strong>Performance Mode</strong></div><button type="button" id="performanceExit" class="performance-button secondary">✕ Exit</button></header>
+ <div class="performance-main">
+   <div class="performance-data"><span class="performance-eyebrow" id="performanceStatus">Ready to practice</span><div id="performanceBpm" class="performance-bpm">120<span>BPM</span></div><div id="performanceMeter" class="performance-meter">4/4 · Metronome</div><div id="performanceBeatText" class="performance-beat-text">Press Play to begin</div><div class="performance-dots" id="performanceDots" aria-hidden="true"></div><div id="performanceNext" class="performance-next">Stay with the beat.</div></div>
+   <div class="performance-kevin" aria-hidden="true" id="performanceKevin"></div>
+ </div>
+ <footer class="performance-footer"><button type="button" id="performanceToggle" class="performance-button primary">▶ Play</button><span>Space = play / stop · Esc = exit</span></footer>
+</section>
 <script>
 // All sounds are synthesized locally. No requests or samples are required.
 'use strict';
@@ -1022,19 +1108,27 @@ desktopPointer.addEventListener?.('change', fitDesktop);
 
 const $ = (id) => document.getElementById(id);
 const clamp = (value, low, high) => Math.min(high, Math.max(low, value));
-const defaults = { bpm:120, meter:'4/4', division:1, voice:'wood', volume:75, countIn:true, accent:true, silentSmall:false, randomBeatSilencing:false, randomBarSilencing:false, randomBeatChance:25, randomBarChance:25, muted:false };
+const defaults = { bpm:120, meter:'4/4', division:1, voice:'wood', volume:75, countIn:true, accent:true, silentSmall:false, randomBeatSilencing:false, randomBarSilencing:false, randomBeatChance:25, randomBarChance:25,accentPatterns:{},tempoTrainer:false,trainerStep:4,trainerMode:'bars',trainerBars:4,trainerTarget:160,memoryChallenge:false,memorySoundBars:4,memorySilentBars:4, muted:false };
 const storeKey = 'kevins-metronome.settings.v1';
 const prefs = { ...defaults };
 try {
   const saved = JSON.parse(localStorage.getItem(storeKey)) || {};
-  for (const [key, low, high] of [['bpm',30,300], ['division',1,4], ['volume',0,100], ['randomBeatChance',0,100], ['randomBarChance',0,100]]) {
+  for (const [key, low, high] of [['bpm',30,300], ['division',1,4], ['volume',0,100], ['randomBeatChance',0,100], ['randomBarChance',0,100], ['trainerStep',1,30], ['trainerBars',1,32], ['trainerTarget',30,300], ['memorySoundBars',1,32], ['memorySilentBars',1,32]]) {
     if (Number.isInteger(saved[key])) prefs[key] = clamp(saved[key], low, high);
   }
   for (const key of ['meter','voice']) {
     if (Array.from($(key).options).some(option => option.value === saved[key])) prefs[key] = saved[key];
   }
-  for (const key of ['countIn','accent','silentSmall','randomBeatSilencing','randomBarSilencing']) {
+  for (const key of ['countIn','accent','silentSmall','randomBeatSilencing','randomBarSilencing','tempoTrainer','memoryChallenge']) {
     if (typeof saved[key] === 'boolean') prefs[key] = saved[key];
+  }
+  if (['bars','loop'].includes(saved.trainerMode)) prefs.trainerMode = saved.trainerMode;
+  if (saved.accentPatterns && typeof saved.accentPatterns === 'object' && !Array.isArray(saved.accentPatterns)) {
+    for (const [meter,beats] of Object.entries(saved.accentPatterns)) {
+      if (!Array.from($('meter').options).some(opt=>opt.value===meter)||!Array.isArray(beats)) continue;
+      const max=Number(meter.split('/')[0]);
+      prefs.accentPatterns[meter]=[...new Set(beats.filter(n=>Number.isInteger(n)&&n>=0&&n<max))].sort((a,b)=>a-b);
+    }
   }
 } catch {}
 prefs.muted = false; // v13: sound always enabled; volume can still be adjusted to 0.
@@ -1137,7 +1231,10 @@ function syncSound() {
   }
 }
 function syncSwitches() {
-  for (const id of ['accent','countIn','silentSmall','randomBeatSilencing','randomBarSilencing']) $(id).setAttribute('aria-checked', String(prefs[id]));
+  for (const id of ['accent','countIn','silentSmall','randomBeatSilencing','randomBarSilencing','tempoTrainer','memoryChallenge']) $(id).setAttribute('aria-checked', String(prefs[id]));
+  for (const key of ['trainerStep','trainerBars','trainerTarget','memorySoundBars','memorySilentBars']) $(key).value = prefs[key];
+  renderPracticeAccents();
+  $('trainerMode').value = prefs.trainerMode; $('trainerBarsField').hidden = prefs.trainerMode === 'loop';
   for (const [key,control,out] of [['randomBeatChance','randomBeatChance','randomBeatChanceOut'],['randomBarChance','randomBarChance','randomBarChanceOut']]) {
     $(control).value = prefs[key];
     $(out).value = prefs[key] + '%';
@@ -1149,7 +1246,13 @@ let phase = 'idle';
 let screenMode = '', characterMotion;
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const mainBeats = {'3/8':[0], '4/8':[0,2], '5/8':[0,3], '6/8':[0,3], '7/8':[0,2,4], '9/8':[0,3,6], '8/8':[0,2,4,6], '12/8':[0,3,6,9]};
-function circles(total, accent, meter) {
+function practiceAccents(meter=prefs.meter) {return Array.isArray(prefs.accentPatterns[meter])?prefs.accentPatterns[meter]:[0];}
+function renderPracticeAccents() {
+  const n=Number(prefs.meter.split('/')[0]); const selected=practiceAccents();
+  $('practiceAccentGrid').innerHTML=Array.from({length:n},(_,i)=>'<button type="button" class="accent-beat" data-accent="'+i+'" aria-pressed="'+selected.includes(i)+'" aria-label="Accent beat '+(i+1)+'">'+(i+1)+'</button>').join('');
+}
+$('practiceAccentGrid').addEventListener('click',e=>{const btn=e.target.closest('.accent-beat');if(!btn)return;const i=Number(btn.dataset.accent);const chosen=new Set(practiceAccents());if(chosen.has(i))chosen.delete(i);else chosen.add(i);prefs.accentPatterns[prefs.meter]=[...chosen].sort((a,b)=>a-b);renderPracticeAccents();save();feedback();if(phase==='idle')showIdle();});
+function circles(total, accent, meter, customAccents = null) {
   const row = $('beats');
   let dots = row.querySelectorAll('.beat');
   if (dots.length !== total) {
@@ -1170,7 +1273,7 @@ function circles(total, accent, meter) {
   }
   row.classList.toggle('many', total > 6);
   row.classList.toggle('very-many', total > 12);
-  for (let i = 0; i < total; i++) dots[i].className = 'beat' + (i === 0 && accent ? ' accent' : '') + (mainBeats[meter] && !mainBeats[meter].includes(i) ? ' minor' : '');
+  for (let i = 0; i < total; i++) dots[i].className = 'beat' + (accent && (customAccents === null ? i===0 : customAccents.includes(i)) ? ' accent' : '') + (mainBeats[meter] && !mainBeats[meter].includes(i) ? ' minor' : '');
 }
 function setMode(mode) {
   if (screenMode === mode) return;
@@ -1178,33 +1281,37 @@ function setMode(mode) {
   const active = mode !== 'idle';
   setIcon($('start'), active ? 'stop' : 'play');
   $('start').querySelector('span').textContent = view === 'seq' ? (active ? 'Stop sequence' : 'Play sequence') : (active ? 'Stop metronome' : 'Start metronome');
+  $('performanceToggle').textContent = active ? '■ Stop' : '▶ Play';
 }
 function showIdle() {
   setMode('idle');
   setTempoBlockLock(false);
   showTempoValue(prefs.bpm);
   markSeq(-1);
+  renderPerformanceIdle();
   if (view === 'seq') {
     const first = plannedSequence()[0]?.block;
     circles(first ? seqSpan(first) : beatsPerBar(), !!first && first.type === 'play' && prefs.accent, first && first.type === 'play' ? first.meter : null);
     $('beatInfo').textContent = plannedSequence().length ? plannedSequence().length + (plannedSequence().length === 1 ? ' block' : ' blocks') + ' ready' : 'Add a section or rest to begin';
     return;
   }
-  circles(prefs.countIn ? 4 : beatsPerBar(), !prefs.countIn && prefs.accent, prefs.countIn ? null : prefs.meter);
+  circles(prefs.countIn ? 4 : beatsPerBar(), !prefs.countIn && prefs.accent, prefs.countIn ? null : prefs.meter, prefs.countIn ? null : practiceAccents());
   $('beatInfo').textContent = prefs.countIn ? '4-beat count-in' : beatsPerBar() + ' beats per bar';
 }
 function showBeat(event) {
   setMode(event.count ? 'count' : 'playing');
   if (seqOn && event.seq !== undefined) setTempoBlockLock(sequenceControlsTempo(seqPlan.find(entry => entry.index === event.seq)));
+  if (!seqOn && prefs.tempoTrainer && phase === 'running') showTempoValue(event.bpm || prefs.bpm,{live:true});
   if (seqOn && event.seq !== undefined && Number.isFinite(event.bpm))
     showTempoValue(event.bpm, {live:true,rit:!!event.rit,accel:!!event.accel,timedRest:!!event.timedRest});
-  circles(event.total, !event.count && prefs.accent, event.count ? null : event.meter);
+  circles(event.total, !event.count && prefs.accent, event.count ? null : event.meter, event.accents ?? null);
   const dots = $('beats').querySelectorAll('.beat');
   if (event.count) {
     for (let i = 0; i <= event.beat; i++) dots[i].classList.add('filled');
   } else { dots[event.beat].classList.add('current'); if (event.randomSilenced) dots[event.beat].classList.add('silenced'); }
   $('beatInfo').textContent = event.info || ((event.count ? 'Count-in ' : 'Beat ') + (event.beat + 1) + ' of ' + event.total);
   if (event.seq !== undefined) markSeq(event.seq, event.prog);
+  updatePerformanceBeat(event);
   if (!reduceMotion.matches && typeof $('kevin').animate === 'function') {
     characterMotion?.cancel();
     const angle = event.beat % 2 ? 5 : -5;
@@ -1230,10 +1337,12 @@ function validSequenceBlocks(raw) {
     if (!b || typeof b !== 'object') continue;
     if (b.type === 'mod') {
       // Retired Cresc., Subito, Swing, and Dropout blocks are ignored in old saved/imported sequences.
-      if (!['rit','fermata','accel'].includes(b.kind)) continue;
-      results.push({id:results.length+1,type:'mod',kind:b.kind,strength:clamp(Math.round(Number(b.strength)) || 25,5,80),curve:b.curve === 'late' ? 'late' : 'linear',hold:clamp(Number(b.hold) || 2,.5,30),holdUnit:b.holdUnit === 'seconds' ? 'seconds' : 'beats'});
+      if (!['rit','fermata','accel','repeat'].includes(b.kind)) continue;
+      results.push({id:results.length+1,type:'mod',kind:b.kind,strength:clamp(Math.round(Number(b.strength)) || 25,5,80),curve:b.curve === 'late' ? 'late' : 'linear',hold:clamp(Number(b.hold) || 2,.5,30),holdUnit:b.holdUnit === 'seconds' ? 'seconds' : 'beats', times:clamp(Math.round(Number(b.times)||2),2,16)});
+    } else if (b.type === 'marker') {
+      results.push({id:results.length+1,type:'marker',name:String(b.name||'Marker').trim().slice(0,40)||'Marker'});
     } else if ((b.type === 'play' || b.type === 'wait') && meterList.includes(b.meter) && Number.isInteger(b.counts) && b.counts >= 1 && b.counts <= (b.type === 'wait' && b.unit === 'seconds' ? 600 : 128)) {
-      results.push({id:results.length+1,type:b.type,meter:b.meter,counts:b.counts,...(b.type === 'wait' ? {unit:b.unit === 'seconds' ? 'seconds' : 'counts'} : {}),bpm:Number.isInteger(b.bpm) && b.bpm >= 30 && b.bpm <= 300 ? b.bpm : 0,...(b.type === 'play' ? {division:Number.isInteger(b.division) && b.division >= 1 && b.division <= 4 ? b.division : 0} : {})});
+      results.push({id:results.length+1,type:b.type,meter:b.meter,counts:b.counts,...(b.type === 'wait' ? {unit:b.unit === 'seconds' ? 'seconds' : 'counts'} : {}),bpm:Number.isInteger(b.bpm) && b.bpm >= 30 && b.bpm <= 300 ? b.bpm : 0,...(b.type === 'play' ? {division:Number.isInteger(b.division) && b.division >= 1 && b.division <= 4 ? b.division : 0, accents:Array.isArray(b.accents) ? [...new Set(b.accents.filter(n=>Number.isInteger(n)&&n>=0&&n<Number(b.meter.split('/')[0])))].sort((a,b)=>a-b) : null} : {})});
     }
   }
   return results;
@@ -1241,19 +1350,22 @@ function validSequenceBlocks(raw) {
 // Consecutive modifiers form a stack. Every modifier in that stack belongs to
 // the first playable block below it, regardless of its position in the stack.
 function plannedSequence() {
-  const plan = [], pending = [];
+  const plan = [], pending = [], markers = [];
   seqList.forEach((block,index) => {
     if (block.type === 'mod') pending.push(block);
+    else if (block.type === 'marker') markers.push(block);
     else {
-      plan.push({block,index,modifiers:[...pending]});
-      pending.length = 0;
+      plan.push({block,index,modifiers:[...pending],markers:[...markers]});
+      pending.length = 0; markers.length = 0;
     }
   });
   return plan;
 }
-function modifierTarget(index) { return seqList.slice(index+1).find(block => block.type !== 'mod') || null; }
+function modifierTarget(index) { return seqList.slice(index+1).find(block => block.type === 'play' || block.type === 'wait') || null; }
+function repeatTimes(modifiers) { return clamp(modifiers.filter(mod=>mod.kind==='repeat').reduce((n,mod)=>n*mod.times,1),1,64); }
+function expandedSequence() { return plannedSequence().flatMap(entry=>Array.from({length:repeatTimes(entry.modifiers)},(_,i)=>({...entry,repeatIndex:i,repeatTotal:repeatTimes(entry.modifiers)}))); }
 function seqBeatTempo(block, modifiers = [], countIndex = 0) {
-  const base = block.bpm || prefs.bpm;
+  const base = phase === 'running' && prefs.tempoTrainer ? Math.max(block.bpm || prefs.bpm,Math.min(prefs.trainerTarget,(block.bpm || prefs.bpm) + trainerOffset)) : block.bpm || prefs.bpm;
   if (block.type === 'wait' && block.unit === 'seconds') return base;
   const ratio = block.counts <= 1 ? 1 : countIndex/(block.counts-1);
   const factor = modifiers.reduce((factor,mod) => {
@@ -1269,6 +1381,16 @@ function chanceSilenced(percent) {
   return percent >= 100 || (percent > 0 && Math.random()*100 < percent);
 }
 let randomBarSilenced = false, randomBeatSilenced = false;
+let trainerOffset = 0, trainerCompletedBars = 0, memoryCompletedBars = 0, memoryBarMuted = false;
+function stepTempoTrainer(kind) {
+  if (!prefs.tempoTrainer || (prefs.trainerMode !== kind && !(view==='practice' && kind==='bars' && prefs.trainerMode==='loop'))) return;
+  if (kind === 'bars' && ++trainerCompletedBars % prefs.trainerBars) return;
+  trainerOffset = clamp(trainerOffset + prefs.trainerStep,0,300);
+}
+function memoryMuteNow() {
+  const cycle = prefs.memorySoundBars + prefs.memorySilentBars;
+  return prefs.memoryChallenge && memoryCompletedBars % cycle >= prefs.memorySoundBars;
+}
 function sequenceControlsTempo(entry) {
   return !!entry && !(entry.block.type === 'wait' && entry.block.unit === 'seconds') && !!entry.block.bpm;
 }
@@ -1437,20 +1559,24 @@ function scheduler() {
       // A bar is sampled only on its downbeat. Each beat is sampled once,
       // and its subdivided clicks share the same decision. Count-ins and Rests
       // always remain audible (unless the user sets the main volume to zero).
-      if (counting) { randomBarSilenced = false; randomBeatSilenced = false; }
+      if (counting) { randomBarSilenced = false; randomBeatSilenced = false; memoryBarMuted = false; }
       else {
-        if (beat === 0) randomBarSilenced = prefs.randomBarSilencing && chanceSilenced(prefs.randomBarChance);
+        if (beat === 0) { randomBarSilenced = prefs.randomBarSilencing && chanceSilenced(prefs.randomBarChance); memoryBarMuted = memoryMuteNow(); }
         randomBeatSilenced = prefs.randomBeatSilencing && chanceSilenced(prefs.randomBeatChance);
       }
-      const effectiveBpm = waiting && seqBlock.unit === 'seconds' ? 60 : (seqOn ? seqBeatTempo(seqBlock, seqModifiers, seqCount) : prefs.bpm);
+      const effectiveBpm = waiting && seqBlock.unit === 'seconds' ? 60 : (seqOn ? seqBeatTempo(seqBlock, seqModifiers, seqCount) : prefs.tempoTrainer ? Math.max(prefs.bpm,Math.min(prefs.trainerTarget,prefs.bpm+trainerOffset)) : prefs.bpm);
       // Count-ins and timed rests remain in real seconds/quarter-note beats.
       // Active /8 Sections click each eighth note at twice the /4 pulse rate.
       beatLength = counting ? 60/effectiveBpm : secondsPerPulse(barMeter,effectiveBpm);
       const lead = leadBeats > 0;
       const eventData = {meter:barMeter, time:nextTime, count:counting, beat:lead ? 4-leadBeats : beat, total:lead ? 4 : barLength, duration:beatLength};
-      eventData.randomSilenced = !counting && (randomBarSilenced || randomBeatSilenced);
+      eventData.randomSilenced = !counting && (randomBarSilenced || randomBeatSilenced || memoryBarMuted);
+      eventData.memorySilent = !counting && memoryBarMuted;
+      eventData.bpm = effectiveBpm;
+      if (seqOn && !waiting && seqBlock.type === 'play') eventData.accents = accentedIndexes(seqBlock);
+      else if (!seqOn) eventData.accents = practiceAccents(barMeter);
       if (seqOn) {
-        eventData.seq = seqPlan[seqIdx].index;
+        eventData.seq = seqPlan[seqIdx].index; eventData.planPosition=seqIdx;
         eventData.bpm = effectiveBpm;
         eventData.rit = seqModifiers.some(mod => mod.kind === 'rit') && !(waiting && seqBlock.unit === 'seconds');
         eventData.accel = seqModifiers.some(mod => mod.kind === 'accel') && !(waiting && seqBlock.unit === 'seconds');
@@ -1458,32 +1584,37 @@ function scheduler() {
         eventData.prog = Math.min(1, (seqCount+1)/seqBlock.counts);
         eventData.info = '#' + (seqIdx+1) + ' · ' + (waiting ? 'rest ' + (seqCount+1) + ' of ' + seqBlock.counts + (seqBlock.unit === 'seconds' ? ' sec' : ' counts') : seqBlock.meter + ' · ' + (seqBlock.meter.endsWith('/8') ? 'eighth ' : 'beat ') + (beat+1)) + (seqModifiers.some(mod => mod.kind === 'rit') ? ' · Rit ' + Math.round(seqBeatTempo(seqBlock,seqModifiers,seqCount)) + ' BPM' : seqBlock.bpm && !(waiting && seqBlock.unit === 'seconds') ? ' · ' + seqBlock.bpm + ' BPM' : '');
       }
+      if (eventData.memorySilent) eventData.info = 'Memory Challenge · silent bar · keep counting';
+      else if (seqOn && seqPlan[seqIdx]?.repeatTotal > 1) eventData.info += ' · repeat '+(seqPlan[seqIdx].repeatIndex+1)+'/'+seqPlan[seqIdx].repeatTotal;
       visualQueue.push(eventData);
     }
     const countInBeat = leadBeats > 0;
+    const chosenAccent = !waiting && seqOn && seqBlock.type === 'play' ? accentedIndexes(seqBlock).includes(beat) : seqOn ? beat===0 : practiceAccents(barMeter).includes(beat);
     const level = part ? 'sub' : countInBeat ? ((4-leadBeats) === 0 ? 'count-accent' : 'count') :
-      waiting ? 'rest' : beat === 0 && prefs.accent ? 'accent' : 'main';
+      waiting ? 'rest' : chosenAccent && prefs.accent ? 'accent' : 'main';
     const smallDot = !counting && mainBeats[barMeter] && !mainBeats[barMeter].includes(beat);
-    const silentByRandom = !counting && (randomBarSilenced || randomBeatSilenced);
+    const silentByRandom = !counting && (randomBarSilenced || randomBeatSilenced || memoryBarMuted);
     if (!(prefs.silentSmall && smallDot) && !silentByRandom) {
-      clickAt(nextTime, prefs.voice, smallDot && part === 0 ? 'small' : level, transportBus);
+      clickAt(nextTime, prefs.voice, smallDot && part === 0 && !chosenAccent ? 'small' : level, transportBus);
     }
     nextTime += beatLength / partsThisBeat;
     part++;
     if (part === partsThisBeat) {
       part = 0;
       if (seqOn) {
-        if (++seqCount >= seqBlock.counts) {
+        ++seqCount;
+        if (!waiting && (seqCount % seqSpan(seqBlock) === 0 || seqCount === seqBlock.counts)) {memoryCompletedBars++;stepTempoTrainer('bars');}
+        if (seqCount >= seqBlock.counts) {
           const hold = fermataExtra(seqBlock,seqModifiers);
           if (hold > 0) {
             visualQueue.push({time:nextTime, seq:seqPlan[seqIdx].index, hold:true, duration:hold, info:'𝄐 Fermata · holding ' + +hold.toFixed(2) + ' seconds'});
             nextTime += hold; // audible silence, scheduled with the Web Audio clock
           }
           seqCount = 0; seqIdx++;
-          if (seqIdx >= seqPlan.length && seqLoop) seqIdx = 0;
+          if (seqIdx >= seqPlan.length && seqLoop) { stepTempoTrainer('loop'); seqIdx = 0; }
         }
       } else if (counting) leadBeats--;
-      else beat = (beat + 1) % barLength;
+      else { beat = (beat + 1) % barLength; if(beat===0) {memoryCompletedBars++;stepTempoTrainer('bars');} }
     }
   }
 }
@@ -1497,7 +1628,7 @@ function paint() {
   let event;
   while (visualQueue.length && visualQueue[0].time <= audible) event = visualQueue.shift();
   if (event && event.end) { stop(); return; }
-  if (event) { if (event.hold) { $('beatInfo').textContent = event.info; markSeq(event.seq,1); } else showBeat(event); }
+  if (event) { if (event.hold) { $('beatInfo').textContent = event.info; $('performanceStatus').textContent='Fermata · hold';$('performanceBeatText').textContent=event.info; markSeq(event.seq,1); } else showBeat(event); }
   frame = requestAnimationFrame(paint);
 }
 async function togglePlayback() {
@@ -1523,7 +1654,8 @@ async function togglePlayback() {
     phase = 'running';
     leadBeats = prefs.countIn ? 4 : 0;
     beat = 0; part = 0; barLength = beatsPerBar(); randomBarSilenced = false; randomBeatSilenced = false;
-    seqOn = view === 'seq'; seqPlan = seqOn ? plannedSequence() : [];
+    trainerOffset = 0; trainerCompletedBars = 0; memoryCompletedBars = 0; memoryBarMuted = false;
+    seqOn = view === 'seq'; seqPlan = seqOn ? expandedSequence() : [];
     seqIdx = seqOn && Number.isInteger(requestedSequenceStart) ? clamp(requestedSequenceStart,0,seqPlan.length-1) : 0;
     requestedSequenceStart = null;
     seqCount = 0; seqDone = false;
@@ -1539,7 +1671,7 @@ function stop() {
   generation++;
   phase = 'idle';
   seqOn = false;
-  randomBarSilenced = false; randomBeatSilenced = false;
+  randomBarSilenced = false; randomBeatSilenced = false; memoryBarMuted = false;
   clearInterval(timer); cancelAnimationFrame(frame); visualQueue.length = 0;
   if (transportBus) {
     const bus = transportBus;
@@ -1607,6 +1739,13 @@ for (const key of ['randomBeatChance','randomBarChance']) {
   $(key).oninput = event => { prefs[key] = clamp(Number(event.target.value),0,100); syncSwitches(); save(); };
 }
 
+for (const key of ['tempoTrainer','memoryChallenge']) {
+  $(key).onclick = () => { prefs[key] = !prefs[key]; syncSwitches(); save(); feedback(); };
+}
+for (const key of ['trainerStep','trainerBars','trainerTarget','memorySoundBars','memorySilentBars']) {
+  $(key).addEventListener('change',e => { const [min,max] = key==='trainerStep'?[1,30]:key==='trainerBars'||key==='memorySoundBars'||key==='memorySilentBars'?[1,32]:[30,300]; prefs[key]=clamp(Math.round(Number(e.target.value)||min),min,max); syncSwitches();save(); });
+}
+$('trainerMode').addEventListener('change', e => { prefs.trainerMode = e.target.value === 'loop' ? 'loop' : 'bars'; syncSwitches();save(); });
 $('loopSequence').onclick = () => {
   seqLoop = !seqLoop;
   $('loopSequence').setAttribute('aria-checked', String(seqLoop));
@@ -1614,7 +1753,7 @@ $('loopSequence').onclick = () => {
 };
 $('meter').onchange = event => {
   prefs.meter = event.target.value;
-  syncDivisionLabels(); if (phase === 'idle') showIdle(); save(); feedback();
+  syncDivisionLabels(); renderPracticeAccents(); if (phase === 'idle') showIdle(); save(); feedback();
 };
 $('division').onchange = event => { prefs.division = +event.target.value; save(); feedback(); };
 $('voice').onchange = event => { prefs.voice = event.target.value; save(); feedback(prefs.voice); };
@@ -1739,11 +1878,12 @@ function seqDuration(block, modifiers = []) {
 }
 function renderSummary() {
   const runnable = plannedSequence();
-  const total = runnable.filter(x => !(x.block.type === 'wait' && x.block.unit === 'seconds')).reduce((sum,x) => sum + x.block.counts,0);
-  const timedWait = runnable.filter(x => x.block.type === 'wait' && x.block.unit === 'seconds').reduce((sum,x) => sum + x.block.counts,0);
-  const seconds = runnable.reduce((sum,x) => sum + seqDuration(x.block,x.modifiers),0);
+  const total = runnable.filter(x => !(x.block.type === 'wait' && x.block.unit === 'seconds')).reduce((sum,x) => sum + x.block.counts * repeatTimes(x.modifiers),0);
+  const timedWait = runnable.filter(x => x.block.type === 'wait' && x.block.unit === 'seconds').reduce((sum,x) => sum + x.block.counts * repeatTimes(x.modifiers),0);
+  const seconds = runnable.reduce((sum,x) => sum + seqDuration(x.block,x.modifiers) * repeatTimes(x.modifiers),0);
   const mods = seqList.filter(b => b.type === 'mod').length;
-  $('seqSummary').textContent = runnable.length ? runnable.length + (runnable.length === 1 ? ' block' : ' blocks') + (mods ? ' + ' + mods + (mods === 1 ? ' modifier' : ' modifiers') : '') + ' · ' + total + ' counts' + (timedWait ? ' + ' + timedWait + 's of timed rest' : '') + ' · ' + seqTime(seconds) : 'Add a Section or Rest to begin';
+  const markersCount = seqList.filter(b=>b.type==='marker').length;
+  $('seqSummary').textContent = runnable.length ? runnable.length + (runnable.length === 1 ? ' block' : ' blocks') + (mods ? ' + ' + mods + (mods === 1 ? ' modifier' : ' modifiers') : '') + (markersCount ? ' · '+markersCount+' marker'+(markersCount===1?'':'s') : '') + ' · ' + total + ' counts' + (timedWait ? ' + ' + timedWait + 's of timed rest' : '') + ' · ' + seqTime(seconds) : 'Add a Section or Rest to begin';
 }
 function renderTrack() {
   // Modifiers render inside their target tile, stacked vertically in play order.
@@ -1752,23 +1892,25 @@ function renderTrack() {
   const modCaption = mod => ({
     rit:'Ritardando: slow this block by ' + mod.strength + '%',
     fermata:'Fermata: hold ' + mod.hold + ' ' + mod.holdUnit + ' after the block',
-    accel:'Accelerando: speed up this block by ' + mod.strength + '%'
+    accel:'Accelerando: speed up this block by ' + mod.strength + '%',
+    repeat:'Repeat this block ' + mod.times + ' times'
   }[mod.kind] || 'Modifier');
-  const modLabel = mod => ({rit:'Rit.',fermata:'𝄐 Fermata',accel:'Accel.'}[mod.kind] || 'Modifier');
+  const modLabel = mod => ({rit:'Rit.',fermata:'𝄐 Fermata',accel:'Accel.',repeat:'⟳ '+mod.times+'×'}[mod.kind] || 'Modifier');
   const oldIds = new Set([...$('seqTrack').querySelectorAll('.track-item')].map(el => el.dataset.blockId));
-  const tiles = runnable.map(({block:b,index,modifiers:mods},position) => {
+  const tiles = runnable.map(({block:b,index,modifiers:mods,markers},position) => {
     const title = b.type === 'wait' ? 'Rest ' + b.counts + ' ' + (b.unit === 'seconds' ? 'seconds' : 'counts') : b.meter + ' · ' + b.counts + ' counts';
     const description = mods.map(modCaption).join(', ');
+    const flags = markers.length ? '<span class="track-markers">'+ markers.map(m=>'<span class="track-marker">⚑ '+escapeText(m.name)+'</span>').join('') + '</span>' : '';
     const badges = mods.length ? '<span class="track-mods" aria-hidden="true">' + mods.map(mod =>
       '<span class="track-mod" title="' + modCaption(mod) + '">' + modLabel(mod) + '</span>').join('') + '</span>' : '';
     const label = b.type === 'wait' ? 'Rest' : b.meter;
     return '<button type="button" class="track-item' + (oldIds.has(String(b.id)) ? '' : ' track-new') + '" data-block-id="' + b.id + '" data-seq-index="' + index + '" style="--block-flex:' + Math.max(seqDuration(b,mods),1).toFixed(2) + '" aria-label="Jump to block ' + (position + 1) + ': ' + title + (mods.length ? ', ' + description : '') + '" title="Click to jump to ' + title + (mods.length ? ' · ' + description : '') + '">' +
-      badges + '<span class="tseg ' + b.type + '"><i></i><span>' + label + '</span></span></button>';
+      flags + badges + '<span class="tseg ' + b.type + '"><i></i><span>' + label + '</span></span></button>';
   });
   const afterLast = runnable.length ? runnable[runnable.length-1].index+1 : 0;
-  const pending = seqList.slice(afterLast).filter(block => block.type === 'mod');
+  const pending = seqList.slice(afterLast).filter(block => block.type === 'mod' || block.type === 'marker');
   if (pending.length) tiles.push('<span class="track-pending-stack" title="Add a Section or Rest below to apply these modifiers">' +
-    pending.map(mod => '<span class="track-pending">' + modLabel(mod) + ' · pending</span>').join('') + '</span>');
+    pending.map(mod => '<span class="track-pending' + (mod.type === 'marker' ? ' marker-pending' : '') + '">' + (mod.type === 'marker' ? '⚑ '+escapeText(mod.name) : modLabel(mod)) + ' · pending</span>').join('') + '</span>');
   $('seqTrack').innerHTML = tiles.join('');
   $('seqTrack').hidden = !seqList.length;
   renderSummary();
@@ -1778,15 +1920,23 @@ function refreshSeqTempo() {
   document.querySelectorAll('.sbpmin').forEach(input => input.placeholder = prefs.bpm);
   renderSummary();
 }
+function escapeText(v) { return String(v).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
 function seqBlockEl(b) {
+  if (b.type === 'marker') {
+    const li=document.createElement('li'); li.className='sblk marker'; li.dataset.id=b.id;
+    li.innerHTML = '<button type="button" class="grip" aria-label="Drag marker">'+seqIcon('grip')+'</button>' +
+      '<div class="sbody"><div class="shead"><span class="skind">⚑ Marker</span></div><div class="sctrl"><input class="marker-name" aria-label="Marker name" maxlength="40" value="'+escapeText(b.name)+'"></div></div>' +
+      '<div class="sacts"><button type="button" class="mini-btn sdel" aria-label="Delete marker">'+seqIcon('trash')+'</button></div>';
+    return li;
+  }
   if (b.type === 'mod') {
     const li = document.createElement('li');
     li.className = 'sblk mod' + (!modifierTarget(seqList.indexOf(b)) ? ' mod-pending' : ''); li.dataset.id = b.id;
     const pending = !modifierTarget(seqList.indexOf(b));
     const tonal = b.kind === 'rit' || b.kind === 'accel';
-    const name = {rit:'↘ Rit.',fermata:'𝄐 Fermata',accel:'↗ Accel.'}[b.kind] || 'Modifier';
-    const hint = {rit:'Gradually slows the next block.',fermata:'Silent hold after the next block.',accel:'Gradually speeds up the next block.'}[b.kind];
-    const controls = tonal ?
+    const name = {rit:'↘ Rit.',fermata:'𝄐 Fermata',accel:'↗ Accel.',repeat:'⟳ Repeat'}[b.kind] || 'Modifier';
+    const hint = {rit:'Gradually slows the next block.',fermata:'Silent hold after the next block.',accel:'Gradually speeds up the next block.',repeat:'Repeat the next block a chosen number of times.'}[b.kind];
+    const controls = b.kind === 'repeat' ? '<label class="mod-setting">Times <input class="modtimes" type="number" inputmode="numeric" min="2" max="16" value="' + b.times + '" aria-label="Repeat count"></label>' : tonal ?
       '<label class="mod-setting">' + (b.kind === 'rit' ? 'Slow by' : b.kind === 'accel' ? 'Speed by' : 'Soften by') +
       ' <input class="modstrength" type="number" inputmode="numeric" min="5" max="80" step="5" value="' + b.strength + '" aria-label="Modifier strength percentage">%</label>' +
       '<label class="mod-setting">Curve <select class="modcurve" aria-label="Tempo change curve"><option value="linear"' + (b.curve === 'linear' ? ' selected' : '') + '>Even</option><option value="late"' + (b.curve === 'late' ? ' selected' : '') + '>Late</option></select></label>' :
@@ -1810,11 +1960,14 @@ function seqBlockEl(b) {
     (wait ? '<div class="select-wrap swaitwrap"><select class="swaitunit" aria-label="Rest in counts or seconds"><option value="counts"' + (b.unit !== 'seconds' ? ' selected' : '') + '>Counts</option><option value="seconds"' + (b.unit === 'seconds' ? ' selected' : '') + '>Seconds</option></select>' + seqIcon('chevron').replace('class="icon"','class="icon chevron"') + '</div>' : '<span class="slabel">counts</span>') +
     '<span class="sbars">' + seqBarsText(b) + '</span></div>' +
     (wait && b.unit === 'seconds' ? '' : '<label class="sbpm"><span class="sbpm-title">Tempo</span><input class="sbpmin" type="number" inputmode="numeric" min="30" max="300" placeholder="' + prefs.bpm + '" value="' + (b.bpm || '') + '" aria-label="Tempo for this block, optional"> BPM</label>') +
-    (wait ? '' : '<label class="sdivfield"><span>Subdivision</span><select class="sdivision" aria-label="Subdivision for this section">' + divisionOptions(b.meter,b.division || 0) + '</select></label>') + '</div></div>' +
+    (wait ? '' : '<label class="sdivfield"><span>Subdivision</span><select class="sdivision" aria-label="Subdivision for this section">' + divisionOptions(b.meter,b.division || 0) + '</select></label>') +
+    (wait ? '' : '<div class="accent-field"><span class="accent-field-label">Accents · tap to toggle each beat</span><div class="accent-grid">'+accentButtons(b)+'</div></div>') + '</div></div>' +
     '<div class="sacts"><button type="button" class="mini-btn sdup" aria-label="Duplicate block">' + seqIcon('copy') + '</button><button type="button" class="mini-btn sdel" aria-label="Delete block">' + seqIcon('trash') + '</button></div>' +
     '';
   return li;
 }
+function accentedIndexes(block) {return block.accents === null || block.accents === undefined ? [0] : block.accents;}
+function accentButtons(block) {return Array.from({length:Number(block.meter.split('/')[0])},(_,i)=>'<button class="accent-beat" type="button" data-accent="'+i+'" aria-pressed="'+String(accentedIndexes(block).includes(i))+'" aria-label="Accent beat '+(i+1)+'">'+(i+1)+'</button>').join('');}
 let renderedSeqIds = new Set();
 function renderSeq() {
   const items = seqList.map(seqBlockEl);
@@ -1851,7 +2004,7 @@ function markSeq(index, prog = 0) {
 // for the old block. The next scheduling pass starts on the new downbeat.
 let requestedSequenceStart = null;
 function jumpToSequenceBlock(rawIndex) {
-  const planned = plannedSequence();
+  const planned = expandedSequence();
   const planIndex = planned.findIndex(entry => entry.index === rawIndex);
   if (planIndex < 0 || phase === 'loading') return;
   report('');
@@ -1910,6 +2063,9 @@ function syncOrder() {
 seqUL.addEventListener('click', event => {
   const row = seqRow(event.target); if (!row) return;
   const [li, block] = row, t = event.target;
+  if (t.closest('.accent-beat') && block.type === 'play') {
+    const i=Number(t.closest('.accent-beat').dataset.accent); const next=new Set(accentedIndexes(block)); if(next.has(i))next.delete(i);else next.add(i);block.accents=[...next].sort((a,b)=>a-b); li.querySelector('.accent-grid').innerHTML=accentButtons(block);seqSave();feedback();return;
+  }
   if (t.closest('.smin,.splus')) { setCounts(li, block, block.counts + (t.closest('.splus') ? 1 : -1)); li.querySelector('.scount').value = block.counts; feedback(); }
   else if (t.closest('.sdup') && block.type !== 'mod') { if (phase !== 'idle') stop(); seqList.splice(seqList.indexOf(block)+1, 0, {...block, id:seqSeed++}); seqChanged(); feedback(); }
   else if (t.closest('.sdel')) { if (phase !== 'idle') stop(); seqList = seqList.filter(b => b !== block); seqChanged(); feedback(); }
@@ -1920,6 +2076,8 @@ seqUL.addEventListener('input', event => {
   sequenceInputBeingEdited = t;
   try {
   if (t.classList.contains('modstrength') && t.value !== '') { block.strength = clamp(Math.round(t.valueAsNumber) || 25,5,80); renderTrack(); seqSave(); }
+  if (t.classList.contains('modtimes') && t.value !== '') { block.times = clamp(Math.round(Number(t.value)||2),2,16); renderTrack();seqSave(); }
+  if (t.classList.contains('marker-name')) { block.name=t.value.slice(0,40); renderTrack();seqSave(); }
   if (t.classList.contains('modhold') && t.value !== '') { block.hold = clamp(t.valueAsNumber || 2,.5,30); renderTrack(); seqSave(); }
   if (t.classList.contains('scount') && t.value !== '') setCounts(li, block, t.valueAsNumber);
   if (t.classList.contains('sbpmin')) { block.bpm = t.value === '' ? 0 : clamp(Math.round(t.valueAsNumber) || 0, 30, 300); renderSummary(); seqSave(); }
@@ -1930,6 +2088,8 @@ seqUL.addEventListener('change', event => {
   const [li, block] = row, t = event.target;
   if (t.classList.contains('modstrength')) t.value = block.strength;
   if (t.classList.contains('modhold')) t.value = block.hold;
+  if (t.classList.contains('modtimes')) t.value = block.times;
+  if (t.classList.contains('marker-name')) {block.name=(t.value.trim()||'Marker').slice(0,40);t.value=block.name;renderTrack();seqSave();}
   if (t.classList.contains('modcurve')) { block.curve = t.value === 'late' ? 'late' : 'linear'; renderTrack(); seqSave(); }
   if (t.classList.contains('modunit')) { block.holdUnit = t.value === 'seconds' ? 'seconds' : 'beats'; renderTrack(); seqSave(); }
   if (t.classList.contains('scount')) t.value = block.counts;
@@ -1946,7 +2106,7 @@ seqUL.addEventListener('change', event => {
     seqChanged(); feedback();
   }
   if (t.classList.contains('smeter')) {
-    block.meter = t.value; li.querySelector('.sbars').textContent = seqBarsText(block);
+    block.meter = t.value; if(Array.isArray(block.accents)) block.accents=block.accents.filter(n=>n<Number(block.meter.split('/')[0])); li.querySelector('.accent-grid').innerHTML=accentButtons(block); li.querySelector('.sbars').textContent = seqBarsText(block);
     const perSection = li.querySelector('.sdivision');
     if (perSection) perSection.innerHTML = divisionOptions(block.meter,block.division || 0);
     renderTrack(); seqSave(); if (phase === 'idle') showIdle(); feedback();
@@ -1956,9 +2116,9 @@ seqUL.addEventListener('focusin', event => { if (event.target.matches('input')) 
 // Modifiers immediately preceding a Section/Rest are its attached stack.
 // Dragging that main block moves its full stack as one unit.
 function attachedRows(li) {
-  if (li.classList.contains('mod')) return [li]; // modifiers may be reassigned individually
+  if (li.classList.contains('mod') || li.classList.contains('marker')) return [li]; // modifiers may be reassigned individually
   const members = [li];
-  for (let prior = li.previousElementSibling; prior?.classList.contains('mod'); prior = prior.previousElementSibling) members.unshift(prior);
+  for (let prior = li.previousElementSibling; prior && (prior.classList.contains('mod') || prior.classList.contains('marker'));  prior = prior.previousElementSibling) members.unshift(prior);
   return members;
 }
 function sortableGroups(excluded = new Set()) {
@@ -1966,7 +2126,7 @@ function sortableGroups(excluded = new Set()) {
   for (const row of seqUL.querySelectorAll(':scope > .sblk')) {
     if (excluded.has(row)) continue;
     pending.push(row);
-    if (!row.classList.contains('mod')) { groups.push(pending.splice(0)); }
+    if (!row.classList.contains('mod') && !row.classList.contains('marker')) { groups.push(pending.splice(0)); }
   }
   if (pending.length) groups.push(pending);
   return groups;
@@ -2083,7 +2243,7 @@ seqUL.addEventListener('pointerdown', event => {
 function addBlock(type) {
   if (phase !== 'idle') stop();
   const play = type === 'play';
-  seqList.push({id:seqSeed++, type, meter:'4/4', counts:play ? 16 : 4, ...(play ? {division:0} : {unit:'counts'}), bpm:0});
+  seqList.push({id:seqSeed++, type, meter:'4/4', counts:play ? 16 : 4, ...(play ? {division:0,accents:null} : {unit:'counts'}), bpm:0});
   seqChanged(); feedback();
   seqUL.lastElementChild.scrollIntoView({block:'nearest', behavior:reduceMotion.matches ? 'auto' : 'smooth'});
 }
@@ -2091,7 +2251,7 @@ function addBlock(type) {
 function addModifier(kind) {
   if (phase !== 'idle') stop();
   report('');
-  seqList.push({id:seqSeed++,type:'mod',kind,strength:25,curve:'linear',hold:2,holdUnit:'beats'});
+  seqList.push({id:seqSeed++,type:'mod',kind,strength:25,curve:'linear',hold:2,holdUnit:'beats',times:2});
   seqChanged(); feedback();
   seqUL.lastElementChild.scrollIntoView({block:'nearest',behavior:reduceMotion.matches ? 'auto' : 'smooth'});
 }
@@ -2178,7 +2338,7 @@ $('sequenceSaveForm').onsubmit = e => {
   if (existing && !confirm('Replace the existing saved sequence "' + existing.name + '"?')) return;
   if (!existing && namedSequences.length >= namedMax) { $('storageMessage').textContent = 'Limit of 40 saved sequences reached. Delete one to save another.'; return; }
   const previous = namedSequences.map(x => ({...x}));
-  const entry = {name,loop:seqLoop,list:seqList.map(b => b.type === 'mod' ? {type:'mod',kind:b.kind,strength:b.strength,curve:b.curve,hold:b.hold,holdUnit:b.holdUnit} : {type:b.type,meter:b.meter,counts:b.counts,...(b.type==='wait'?{unit:b.unit==='seconds'?'seconds':'counts'}:{division:b.division || 0}),bpm:b.bpm}),savedAt:Date.now()};
+  const entry = {name,loop:seqLoop,list:seqList.map(b => b.type === 'mod' ? {type:'mod',kind:b.kind,strength:b.strength,curve:b.curve,hold:b.hold,holdUnit:b.holdUnit,times:b.times||2} : b.type==='marker'?{type:'marker',name:b.name}:{type:b.type,meter:b.meter,counts:b.counts,...(b.type==='wait'?{unit:b.unit==='seconds'?'seconds':'counts'}:{division:b.division || 0,accents:b.accents??null}),bpm:b.bpm}),savedAt:Date.now()};
   if (existing) Object.assign(existing,entry); else namedSequences.unshift(entry);
   if (persistNamedSequences()) { activeSequenceName = name; seqSave(); closeSequenceDialog(); showSeqToast('Saved “' + name + '”'); feedback(); }
   else namedSequences = previous;
@@ -2200,11 +2360,11 @@ function showSeqToast(message, isError = false) {
 }
 function portableSequenceBlocks() {
   return seqList.map(b => b.type === 'mod' ?
-    {type:'mod',kind:b.kind,strength:b.strength,curve:b.curve,hold:b.hold,holdUnit:b.holdUnit} :
-    {type:b.type,meter:b.meter,counts:b.counts,...(b.type === 'wait' ? {unit:b.unit === 'seconds' ? 'seconds' : 'counts'} : {division:b.division || 0}),bpm:b.bpm});
+    {type:'mod',kind:b.kind,strength:b.strength,curve:b.curve,hold:b.hold,holdUnit:b.holdUnit,times:b.times||2} :
+    b.type === 'marker' ? {type:'marker',name:b.name} : {type:b.type,meter:b.meter,counts:b.counts,...(b.type === 'wait' ? {unit:b.unit === 'seconds' ? 'seconds' : 'counts'} : {division:b.division || 0,accents:b.accents??null}),bpm:b.bpm});
 }
 function downloadSequenceJSON() {
-  if (!seqList.some(b => b.type !== 'mod')) {
+  if (!seqList.some(b => b.type === 'play' || b.type === 'wait')) {
     showSeqToast('Add at least one Section or Rest first.', true); return;
   }
   const name = activeSequenceName || 'Kevin sequence';
@@ -2228,10 +2388,10 @@ async function importSequenceJSON(file) {
     if (data.format && data.version !== 1) throw Error('Unsupported sequence file version.');
     const raw = data.blocks ?? data.list;
     if (!Array.isArray(raw) || raw.length < 1 || raw.length > 150) throw Error('Expected 1–150 sequence blocks.');
-    if (raw.some(b => !b || !['play','wait','mod'].includes(b.type))) throw Error('The sequence has an invalid block type.');
+    if (raw.some(b => !b || !['play','wait','mod','marker'].includes(b.type))) throw Error('The sequence has an invalid block type.');
     const parsed = validSequenceBlocks(raw);
-    const removedRetired = raw.filter(b => b.type === 'mod' && ['cresc','subito'].includes(b.kind)).length;
-    if (!parsed || parsed.length !== raw.length - removedRetired || !parsed.some(b => b.type !== 'mod')) throw Error('Some blocks have invalid settings.');
+    const removedRetired = raw.filter(b => b.type === 'mod' && ['cresc','subito','swing','dropout'].includes(b.kind)).length;
+    if (!parsed || parsed.length !== raw.length - removedRetired || !parsed.some(b => b.type === 'play' || b.type === 'wait')) throw Error('Some blocks have invalid settings.');
     if (phase !== 'idle') stop();
     seqList = parsed;
     seqSeed = seqList.length + 1;
@@ -2255,9 +2415,11 @@ $('importSequenceFile').addEventListener('change', event => {
 
 $('addSection').onclick = () => addBlock('play');
 $('addWait').onclick = () => addBlock('wait');
+$('addMarker').onclick = () => { if(phase!=='idle')stop();seqList.push({id:seqSeed++,type:'marker',name:'New marker'});seqChanged();seqUL.lastElementChild.scrollIntoView({block:'nearest',behavior:'smooth'});feedback(); };
 $('addRit').onclick = () => addModifier('rit');
 $('addFermata').onclick = () => addModifier('fermata');
 $('addAccel').onclick = () => addModifier('accel');
+$('addRepeat').onclick = () => addModifier('repeat');
 function setView(next) {
   if (view === next) return;
   if (phase !== 'idle') stop();
@@ -2269,12 +2431,68 @@ function setView(next) {
   $('seqCard').hidden = !seq;
   $('viewTitle').textContent = seq ? 'Sequence' : 'Metronome';
   $('meter').closest('.field').hidden = seq;
+  $('practiceAccentEditor').hidden = seq;
   $('countIn').hidden = seq;
   $('loopSequence').hidden = !seq;
   $('sequenceStorage').hidden = !seq;
   screenMode = '';
   showIdle(); feedback();
 }
+
+// Fullscreen Performance Mode reads exactly the same clock-driven playback events.
+let performanceOpened = false, performanceReturnFocus = null;
+function performanceDots(total,active=-1,silent=false) {
+  const target=$('performanceDots');
+  if (target.children.length !== total) target.innerHTML=Array.from({length:total},(_,i)=>'<span class="performance-dot">'+(i+1)+'</span>').join('');
+  [...target.children].forEach((dot,i)=> {dot.classList.toggle('lit',active===i);dot.classList.toggle('silent',active===i&&silent);});
+}
+function renderPerformanceIdle() {
+  if (!performanceOpened) return;
+  $('performanceStatus').textContent='Ready to practice';
+  $('performanceBpm').innerHTML=String(prefs.bpm)+'<span>BPM</span>';
+  const first=view==='seq'?plannedSequence()[0]?.block:null;
+  $('performanceMeter').textContent=(first?.meter||prefs.meter)+' · '+(view==='seq'?'Sequence':'Metronome');
+  $('performanceBeatText').textContent='Press Play to begin';
+  $('performanceNext').textContent=first?'First up: '+(first.type==='wait'?'Rest':first.meter):'Keep the pulse steady';
+  performanceDots(first?seqSpan(first):beatsPerBar());
+}
+function updatePerformanceBeat(event) {
+  if (!performanceOpened)return;
+  $('performanceStatus').textContent=event.memorySilent?'Silent bar · keep counting':event.count?'Count-in':'Now playing';
+  $('performanceBpm').innerHTML=String(Math.round(event.bpm||prefs.bpm))+'<span>BPM</span>';
+  $('performanceMeter').textContent=event.meter+' · '+(view==='seq'?'Sequence':'Metronome');
+  $('performanceBeatText').textContent=event.info||('Beat '+(event.beat+1)+' of '+event.total);
+  performanceDots(event.total,event.beat,event.randomSilenced);
+  if(seqOn&&event.seq!==undefined){
+    const ix=event.planPosition ?? seqPlan.findIndex(x=>x.index===event.seq),next=seqPlan[ix+1];
+    $('performanceNext').textContent=next?'Up next: '+(next.markers.length?'⚑ '+next.markers.map(m=>m.name).join(' · ')+' · ':'')+(next.block.type==='wait'?'Rest':next.block.meter)+(next.repeatTotal>1?' · repeat '+(next.repeatIndex+1)+'/'+next.repeatTotal:''):(seqLoop?'Sequence loops':'End of sequence');
+  } else $('performanceNext').textContent=event.memorySilent?'Listen internally. Keep the pulse.':'Stay with the beat.';
+  const image=$('performanceKevin').querySelector('svg');
+  if(image&&!reduceMotion.matches){image.animate([{transform:'translateY(0)'},{transform:'translateY(-8px)'},{transform:'translateY(0)'}],{duration:Math.min(250,event.duration*800),easing:'ease-out'});}
+}
+async function openPerformance() {
+  if(performanceOpened) return;
+  performanceReturnFocus=document.activeElement;performanceOpened=true;
+  $('performanceScreen').hidden=false;document.body.classList.add('performance-active');
+  const original=$('kevin').ownerSVGElement;
+  if(!$('performanceKevin').firstChild && original){const svg=original.cloneNode(true);const img=svg.querySelector('#kevin');img?.removeAttribute('id');svg.querySelector('#ink')?.removeAttribute('id');img?.removeAttribute('filter');$('performanceKevin').append(svg);}
+  renderPerformanceIdle();
+  $('performanceExit').focus();
+  try{await $('performanceScreen').requestFullscreen?.({navigationUI:'hide'});}catch{/* iOS Safari and embedded browsers can use the overlay instead. */}
+}
+async function closePerformance() {
+  if(!performanceOpened)return;
+  performanceOpened=false;$('performanceScreen').hidden=true;document.body.classList.remove('performance-active');
+  if(document.fullscreenElement===$('performanceScreen'))try{await document.exitFullscreen();}catch{}
+  performanceReturnFocus?.focus?.();
+}
+$('performanceOpen').onclick=openPerformance;
+$('performanceExit').onclick=closePerformance;
+$('performanceToggle').onclick=togglePlayback;
+document.addEventListener('keydown',event=>{if(performanceOpened&&event.key==='Escape'){event.preventDefault();closePerformance();}});
+document.addEventListener('fullscreenchange',()=>{if(performanceOpened&&!document.fullscreenElement&&performanceScreenWasFull){closePerformance();}performanceScreenWasFull=document.fullscreenElement===$('performanceScreen');});
+let performanceScreenWasFull=false;
+
 $('tabPractice').onclick = () => setView('practice');
 $('tabSeq').onclick = () => setView('seq');
 window.addEventListener('pagehide', () => { stop(); mediaRoute?.pause(); });
