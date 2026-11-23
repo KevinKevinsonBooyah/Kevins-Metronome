@@ -636,6 +636,62 @@ body[data-view=seq] .stage{min-height:219px}
 [data-theme=dark] .seq-toast{background:#34304e;color:#ede9ff}
 @media(max-width:360px){.sequence-storage .storage-button{font-size:.72rem;padding:5px 4px;gap:4px}.sequence-storage .storage-button .icon{width:14px;height:14px}}
 @media(prefers-reduced-motion:reduce){.sblk,.track-item,.track-item .tseg,.track-item .tseg i,.track-item .track-mod,.seq-toast,.storage-button,.action,.mini-btn,.beat,.tempo-tag{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* v11: keep selection rings, glow, and pop animations inside their visual lanes. */
+/* Desktop's horizontal overview scroller used to crop the active ring at its edges. */
+.seq-track{
+  box-sizing:border-box;
+  padding:16px 14px 25px;
+  scroll-padding-inline:14px;
+  scroll-padding-block:14px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  row-gap:20px;
+}
+/* Reserve space for the transform and selection shadow on either end. */
+.track-item{flex-shrink:0;max-width:100%;isolation:isolate}
+.track-item .tseg{box-sizing:border-box;flex:0 0 49px;height:49px;min-height:49px}
+.track-item.active .tseg{transform:none}
+/* Do not let the focused overview outline get trapped beneath adjacent tiles. */
+.track-item:is(.active,:hover,:focus-visible){z-index:3}
+/* Avoid an outside-facing shadow on clipped playback rows. Use inset light instead. */
+.sblk.active{animation:activeInset 2.3s ease-in-out infinite;filter:none}
+.sblk.mod.active{animation:activeModInset 2.3s ease-in-out infinite;filter:none}
+@keyframes activeInset{0%,100%{filter:brightness(1)}50%{filter:brightness(1.055)}}
+@keyframes activeModInset{0%,100%{filter:brightness(1)}50%{filter:brightness(1.07)}}
+/* Drag/drop labels and block entrance have room to animate inside the editor. */
+.seq-list{padding:13px 14px 20px 9px;overflow:clip;overflow-clip-margin:6px}
+@keyframes rowArrive{from{opacity:0;translate:0 5px}to{opacity:1;translate:0 0}}
+@media(max-width:720px),(hover:none) and (pointer:coarse) and (orientation:landscape) and (max-height:650px){
+  /* In-flow modifier stacks are part of each tile's height; never stretch
+     the beat tile to that stack's full height. */
+  body[data-view=seq] .seq-track{
+    grid-template-columns:repeat(auto-fit,minmax(min(90px,100%),1fr));
+    gap:21px 11px;
+    padding:15px 10px 25px;
+    overflow:visible;
+    align-items:end;
+  }
+  body[data-view=seq] .track-item{
+    width:100%;min-width:0;height:auto;min-height:49px;
+    align-self:end;justify-content:flex-end;
+  }
+  body[data-view=seq] .track-item .tseg{
+    box-sizing:border-box;width:100%;height:49px;min-height:49px;
+    flex:0 0 49px;
+    font-size:1.03rem;
+  }
+  body[data-view=seq] .track-item .track-mod{
+    max-width:100%;min-width:0;overflow-wrap:anywhere;
+  }
+  body[data-view=seq] .seq-list{padding:11px 9px 19px 5px}
+}
+@media(max-width:335px){
+  body[data-view=seq] .seq-track{grid-template-columns:repeat(auto-fit,minmax(min(88px,100%),1fr));gap:21px 9px;padding-inline:9px}
+  body[data-view=seq] .track-item .tseg{font-size:.98rem}
+}
+@media(prefers-reduced-motion:reduce){.sblk.active,.sblk.mod.active{animation:none!important;filter:none!important}}
+
 </style>
 </head>
 <body>
