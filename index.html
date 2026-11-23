@@ -568,6 +568,74 @@ body[data-view=seq] .stage{min-height:219px}
  body[data-view=seq] .sblk.mod:not(.mod-pending):not(.drag) + .sblk.mod::before{left:25px}
 }
 @media(max-width:335px){body[data-view=seq] .track-item .track-mod{font-size:.74rem}}
+
+/* v10: animated, tactile controls and brighter progress cues. Respect reduced motion. */
+:root{--motion-pop:cubic-bezier(.2,1.35,.35,1);--motion-smooth:cubic-bezier(.2,.85,.25,1)}
+.seq.card{position:relative;isolation:isolate}
+.seq-head .settings-icon{transition:transform .3s var(--motion-pop),background .25s}
+.seq:hover .seq-head .settings-icon{transform:rotate(3deg) scale(1.07);background:#e4e0ff}
+.action,.storage-button,.mini-btn,.view-toggle button{transition:transform .2s var(--motion-pop),background-color .2s,box-shadow .2s,filter .2s}
+@media(hover:hover){.storage-button:hover,.action:hover{transform:translateY(-2px);box-shadow:2px 5px 0 var(--ink)}.mini-btn:hover{transform:translateY(-1px) scale(1.065)}}
+.storage-file{background:#eee9ff; border-color:#7d6ab3}
+.storage-file:hover{background:#e3d9ff}
+.sequence-storage{position:relative}
+.sequence-storage .storage-button{min-height:43px}
+.sblk{transition:transform .21s var(--motion-smooth),box-shadow .21s var(--motion-smooth),border-color .22s,background-color .24s;will-change:auto}
+.sblk .skind{transition:transform .24s var(--motion-pop),box-shadow .24s}
+.sblk:not(.drag):hover{border-color:#7274c3;box-shadow:3px 5px 0 var(--ink)}
+.sblk:not(.mod):not(.drag):hover .skind{transform:rotate(-2deg) translateY(-2px)}
+.sblk.mod:not(.drag):hover{border-color:#986ae1}
+.sblk.just-added{animation:rowArrive .3s var(--motion-pop) both}
+@keyframes rowArrive{from{opacity:0;translate:0 12px;filter:blur(2px)}to{opacity:1;translate:0 0;filter:blur(0)}}
+.sblk.active{position:relative;animation:activeBreath 2.3s ease-in-out infinite;}
+.sblk.active .skind{filter:brightness(1.07)}
+@keyframes activeBreath{0%,100%{filter:drop-shadow(0 0 0 transparent)}50%{filter:drop-shadow(0 0 5px #6d80db55)}}
+.sblk.mod.active{animation:activeModBreath 2.3s ease-in-out infinite}
+@keyframes activeModBreath{0%,100%{filter:drop-shadow(0 0 0 transparent)}50%{filter:drop-shadow(0 0 6px #9669d655)}}
+.seq-track{position:relative;scroll-behavior:smooth}
+.track-item{transform-origin:center bottom;transition:transform .23s var(--motion-pop),filter .23s;will-change:auto}
+.track-item.track-new{animation:trackArrive .36s var(--motion-pop) both}
+@keyframes trackArrive{from{opacity:0;translate:0 10px;scale:.93}to{opacity:1;translate:0 0;scale:1}}
+.track-item .tseg{position:relative;transition:background-color .22s,box-shadow .22s,transform .22s var(--motion-pop),border-color .22s;isolation:isolate}
+.track-item .tseg i{background:linear-gradient(90deg,#687dfa9a,#bd9bffac,#687dfa9a);background-size:180% 100%;opacity:.42;transition:width .12s ease-out;z-index:0}
+.track-item .tseg span{z-index:1}
+.track-item .tseg.wait i{background:linear-gradient(90deg,#d1a74566,#fff6b69c,#d1a74566)}
+.track-item .track-mod{transition:background .2s,transform .2s var(--motion-pop),box-shadow .2s}
+@media(hover:hover){.track-item:hover{transform:translateY(-4px) scale(1.035);filter:drop-shadow(0 4px 4px #41317a24)}.track-item:hover .track-mod{background:#e2d5ff}.track-item:hover .tseg{border-color:#6f68ad}}
+.track-item.active .tseg{animation:trackPulse 1.4s ease-in-out infinite alternate;border-color:#6457ad;box-shadow:0 3px 0 var(--ink),0 0 0 3px #8875e32f}
+.track-item.active .tseg i{animation:progressShimmer 2.2s linear infinite}
+.track-item.active .track-mod{background:#d5c3ff;box-shadow:0 2px 0 #7358ae,0 0 10px #9874d745}
+.track-item.active .track-mods::after{animation:arrowBob .8s ease-in-out infinite alternate}
+@keyframes progressShimmer{to{background-position:-180% 0}}
+@keyframes trackPulse{to{box-shadow:0 4px 0 var(--ink),0 0 0 5px #8875e32f}}
+@keyframes arrowBob{to{transform:translateX(-50%) translateY(2px) rotate(45deg)}}
+.sblk.mod.drag.group-drag:not(.mod-pending)::after{content:"";position:absolute;left:clamp(24px,3vw,37px);top:calc(100% + 1px);height:calc(var(--mod-gap,12px) + 3px);width:3px;background:#9d72e8;border-radius:8px;z-index:12;pointer-events:none;box-shadow:0 0 8px #ae85ff}
+.sblk.mod.drag.group-drag + .sblk:not(.mod)::before{content:"";position:absolute;top:-4px;left:calc(clamp(12px,3vw,36px) + clamp(24px,3vw,37px) - 4px);width:11px;height:7px;border-radius:5px;background:#9d72e8;z-index:12;pointer-events:none}
+.beat.current{animation:beatSpring .25s cubic-bezier(.17,1.7,.4,1) both}
+.beat.minor.current{animation:beatSpringMinor .25s cubic-bezier(.17,1.7,.4,1) both}
+@keyframes beatSpring{0%{scale:.76}70%{scale:1.07}100%{scale:1}}
+@keyframes beatSpringMinor{0%{scale:.76}70%{scale:1.1}100%{scale:1}}
+.tempo-tag{transition:transform .28s var(--motion-pop),box-shadow .2s}
+@media(hover:hover){.tempo-tag:hover{transform:rotate(0deg) scale(1.05);box-shadow:2px 4px 0 var(--ink)}}
+.bpm:focus{outline-color:#7465dc;outline-offset:1px}
+.seq-list.is-dragging{background:linear-gradient(90deg,transparent,#9679eb0a,transparent);border-radius:12px}
+.seq-list.is-dragging .sblk:not(.drag){filter:saturate(.86)}
+.sblk.drag,.sblk.mod.drag{z-index:8!important;transition:none!important;background:#fefeff!important;border-color:#7457c8!important;box-shadow:0 9px 0 #7566a6,0 14px 25px #3726682c!important;filter:none!important;animation:none!important;cursor:grabbing}
+.sblk.drag .grip{cursor:grabbing;color:#7863ce}
+.drag-position{height:0;min-height:0;padding:0;margin:0;list-style:none;position:relative;pointer-events:none;z-index:1}
+.drag-position::after{content:"DROP HERE";position:absolute;top:-8px;right:7px;color:#8563c2;background:#f0eaff;border:1px dashed #906bd1;font:750 .6rem/1 ui-monospace,monospace;padding:2px 5px;border-radius:5px;letter-spacing:.03em}
+.drag-position::before{content:"";position:absolute;left:5px;right:6px;top:0;height:3px;background:#9c77e4;border-radius:9px;box-shadow:0 0 9px #9c77e4aa}
+.seq-toast{position:fixed;z-index:999;left:50%;bottom:max(20px,env(safe-area-inset-bottom));transform:translateX(-50%);max-width:min(90vw,420px);padding:10px 17px;border-radius:12px;border:1.5px solid #8570c4;background:#f1edff;color:#31245d;box-shadow:0 5px 20px #20144b3b;font-weight:780;text-align:center;pointer-events:none}
+.seq-toast.error{background:#fff0e9;color:#8d3626;border-color:#c87a64}
+.seq-toast.appear{animation:toastUp .32s var(--motion-pop) both}
+@keyframes toastUp{from{opacity:0;translate:0 18px;scale:.95}to{opacity:1;translate:0 0;scale:1}}
+[data-theme=dark] .storage-file{background:#3d365c;border-color:#8373ba}
+[data-theme=dark] .storage-file:hover{background:#514477}
+[data-theme=dark] .sblk.drag,[data-theme=dark] .sblk.mod.drag{background:#34304d!important;box-shadow:0 7px 0 #65548b,0 12px 23px #0007!important}
+[data-theme=dark] .track-item.active .track-mod{background:#64508c}
+[data-theme=dark] .seq-toast{background:#34304e;color:#ede9ff}
+@media(max-width:360px){.sequence-storage .storage-button{font-size:.72rem;padding:5px 4px;gap:4px}.sequence-storage .storage-button .icon{width:14px;height:14px}}
+@media(prefers-reduced-motion:reduce){.sblk,.track-item,.track-item .tseg,.track-item .tseg i,.track-item .track-mod,.seq-toast,.storage-button,.action,.mini-btn,.beat,.tempo-tag{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
@@ -594,7 +662,7 @@ body[data-view=seq] .stage{min-height:219px}
 <symbol id="i-save" viewBox="0 0 24 24"><path d="M5 3h12l3 3v15H4V3h1zM8 3v7h9V3M8 21v-7h8v7M10 3v5h4V3"/></symbol>
 <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6h7l2 3h9v10H3zM3 6v13"/></symbol>
 <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 7V4h4v3M6.5 7l1 13h9l1-13M10 11v6m4-6v6"/></symbol>
-</defs></svg>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M4 17v3h16v-3"/></symbol><symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4m-4 4 4-4 4 4M4 17v3h16v-3"/></symbol></defs></svg>
 <header><div class="wrap topbar">
 <div class="brand"><span class="logo" aria-hidden="true"><svg viewBox="0 0 60 60" fill="none" stroke="white" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"><path d="M31 9C15 7 4 20 6 33c2 12 15 18 29 15 14-3 20-13 17-23-2-6-12-15-21-18M16 29q11 21 25-2"/><g fill="white" stroke="none"><circle cx="22" cy="23" r="2.7"/><circle cx="35" cy="21" r="2.7"/></g></svg></span><span>Kevin’s <em>Metronome</em></span></div>
 <div class="top-actions"><button class="audio-btn" id="theme" type="button" aria-label="Dark mode" aria-pressed="false"><span aria-hidden="true">☾</span><span>Dark mode</span></button><button class="audio-btn" id="mute" type="button" aria-pressed="true" aria-label="Enable sound"><svg class="icon" aria-hidden="true"><use href="#i-volume"/></svg><span>Sound on</span></button></div>
@@ -627,7 +695,13 @@ body[data-view=seq] .stage{min-height:219px}
 </div>
 <div class="volume"><div class="volume-top"><label for="volume">Volume</label><output for="volume" id="volumeOut">75%</output></div><div class="volume-slider"><svg class="icon" aria-hidden="true"><use href="#i-low"/></svg><input id="volume" type="range" min="0" max="300" value="75" aria-label="Sound volume"><svg class="icon" aria-hidden="true"><use href="#i-volume"/></svg></div></div>
 <div class="switches"><button class="switch-row" role="switch" aria-checked="true" type="button" id="countIn"><span>4-beat count-in</span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row" role="switch" aria-checked="true" type="button" id="accent"><span>Accent first beat</span><span class="switch-track" aria-hidden="true"></span></button><button class="switch-row" role="switch" aria-checked="false" type="button" id="loopSequence" hidden><span>Loop Sequence</span><span class="switch-track" aria-hidden="true"></span></button></div>
-<div class="sequence-storage" id="sequenceStorage" hidden aria-label="Saved sequences"><button type="button" class="storage-button" id="saveSequence"><svg class="icon" aria-hidden="true"><use href="#i-save"/></svg><span>Save sequence</span></button><button type="button" class="storage-button" id="loadSequence"><svg class="icon" aria-hidden="true"><use href="#i-folder"/></svg><span>Load sequence</span></button></div>
+<div class="sequence-storage" id="sequenceStorage" hidden aria-label="Sequence files and saved sequences">
+<button type="button" class="storage-button" id="saveSequence"><svg class="icon" aria-hidden="true"><use href="#i-save"/></svg><span>Save sequence</span></button>
+<button type="button" class="storage-button" id="loadSequence"><svg class="icon" aria-hidden="true"><use href="#i-folder"/></svg><span>Load sequence</span></button>
+<button type="button" class="storage-button storage-file" id="downloadSequence"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg><span>Download sequence</span></button>
+<button type="button" class="storage-button storage-file" id="importSequence"><svg class="icon" aria-hidden="true"><use href="#i-upload"/></svg><span>Import sequence</span></button>
+<input id="importSequenceFile" type="file" accept=".json,application/json" hidden aria-label="Choose a downloaded sequence JSON file">
+</div>
 </section></div>
 <section id="seqCard" class="seq card" aria-labelledby="seqTitle" hidden>
 <div class="seq-head"><div class="settings-title"><span class="settings-icon"><svg class="icon" aria-hidden="true"><use href="#i-seq"/></svg></span><h2 id="seqTitle">Your sequence</h2></div><span id="seqSummary" class="seq-sum"></span></div>
@@ -647,6 +721,7 @@ body[data-view=seq] .stage{min-height:219px}
  <p class="storage-message" id="storageMessage" role="status"></p>
 </dialog>
 <p id="error" role="alert" hidden></p>
+<div id="seqToast" class="seq-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
 <div class="shortcuts" aria-label="Keyboard shortcuts"><span><svg class="icon" aria-hidden="true"><use href="#i-keys"/></svg>Shortcuts</span><span><kbd>Space</kbd> Start / stop</span><span><kbd>T</kbd> Tap tempo</span><span><kbd>↑</kbd><kbd>↓</kbd> Adjust tempo</span></div>
 </main>
 <script>
@@ -1233,13 +1308,14 @@ function renderTrack() {
     ? 'Ritardando: slow this block by ' + mod.strength + '% (' + (mod.curve === 'late' ? 'late' : 'even') + ')'
     : 'Fermata: add ' + mod.hold + ' ' + mod.holdUnit + ' after this block';
   const modLabel = mod => mod.kind === 'rit' ? 'Rit.' : '𝄐 Fermata';
+  const oldIds = new Set([...$('seqTrack').querySelectorAll('.track-item')].map(el => el.dataset.blockId));
   const tiles = runnable.map(({block:b,index,modifiers:mods},position) => {
     const title = b.type === 'wait' ? 'Rest ' + b.counts + ' ' + (b.unit === 'seconds' ? 'seconds' : 'counts') : b.meter + ' · ' + b.counts + ' counts';
     const description = mods.map(modCaption).join(', ');
     const badges = mods.length ? '<span class="track-mods" aria-hidden="true">' + mods.map(mod =>
       '<span class="track-mod" title="' + modCaption(mod) + '">' + modLabel(mod) + '</span>').join('') + '</span>' : '';
     const label = b.type === 'wait' ? 'Rest' : b.meter;
-    return '<button type="button" class="track-item" data-seq-index="' + index + '" style="--block-flex:' + Math.max(seqDuration(b,mods),1).toFixed(2) + '" aria-label="Jump to block ' + (position + 1) + ': ' + title + (mods.length ? ', ' + description : '') + '" title="Click to jump to ' + title + (mods.length ? ' · ' + description : '') + '">' +
+    return '<button type="button" class="track-item' + (oldIds.has(String(b.id)) ? '' : ' track-new') + '" data-block-id="' + b.id + '" data-seq-index="' + index + '" style="--block-flex:' + Math.max(seqDuration(b,mods),1).toFixed(2) + '" aria-label="Jump to block ' + (position + 1) + ': ' + title + (mods.length ? ', ' + description : '') + '" title="Click to jump to ' + title + (mods.length ? ' · ' + description : '') + '">' +
       badges + '<span class="tseg ' + b.type + '"><i></i><span>' + label + '</span></span></button>';
   });
   const afterLast = runnable.length ? runnable[runnable.length-1].index+1 : 0;
@@ -1288,8 +1364,14 @@ function seqBlockEl(b) {
     '';
   return li;
 }
+let renderedSeqIds = new Set();
 function renderSeq() {
   const items = seqList.map(seqBlockEl);
+  items.forEach((li,index) => {
+    li.style.setProperty('--row-order', Math.min(index,12));
+    if (!renderedSeqIds.has(li.dataset.id)) li.classList.add('just-added');
+  });
+  renderedSeqIds = new Set(seqList.map(b => String(b.id)));
   if (!items.length) {
     const empty = document.createElement('li');
     empty.className = 'seq-empty';
@@ -1403,65 +1485,132 @@ seqUL.addEventListener('change', event => {
   }
 });
 seqUL.addEventListener('focusin', event => { if (event.target.matches('input')) event.target.select(); });
+// Modifiers immediately preceding a Section/Rest are its attached stack.
+// Dragging that main block moves its full stack as one unit.
+function attachedRows(li) {
+  if (li.classList.contains('mod')) return [li]; // modifiers may be reassigned individually
+  const members = [li];
+  for (let prior = li.previousElementSibling; prior?.classList.contains('mod'); prior = prior.previousElementSibling) members.unshift(prior);
+  return members;
+}
+function sortableGroups(excluded = new Set()) {
+  const groups = [], pending = [];
+  for (const row of seqUL.querySelectorAll(':scope > .sblk')) {
+    if (excluded.has(row)) continue;
+    pending.push(row);
+    if (!row.classList.contains('mod')) { groups.push(pending.splice(0)); }
+  }
+  if (pending.length) groups.push(pending);
+  return groups;
+}
+function insertBundleBefore(members, next) {
+  const fragment = document.createDocumentFragment();
+  members.forEach(el => fragment.appendChild(el));
+  seqUL.insertBefore(fragment, next ?? null);
+}
+const rowAnimations = new WeakMap();
+function animateReflow(oldRects, excluded) {
+  if (reduceMotion.matches) return;
+  for (const [el, before] of oldRects) {
+    if (excluded.has(el)) continue;
+    const dy = before - el.getBoundingClientRect().top;
+    if (Math.abs(dy) < 1.5) continue;
+    rowAnimations.get(el)?.cancel();
+    const anim = el.animate([{transform:'translateY(' + dy + 'px)'},{transform:'translateY(0)'}],{duration:190,easing:'cubic-bezier(.2,.9,.2,1)'});
+    rowAnimations.set(el,anim);
+  }
+}
 seqUL.addEventListener('keydown', event => {
   if (event.key === 'Enter' && event.target.matches('input')) { event.target.blur(); return; }
   const grip = event.target.closest && event.target.closest('.grip');
-  if (!grip || (event.key !== 'ArrowUp' && event.key !== 'ArrowDown')) return;
+  if (!grip || !['ArrowUp','ArrowDown'].includes(event.key)) return;
   event.preventDefault(); event.stopPropagation();
-  const li = grip.closest('.sblk'), sibling = event.key === 'ArrowUp' ? li.previousElementSibling : li.nextElementSibling;
-  if (!sibling || !sibling.dataset.id) return;
-  if (phase !== 'idle') stop();
-  if (event.key === 'ArrowUp') sibling.before(li); else sibling.after(li);
-  grip.focus(); syncOrder();
+  const li = grip.closest('.sblk');
+  const members = attachedRows(li), membersSet = new Set(members);
+  const groups = sortableGroups(membersSet);
+  const top = members[0].getBoundingClientRect().top;
+  const bottom = members.at(-1).getBoundingClientRect().bottom;
+  if (event.key === 'ArrowUp') {
+    const preceding = groups.filter(group => group.at(-1).getBoundingClientRect().bottom <= top+2).at(-1);
+    if (!preceding) return;
+    if (phase !== 'idle') stop();
+    insertBundleBefore(members,preceding[0]);
+  } else {
+    const following = groups.find(group => group[0].getBoundingClientRect().top >= bottom-2);
+    if (!following) return;
+    if (phase !== 'idle') stop();
+    const after = following.at(-1).nextElementSibling;
+    insertBundleBefore(members,after);
+  }
+  syncOrder();
+  seqUL.querySelector('.sblk[data-id="'+li.dataset.id+'"] .grip')?.focus();
 });
 seqUL.addEventListener('pointerdown', event => {
   const grip = event.target.closest('.grip');
   if (!grip || event.button !== 0) return;
-  event.preventDefault();
   const li = grip.closest('.sblk');
   if (!li) return;
+  event.preventDefault();
   const pointerId = event.pointerId;
-  const zoom = parseFloat(getComputedStyle(document.body).zoom) || 1;
-  const origin = li.getBoundingClientRect();
-  const offsetY = event.clientY - origin.top;
+  const members = attachedRows(li), membersSet = new Set(members);
+  const first = members[0], last = members.at(-1);
+  const originalTop = first.getBoundingClientRect().top;
+  const offsetY = event.clientY - originalTop;
   const firstY = event.clientY;
-  let moved = false;
+  let moved = false, lastIndex = -1;
+  const ghost = document.createElement('div');
+  ghost.className = 'drag-position';
+  ghost.setAttribute('aria-hidden','true');
+  function removeGhost() { ghost.remove(); }
+  function paintDrag(clientY) {
+    const area = seqUL.getBoundingClientRect();
+    const groupHeight = last.getBoundingClientRect().bottom - first.getBoundingClientRect().top;
+    const desiredTop = clamp(clientY - offsetY, area.top+1, Math.max(area.top+1,area.bottom-groupHeight-1));
+    const groups = sortableGroups(membersSet);
+    const target = groups.find(group => clientY < group[0].getBoundingClientRect().top + (group.at(-1).getBoundingClientRect().bottom-group[0].getBoundingClientRect().top)/2);
+    const next = target ? target[0] : null;
+    const nextIndex = next ? [...seqUL.children].indexOf(next) : seqUL.children.length;
+    if (nextIndex !== lastIndex) {
+      const oldRects = new Map([...seqUL.querySelectorAll(':scope > .sblk')].map(el=>[el,el.getBoundingClientRect().top]));
+      insertBundleBefore(members,next);
+      animateReflow(oldRects,membersSet);
+      lastIndex = nextIndex;
+      removeGhost();
+      if (members.at(-1).nextElementSibling) members.at(-1).after(ghost);
+      else seqUL.append(ghost);
+    }
+    members.forEach(row => { row.style.transform = ''; });
+    const naturalTop = first.getBoundingClientRect().top;
+    const newArea = seqUL.getBoundingClientRect();
+    const boundedTop = clamp(desiredTop,newArea.top+1,Math.max(newArea.top+1,newArea.bottom-groupHeight-1));
+    const delta = boundedTop-naturalTop;
+    members.forEach(row => { row.style.transform = 'translateY(' + delta + 'px)'; });
+  }
   const move = e => {
     if (e.pointerId !== pointerId) return;
-    if (!moved && Math.abs(e.clientY - firstY) < 4) return;
+    if (!moved && Math.abs(e.clientY - firstY) < 5) return;
     if (!moved) {
       moved = true;
       if (phase !== 'idle') stop();
-      li.classList.add('drag');
+      seqUL.classList.add('is-dragging');
+      members.forEach(el => { el.classList.add('drag'); if (members.length > 1) el.classList.add('group-drag'); });
+      // Keep the overall editor height stable while dragging.
     }
-    const area = seqUL.getBoundingClientRect();
-    // Clamp the visual top between the list's edges; never allow a dragged block outside.
-    const maxTop = Math.max(area.top, area.bottom - li.getBoundingClientRect().height);
-    const visualTop = clamp(e.clientY - offsetY, area.top, maxTop);
-    li.style.transform = 'none';
-    const ownHeight = li.getBoundingClientRect().height;
-    const center = visualTop + ownHeight/2;
-    const rest = [...seqUL.children].filter(el => el !== li && el.dataset.id);
-    const next = rest.find(el => center < el.getBoundingClientRect().top + el.getBoundingClientRect().height/2);
-    if (next) {
-      if (li.nextElementSibling !== next) next.before(li);
-    } else if (seqUL.lastElementChild !== li) seqUL.appendChild(li);
-    const naturalTop = li.getBoundingClientRect().top;
-    const newArea = seqUL.getBoundingClientRect();
-    const boundedTop = clamp(visualTop, newArea.top, Math.max(newArea.top, newArea.bottom - ownHeight));
-    li.style.transform = `translateY(${(boundedTop - naturalTop)/zoom}px)`;
+    paintDrag(e.clientY);
   };
   const finish = e => {
     if (e.pointerId !== pointerId) return;
-    removeEventListener('pointermove', move);
-    removeEventListener('pointerup', finish);
-    removeEventListener('pointercancel', finish);
-    li.classList.remove('drag'); li.style.transform = '';
-    if (moved) syncOrder();
+    removeEventListener('pointermove',move);
+    removeEventListener('pointerup',finish);
+    removeEventListener('pointercancel',finish);
+    removeGhost();
+    seqUL.classList.remove('is-dragging');
+    members.forEach(el => { el.classList.remove('drag','group-drag'); el.style.transform=''; });
+    if (moved) { syncOrder(); showSeqToast(members.length > 1 ? 'Moved section with ' + (members.length-1) + ' attached modifier' + (members.length===2?'':'s') : 'Block moved'); }
   };
-  addEventListener('pointermove', move, {passive:true});
-  addEventListener('pointerup', finish);
-  addEventListener('pointercancel', finish);
+  addEventListener('pointermove',move,{passive:true});
+  addEventListener('pointerup',finish);
+  addEventListener('pointercancel',finish);
 });
 function addBlock(type) {
   if (phase !== 'idle') stop();
@@ -1482,6 +1631,8 @@ function addModifier(kind) {
 const namedSequenceKey = 'kevins-metronome.named-sequences.v1';
 const namedMax = 40;
 let namedSequences = [];
+let activeSequenceName = 'Kevin sequence';
+let toastTimer;
 try {
   const stored = JSON.parse(localStorage.getItem(namedSequenceKey));
   if (Array.isArray(stored)) namedSequences = stored.filter(x => x && typeof x.name === 'string' && Array.isArray(x.list)).slice(0,namedMax);
@@ -1528,6 +1679,7 @@ function renderSavedSequences() {
       if (!parsed) { $('storageMessage').textContent = 'This saved sequence cannot be loaded.'; return; }
       if (phase !== 'idle') stop();
       seqList = parsed;
+      activeSequenceName = saved.name;
       seqSeed = seqList.length+1;
       seqLoop = saved.loop === true;
       $('loopSequence').setAttribute('aria-checked', String(seqLoop));
@@ -1560,9 +1712,77 @@ $('sequenceSaveForm').onsubmit = e => {
   const previous = namedSequences.map(x => ({...x}));
   const entry = {name,loop:seqLoop,list:seqList.map(b => b.type === 'mod' ? {type:'mod',kind:b.kind,strength:b.strength,curve:b.curve,hold:b.hold,holdUnit:b.holdUnit} : {type:b.type,meter:b.meter,counts:b.counts,...(b.type==='wait'?{unit:b.unit==='seconds'?'seconds':'counts'}:{}),bpm:b.bpm}),savedAt:Date.now()};
   if (existing) Object.assign(existing,entry); else namedSequences.unshift(entry);
-  if (persistNamedSequences()) { seqSave(); closeSequenceDialog(); feedback(); }
+  if (persistNamedSequences()) { activeSequenceName = name; seqSave(); closeSequenceDialog(); showSeqToast('Saved “' + name + '”'); feedback(); }
   else namedSequences = previous;
 };
+
+
+// Portable sequence files: independent of this browser's local saved library.
+// The same validator used by saved sequences ensures imported blocks are safe.
+function showSeqToast(message, isError = false) {
+  const toast = $('seqToast');
+  clearTimeout(toastTimer);
+  toast.hidden = false;
+  toast.textContent = message;
+  toast.classList.toggle('error', isError);
+  toast.classList.remove('appear');
+  void toast.offsetWidth;
+  toast.classList.add('appear');
+  toastTimer = setTimeout(() => { toast.hidden = true; toast.classList.remove('appear'); }, 3300);
+}
+function portableSequenceBlocks() {
+  return seqList.map(b => b.type === 'mod' ?
+    {type:'mod',kind:b.kind,strength:b.strength,curve:b.curve,hold:b.hold,holdUnit:b.holdUnit} :
+    {type:b.type,meter:b.meter,counts:b.counts,...(b.type === 'wait' ? {unit:b.unit === 'seconds' ? 'seconds' : 'counts'} : {}),bpm:b.bpm});
+}
+function downloadSequenceJSON() {
+  if (!seqList.some(b => b.type !== 'mod')) {
+    showSeqToast('Add at least one Section or Rest first.', true); return;
+  }
+  const name = activeSequenceName || 'Kevin sequence';
+  const exported = {format:'kevins-metronome-sequence',version:1,name,loop:seqLoop,blocks:portableSequenceBlocks()};
+  const json = JSON.stringify(exported,null,2);
+  const filename = (name.normalize('NFKD').replace(/[^a-zA-Z0-9_-]+/g,'-').replace(/^-|-$/g,'').slice(0,48) || 'kevin-sequence') + '.json';
+  const url = URL.createObjectURL(new Blob([json],{type:'application/json'}));
+  const link = document.createElement('a');
+  link.href = url; link.download = filename;
+  document.body.append(link); link.click(); link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  showSeqToast('Downloaded ' + filename);
+}
+async function importSequenceJSON(file) {
+  if (!file) return;
+  if (file.size > 512000) { showSeqToast('That file is too large (max 500 KB).', true); return; }
+  try {
+    const data = JSON.parse(await file.text());
+    if (!data || typeof data !== 'object' || Array.isArray(data)) throw Error('Not a sequence file.');
+    if (data.format && data.format !== 'kevins-metronome-sequence') throw Error('Unrecognized sequence format.');
+    if (data.format && data.version !== 1) throw Error('Unsupported sequence file version.');
+    const raw = data.blocks ?? data.list;
+    if (!Array.isArray(raw) || raw.length < 1 || raw.length > 150) throw Error('Expected 1–150 sequence blocks.');
+    if (raw.some(b => !b || !['play','wait','mod'].includes(b.type))) throw Error('The sequence has an invalid block type.');
+    const parsed = validSequenceBlocks(raw);
+    if (!parsed || parsed.length !== raw.length || !parsed.some(b => b.type !== 'mod')) throw Error('Some blocks have invalid settings.');
+    if (phase !== 'idle') stop();
+    seqList = parsed;
+    seqSeed = seqList.length + 1;
+    seqLoop = data.loop === true;
+    activeSequenceName = typeof data.name === 'string' && data.name.trim() ? data.name.trim().slice(0,60) : file.name.replace(/\.json$/i,'').slice(0,60);
+    $('loopSequence').setAttribute('aria-checked', String(seqLoop));
+    seqChanged();
+    showSeqToast('Imported “' + activeSequenceName + '”');
+    feedback();
+  } catch (error) {
+    showSeqToast('Could not import: ' + (error instanceof Error ? error.message : 'Invalid JSON'), true);
+  }
+}
+$('downloadSequence').onclick = downloadSequenceJSON;
+$('importSequence').onclick = () => $('importSequenceFile').click();
+$('importSequenceFile').addEventListener('change', event => {
+  const file = event.currentTarget.files?.[0];
+  event.currentTarget.value = ''; // allow importing the same file again
+  if (file) importSequenceJSON(file);
+});
 
 $('addSection').onclick = () => addBlock('play');
 $('addWait').onclick = () => addBlock('wait');
